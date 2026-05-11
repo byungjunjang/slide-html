@@ -1,0 +1,108 @@
+/* ============================================================
+   Jangpm Slide CSS — html2pptx safe (no gradients, no pseudos)
+   Canvas: 960pt × 540pt (= 1280px × 720px = 13.333" × 7.5")
+   ============================================================ */
+
+@import url('design-system/colors_and_type.css');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 960pt; height: 540pt;
+  background: #FAFAF9;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Segoe UI', Roboto, sans-serif;
+  color: #1A1A1A;
+  overflow: hidden;
+}
+
+/* canvas wrapper helpers */
+.pad         { padding: 42pt 42pt 36pt 42pt; height: 540pt; width: 960pt; position: relative; }
+.pad-wide    { padding: 42pt 56pt 56pt 56pt; height: 540pt; width: 960pt; position: relative; }
+
+/* GM (governing message) — bottom centered text */
+.gm-band     { position: absolute; bottom: 18pt; left: 56pt; right: 56pt; text-align: center; }
+
+/* card */
+.card        { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12pt; padding: 18pt 20pt; }
+.card-accent { background: #E8E5FC; border: 1px solid #4633E3; border-radius: 12pt; padding: 18pt 20pt; }
+.card-alt    { background: #F5F5F4; border: 1px solid #E5E7EB; border-radius: 12pt; padding: 18pt 20pt; }
+.card-dark   { background: #1A1A1A; border-radius: 12pt; padding: 18pt 20pt; }
+
+/* badges (div-wrapped: bg on div, p inside) */
+.badge-accent-soft { display: inline-block; background: #E8E5FC; border-radius: 9999pt; padding: 6pt 14pt; }
+.badge-accent      { display: inline-block; background: #4633E3; border-radius: 9999pt; padding: 5pt 14pt; }
+.badge-dark        { display: inline-block; background: #1A1A1A; border-radius: 9999pt; padding: 5pt 14pt; }
+.badge-square      { display: inline-block; background: #4633E3; border-radius: 4pt; padding: 8pt 18pt; }
+.number-circle     { display: inline-block; width: 22pt; height: 22pt; background: #4633E3; border-radius: 50%; text-align: center; }
+.number-circle-lg  { display: inline-block; width: 28pt; height: 28pt; background: #4633E3; border-radius: 50%; text-align: center; }
+
+/* divider lines (use div, not <hr>) */
+.rule        { background: #E5E7EB; height: 1pt; width: 100%; }
+.rule-accent { background: #4633E3; height: 2pt; width: 64pt; }
+
+/* accent vertical strip (replaces ::before pseudo) */
+.strip-accent { background: #4633E3; width: 3pt; border-radius: 2pt; }
+
+/* report table — use grid of divs (html2pptx friendly) */
+.tbl-row     { display: grid; }
+.tbl-cell    { padding: 8pt 12pt; border-bottom: 1px solid #E5E7EB; }
+.tbl-head    { background: #E8E5FC; }
+.tbl-zebra   { background: #FAFAF9; }
+.tbl-hi      { background: rgba(70, 51, 227, 0.06); border-left: 2px solid #4633E3; border-right: 2px solid #4633E3; }
+
+/* placeholder frame (solid colors only) */
+.ph-frame    { background: #F5F5F4; border: 2px dashed #D4D4D4; border-radius: 12pt; padding: 16pt; text-align: center; }
+.ph-frame-accent { background: #E8E5FC; border: 2px dashed #4633E3; border-radius: 12pt; padding: 16pt; text-align: center; }
+
+/* terminal */
+.term-window { background: #1A1A1A; border-radius: 8pt; padding: 0; overflow: hidden; }
+.term-chrome { background: #2A2A2A; padding: 8pt 12pt; }
+.term-dot    { display: inline-block; width: 9pt; height: 9pt; border-radius: 50%; margin-right: 4pt; }
+.term-body   { background: #1A1A1A; padding: 14pt 16pt; }
+
+/* layout helpers */
+.row         { display: flex; }
+.col         { display: flex; flex-direction: column; }
+.between     { justify-content: space-between; }
+.center      { align-items: center; }
+
+/* size helpers (pt) */
+.gap-1 { gap: 4pt; } .gap-2 { gap: 8pt; } .gap-3 { gap: 12pt; }
+.gap-4 { gap: 16pt; } .gap-5 { gap: 20pt; } .gap-6 { gap: 24pt; }
+.gap-8 { gap: 32pt; } .gap-10 { gap: 40pt; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18pt; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18pt; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14pt; }
+.grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12pt; }
+.grid-6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12pt; }
+
+/* typography classes — for use INSIDE p/h* (override colors_and_type.css rem with pt) */
+.t-display  { font-size: 42pt; font-weight: 800; line-height: 1.05; letter-spacing: -1pt; color: #1A1A1A; }
+.t-display2 { font-size: 36pt; font-weight: 800; line-height: 1.05; letter-spacing: -1pt; color: #1A1A1A; }
+.t-h1       { font-size: 30pt; font-weight: 800; line-height: 1.1;  letter-spacing: -0.6pt; color: #1A1A1A; }
+.t-h2       { font-size: 24pt; font-weight: 700; line-height: 1.2;  letter-spacing: -0.4pt; color: #1A1A1A; }
+.t-h3       { font-size: 18pt; font-weight: 700; line-height: 1.25; color: #1A1A1A; }
+.t-title    { font-size: 14pt; font-weight: 600; line-height: 1.3;  color: #1A1A1A; }
+.t-body     { font-size: 12pt; font-weight: 400; line-height: 1.5;  color: #1A1A1A; }
+.t-body-sec { font-size: 12pt; font-weight: 400; line-height: 1.5;  color: #6B7280; }
+.t-cap      { font-size: 9pt;  font-weight: 500; line-height: 1.4;  color: #6B7280; }
+.t-cap-up   { font-size: 9pt;  font-weight: 600; line-height: 1.4;  color: #6B7280; letter-spacing: 0.4pt; text-transform: uppercase; }
+.t-mono     { font-family: 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace; }
+
+/* color modifiers */
+.c-accent     { color: #4633E3; }
+.c-accent-ink { color: #2E1FB3; }
+.c-text       { color: #1A1A1A; }
+.c-secondary  { color: #6B7280; }
+.c-tertiary   { color: #9CA3AF; }
+.c-bg         { color: #FAFAF9; }
+.c-white      { color: #FFFFFF; }
+.c-positive   { color: #059669; }
+.c-negative   { color: #E11D48; }
+.c-warning    { color: #D97706; }
+
+.bg-accent      { background: #4633E3; }
+.bg-accent-soft { background: #E8E5FC; }
+.bg-surface-alt { background: #F5F5F4; }
+.bg-text        { background: #1A1A1A; }

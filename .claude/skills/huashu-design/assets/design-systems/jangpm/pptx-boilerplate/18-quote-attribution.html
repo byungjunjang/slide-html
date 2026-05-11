@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Quote Slide — Jangpm</title>
+<link rel="stylesheet" href="../design-system/slides/_slide.css">
+<link rel="stylesheet" href="../_pptx-slide.css">
+<style>
+  /* Override _slide.css 100vh body: html2pptx needs body == canvas (1280x720px = 960x540pt) */
+  html, body { width: 1280px; height: 720px; padding: 0; margin: 0; min-height: 0; overflow: hidden; display: block; background: #FAFAF9; }
+</style>
+</head>
+<body>
+<section class="slide slide-centered">
+  <div class="flex-row justify-between items-center" style="position: absolute; top: var(--space-14); left: var(--space-14); right: var(--space-14);">
+    <span class="label-caption">Section 02 · 인용</span>
+    <span class="caption">08 / 12</span>
+  </div>
+  <div class="flex-col gap-6" style="align-items: flex-start; max-width: 960px; padding: 0 var(--space-8);">
+    <p style="font-size: 4rem; line-height: 1; color: #4633E3; font-weight: 700; margin: 0;">&ldquo;</p>
+    <blockquote style="font-size: 3rem; font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; color: var(--text);">
+      도구는 답을 주지 않는다.<br>
+      <span style="color: var(--accent);">좋은 질문</span>을 가진 사람에게만<br>
+      답에 가까운 것을 돌려준다.
+    </blockquote>
+    <hr class="rule-accent" style="width: 64px; margin-top: var(--space-4);">
+    <div class="flex-col gap-1">
+      <p class="title">— 장피엠</p>
+      <p class="caption">2026년 1월, 팀 회고 노트에서</p>
+    </div>
+  </div>
+</section>
+</body>
+</html>

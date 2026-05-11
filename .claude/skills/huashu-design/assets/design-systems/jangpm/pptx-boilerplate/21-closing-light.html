@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Closing Slide — Jangpm</title>
+<link rel="stylesheet" href="../design-system/slides/_slide.css">
+<link rel="stylesheet" href="../_pptx-slide.css">
+<style>
+  /* Override _slide.css 100vh body: html2pptx needs body == canvas (1280x720px = 960x540pt) */
+  html, body { width: 1280px; height: 720px; padding: 0; margin: 0; min-height: 0; overflow: hidden; display: block; background: #FAFAF9; }
+</style>
+</head>
+<body>
+<section class="slide slide-centered">
+  <div style="display:flex; align-items:center; gap: var(--space-12); width:100%; padding: 0 var(--space-8);">
+    <div class="flex-col gap-6" style="flex: 1;">
+      <span class="accent-badge">End · 감사합니다</span>
+      <h1 class="display" style="font-size: 4.5rem; line-height: 1.05;">
+        질문은<br>
+        <span style="color: var(--accent);">여기서부터</span>.
+      </h1>
+      <p class="body" style="font-size: 1.1rem; color: var(--text-secondary); max-width: 520px;">
+        오늘 이야기한 루프 중 하나만 골라 다음 주에 돌려보시기를.
+      </p>
+      <hr class="rule-accent" style="width: 64px;">
+      <div class="flex-col gap-2">
+        <span class="label-caption">Contact</span>
+        <div class="flex-col gap-1">
+          <p class="title" style="font-family: var(--font-mono); font-size: 1rem;">jangpm@newsletter.kr</p>
+          <p class="caption">뉴스레터 · 월 1회 발송 · 이번 회차 요약본 전송 예정</p>
+        </div>
+      </div>
+    </div>
+    <div style="flex-shrink: 0; position: relative;">
+      <div style="position: absolute; top: 10%; left: 10%; width: 340px; height: 340px; background: var(--accent-soft); border-radius: 50%;"></div>
+      <img src="../design-system/assets/jangpm-character.png" alt="Jangpm" style="position: relative; width: 380px; height: 380px; object-fit: contain;">
+    </div>
+  </div>
+  <div style="position:absolute; bottom: var(--space-8); left: var(--space-14); right: var(--space-14); display:flex; justify-content: space-between; align-items: center;">
+    <span class="caption" style="font-family: var(--font-mono);">JANGPM × AI · EP.01</span>
+    <span class="caption">12 / 12 · Fin.</span>
+  </div>
+</section>
+</body>
+</html>

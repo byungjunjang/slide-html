@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Four Point Slide — Jangpm</title>
+<link rel="stylesheet" href="_slide.css">
+<style>
+  .fp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-5); width: 100%; align-items: start; }
+  .fp-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-self: start;
+  }
+  .fp-card.accent { background: var(--accent-soft); border-color: var(--accent); }
+  .fp-card > * { padding-left: var(--space-5); padding-right: var(--space-5); }
+  .fp-card > *:first-child { padding-top: var(--space-5); }
+  .fp-card > *:last-child { padding-bottom: var(--space-5); }
+  .fp-head { display: flex; align-items: center; gap: var(--space-3); }
+  .fp-title { font-size: 1.2rem; font-weight: 700; line-height: 1.25; margin-top: var(--space-3); }
+  .fp-body { font-size: var(--fs-body); line-height: 1.55; margin-top: var(--space-3); }
+  .fp-rule { border: none; border-top: 1px solid var(--border); margin: var(--space-4) var(--space-5); padding: 0 !important; width: auto; }
+  .fp-rule.accent { border-color: rgba(70,51,227,0.2); }
+  .fp-caption { font-size: var(--fs-caption); color: var(--text-secondary); line-height: 1.4; margin-top: 0; }
+</style>
+</head>
+<body>
+<section class="slide">
+  <div class="flex-row justify-between items-center">
+    <span class="label-caption">Section 02 · 실행 원칙</span>
+    <span class="caption">04 / 12</span>
+  </div>
+  <h2 class="headline" style="font-size: 2.3rem;">AI와 함께 일할 때 지킬 <span style="color: var(--accent);">네 가지 원칙</span>.</h2>
+
+  <!-- content group: vertically centered between title and GM -->
+  <div style="flex: 1; display: flex; align-items: center;">
+    <div class="fp-grid">
+      <div class="fp-card">
+        <div class="fp-head"><span class="number-badge">01</span><span class="label-caption">Frame</span></div>
+        <div class="fp-title">맥락을 먼저 쓴다</div>
+        <p class="fp-body" style="color: var(--text-secondary);">
+          질문 전에 <b style="color: var(--text);">상황·청중·제약</b>을 세 줄로 요약. 답의 절반은 여기서 결정된다.
+        </p>
+        <hr class="fp-rule">
+        <span class="fp-caption">누구에게 · 왜 · 어떤 형태로</span>
+      </div>
+
+      <div class="fp-card accent">
+        <div class="fp-head"><span class="number-badge">02</span><span class="label-caption" style="color: var(--accent);">Structure</span></div>
+        <div class="fp-title" style="color: var(--accent-ink);">질문을 구조화한다</div>
+        <p class="fp-body" style="color: var(--accent-ink);">
+          한 번에 묻지 않는다. <b>분해 → 순서 → 합성</b>의 루프가 품질을 만든다.
+        </p>
+        <hr class="fp-rule accent">
+        <span class="fp-caption" style="color: var(--accent-ink);">좋은 프롬프트는 ≈ 좋은 목차</span>
+      </div>
+
+      <div class="fp-card">
+        <div class="fp-head"><span class="number-badge">03</span><span class="label-caption">Check</span></div>
+        <div class="fp-title">결과를 검증한다</div>
+        <p class="fp-body" style="color: var(--text-secondary);">
+          '그럴듯함'을 <b style="color: var(--text);">검증 가능한 사실</b>로 분리. 반례를 일부러 찾아본다.
+        </p>
+        <hr class="fp-rule">
+        <span class="fp-caption">출처 · 숫자 · 가정 재확인</span>
+      </div>
+
+      <div class="fp-card">
+        <div class="fp-head"><span class="number-badge">04</span><span class="label-caption">Archive</span></div>
+        <div class="fp-title">성공을 귀속시킨다</div>
+        <p class="fp-body" style="color: var(--text-secondary);">
+          잘된 프롬프트는 <b style="color: var(--text);">팀 자산</b>으로 옮긴다. 개인기 → 팀 프로세스.
+        </p>
+        <hr class="fp-rule">
+        <span class="fp-caption">주간 단위의 템플릿 귀속</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="gm">네 원칙은 순서대로 쓰이되, 실전에서는 <b>Structure</b>에 가장 많은 시간을 써야 합니다.</div>
+</section>
+</body>
+</html>

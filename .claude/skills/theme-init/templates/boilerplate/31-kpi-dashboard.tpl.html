@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>KPI Dashboard — Jangpm</title>
+<link rel="stylesheet" href="../design-system/slides/_slide.css">
+<link rel="stylesheet" href="../_pptx-slide.css">
+<style>
+  /* Override _slide.css 100vh body: html2pptx needs body == canvas (1280x720px = 960x540pt) */
+  html, body { width: 1280px; height: 720px; padding: 0; margin: 0; min-height: 0; overflow: hidden; display: block; background: {{TOKEN:colors.bg}}; }
+</style>
+</head>
+<body>
+<section class="slide">
+  <div class="flex-row justify-between items-center">
+    <span class="label-caption">Section 06 · 성과 측정</span>
+    <span class="caption">08 / 20</span>
+  </div>
+  <h2 class="headline" style="font-size: 2.3rem;">성과 측정 <span style="color: var(--accent);">지표</span>.</h2>
+
+  <!-- content group: vertically centered between title and GM -->
+  <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: var(--space-5);">
+  <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-3);">
+    <!-- KPI 1 -->
+    <div class="card" style="padding: var(--space-4); gap: var(--space-2);">
+      <span class="label-caption">고객 만족도</span>
+      <span class="stat-number" style="font-size: 2.3rem; color: var(--positive);">99.5<span style="font-size:0.55em;">점</span></span>
+      <div style="height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-top: 4px;">
+        <div style="height: 100%; width: 99.5%; background: var(--positive);"></div>
+      </div>
+      <span class="caption">경고 기준 <b style="color:var(--text);">60점</b> 이하</span>
+    </div>
+    <!-- KPI 2 -->
+    <div class="card card-accent" style="padding: var(--space-4); gap: var(--space-2);">
+      <span class="label-caption" style="color: var(--accent);">매출 성장률</span>
+      <span class="stat-number" style="font-size: 2.3rem;">+21<span style="font-size:0.55em;">%</span></span>
+      <div style="height: 6px; background: rgba(70,51,227,0.15); border-radius: 3px; overflow: hidden; margin-top: 4px;">
+        <div style="height: 100%; width: 100%; background: var(--accent);"></div>
+      </div>
+      <span class="caption" style="color: var(--accent-ink);">경고 기준 <b>+15%</b> 이하</span>
+    </div>
+    <!-- KPI 3 -->
+    <div class="card" style="padding: var(--space-4); gap: var(--space-2);">
+      <span class="label-caption">영업이익률</span>
+      <span class="stat-number" style="font-size: 2.3rem; color: var(--positive);">12<span style="font-size:0.55em;">%</span></span>
+      <div style="height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-top: 4px;">
+        <div style="height: 100%; width: 78%; background: var(--positive);"></div>
+      </div>
+      <span class="caption">경고 기준 <b style="color:var(--text);">9%</b> 이하</span>
+    </div>
+    <!-- KPI 4 -->
+    <div class="card" style="padding: var(--space-4); gap: var(--space-2);">
+      <span class="label-caption">재고 회전율</span>
+      <span class="stat-number" style="font-size: 2.3rem; color: var(--warning);">5.5<span style="font-size:0.55em;">회</span></span>
+      <div style="height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-top: 4px;">
+        <div style="height: 100%; width: 62%; background: var(--warning);"></div>
+      </div>
+      <span class="caption">경고 기준 <b style="color:var(--text);">4.8회</b> 이하</span>
+    </div>
+    <!-- KPI 5 -->
+    <div class="card" style="padding: var(--space-4); gap: var(--space-2);">
+      <span class="label-caption">재구매율</span>
+      <span class="stat-number" style="font-size: 2.3rem; color: var(--negative);">40<span style="font-size:0.55em;">%</span></span>
+      <div style="height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-top: 4px;">
+        <div style="height: 100%; width: 40%; background: var(--negative);"></div>
+      </div>
+      <span class="caption trend-negative"><b>경고 구간</b> · 기준 35% 근접</span>
+    </div>
+  </div>
+
+  <div class="insight-bar">
+    <p style="margin: 0;"><b>재구매율이 가장 취약한 지표</b> — 목표 미달 시 즉각 원인 분석과 개선 조치를 마련해 실행해야 합니다.</p>
+  </div>
+  </div>
+
+  <p class="gm">5개 지표 중 <b>4개 안정 / 1개 주의</b> — 개선 포인트가 명확할 때 행동이 빠릅니다.</p>
+</section>
+</body>
+</html>

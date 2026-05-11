@@ -1,0 +1,251 @@
+/* ============================================================
+   Jangpm Slide CSS — 1280×720 Reveal-style canvas.
+   All slide samples import this on top of colors_and_type.css.
+   ============================================================ */
+
+@import url('../colors_and_type.css');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; background: #DAD7D4; }
+body { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+
+/* Fixed slide canvas */
+.slide {
+  position: relative;
+  width: 1280px;
+  height: 720px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  padding: var(--space-14);
+  padding-bottom: var(--space-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.slide-centered { justify-content: center; }
+
+.slide-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-6);
+  min-height: 0;
+}
+
+/* Headline / display shortcuts already in colors_and_type.css */
+h1, h2 { font-weight: inherit; }
+
+/* Governing message */
+.gm {
+  position: absolute;
+  bottom: var(--space-6);
+  left: var(--space-14);
+  right: var(--space-14);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-headline);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* Badges / pills */
+.accent-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-title);
+  width: fit-content;
+}
+.pill-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: var(--space-1) var(--space-4);
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-title);
+}
+.pill-dark { background: var(--text); color: var(--bg); }
+
+.number-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 50%;
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-display);
+  flex-shrink: 0;
+}
+
+/* Card */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: var(--card-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.card-accent {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+.card-alt {
+  background: var(--surface-alt);
+}
+
+/* Icons */
+.icon    { width: 20px; height: 20px; }
+.icon-lg { width: 32px; height: 32px; }
+.icon-xl { width: 48px; height: 48px; }
+svg.icon, svg.icon-lg, svg.icon-xl { stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Grid + flex helpers */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--card-gap); }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--card-gap); }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--card-gap); }
+.flex-col { display: flex; flex-direction: column; }
+.flex-row { display: flex; flex-direction: row; }
+.gap-2 { gap: var(--space-2); }
+.gap-3 { gap: var(--space-3); }
+.gap-4 { gap: var(--space-4); }
+.gap-6 { gap: var(--space-6); }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.items-end { align-items: flex-end; }
+.justify-between { justify-content: space-between; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.mt-auto { margin-top: auto; }
+
+/* Rule */
+.rule { border: none; border-top: 1px solid var(--border); margin: 0; width: 100%; }
+.rule-accent { border: none; border-top: 2px solid var(--accent); margin: 0; width: 100%; }
+
+/* Section sub heading */
+.section-sub {
+  font-size: var(--fs-title);
+  font-weight: var(--fw-headline);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.section-sub::before {
+  content: '\203A';
+  color: var(--accent);
+  font-size: 1.4em;
+  font-weight: 700;
+}
+
+/* Stat numbers */
+.stat-number {
+  font-size: var(--fs-display-sm);
+  font-weight: var(--fw-display);
+  color: var(--accent);
+  line-height: 1;
+}
+
+/* Report table */
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-body);
+}
+.report-table thead th {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: var(--fw-title);
+  padding: var(--space-3) var(--space-4);
+  text-align: center;
+}
+.report-table thead th:first-child { text-align: left; }
+.report-table tbody td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+.report-table tbody td:first-child { text-align: left; }
+.report-table tbody tr:nth-child(even) { background: var(--bg); }
+.col-highlight {
+  border-left: 2px solid var(--accent);
+  border-right: 2px solid var(--accent);
+  background: rgba(70, 51, 227, 0.03);
+}
+
+/* Summary / insight bars */
+.summary-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4) var(--space-6);
+  background: var(--surface);
+  border-radius: var(--card-radius);
+  border: 1px solid var(--border);
+}
+.insight-bar {
+  padding: var(--space-5) var(--space-6);
+  background: var(--accent-soft);
+  border-radius: var(--card-radius);
+  text-align: center;
+  font-size: var(--fs-body);
+  color: var(--text);
+}
+
+/* Agenda item */
+.agenda-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--border);
+}
+.agenda-item:last-child { border-bottom: none; }
+.agenda-item-past { opacity: 0.5; }
+.agenda-item-current {
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+}
+
+/* Before/after label */
+.before-after-label {
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  background: var(--border);
+  border-radius: var(--radius-xs);
+  font-size: var(--fs-title);
+  font-weight: var(--fw-title);
+  color: var(--text-secondary);
+  width: fit-content;
+}
+
+/* Label caption */
+.label-caption {
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-title);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+/* Dot background for title/section slides (optional motif).
+   2026-04-27: replaced radial-gradient dot pattern with a solid surface-alt
+   tint to comply with html2pptx 4-constraints (no background-image / gradient).
+   Restoring the dot motif requires a tiled <img src="dots.png"> in the slide. */
+.bg-dots {
+  background: var(--surface-alt);
+}

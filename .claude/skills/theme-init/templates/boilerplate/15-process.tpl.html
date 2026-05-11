@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Process Slide — Jangpm</title>
+<link rel="stylesheet" href="../design-system/slides/_slide.css">
+<link rel="stylesheet" href="../_pptx-slide.css">
+<style>
+  /* Override _slide.css 100vh body: html2pptx needs body == canvas (1280x720px = 960x540pt) */
+  html, body { width: 1280px; height: 720px; padding: 0; margin: 0; min-height: 0; overflow: hidden; display: block; background: {{TOKEN:colors.bg}}; }
+</style>
+<style>
+  .proc-row { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; align-items: stretch; gap: 0; width: 100%; }
+  .proc-step { display: flex; flex-direction: column; gap: var(--space-3); padding: 0 var(--space-4); align-self: start; }
+  .proc-step.accent {
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: var(--card-radius);
+    padding: 0;
+  }
+  .proc-step.accent > * { padding-left: var(--space-5); padding-right: var(--space-5); }
+  .proc-step.accent > *:first-child { padding-top: var(--space-5); }
+  .proc-step.accent > *:last-child { padding-bottom: var(--space-5); }
+  .proc-arrow { display: flex; align-items: flex-start; justify-content: center; padding-top: 10px; color: var(--border-strong); font-size: 24px; line-height: 1; }
+  .proc-title { font-size: 1.3rem; font-weight: 700; line-height: 1.2; }
+  .proc-body { font-size: var(--fs-body); line-height: 1.6; color: var(--text-secondary); }
+</style>
+</head>
+<body>
+<section class="slide">
+  <div class="flex-row justify-between items-center">
+    <span class="label-caption">Section 03 · 실행 프로세스</span>
+    <span class="caption">09 / 12</span>
+  </div>
+  <h2 class="headline" style="font-size: 2.3rem;">다음 주부터 <span style="color: var(--accent);">4단계</span>로 시도하세요.</h2>
+
+  <!-- content group: vertically centered between title and GM -->
+  <div style="flex: 1; display: flex; align-items: center;">
+    <div class="proc-row">
+      <div class="proc-step">
+        <div class="flex-row items-center gap-3">
+          <span class="number-badge">01</span>
+          <span class="label-caption">Monday</span>
+        </div>
+        <h4 class="proc-title">기대 적기</h4>
+        <p class="proc-body">한 주의 첫 과제를 <b style="color: var(--text);">글로 기대치</b>부터 적는다. 5줄 이내.</p>
+      </div>
+      <p class="proc-arrow">›</p>
+
+      <div class="proc-step">
+        <div class="flex-row items-center gap-3">
+          <span class="number-badge">02</span>
+          <span class="label-caption">Wed</span>
+        </div>
+        <h4 class="proc-title">프롬프트 설계</h4>
+        <p class="proc-body">기대치를 그대로 프롬프트의 <b style="color: var(--text);">축</b>으로 번역한다.</p>
+      </div>
+      <p class="proc-arrow">›</p>
+
+      <div class="proc-step">
+        <div class="flex-row items-center gap-3">
+          <span class="number-badge">03</span>
+          <span class="label-caption">Thu</span>
+        </div>
+        <h4 class="proc-title">결과 비교</h4>
+        <p class="proc-body">초기 기대와 결과의 <b style="color: var(--text);">간격</b>을 한 문장으로 요약.</p>
+      </div>
+      <p class="proc-arrow">›</p>
+
+      <div class="proc-step accent">
+        <div class="flex-row items-center gap-3">
+          <span class="number-badge">04</span>
+          <span class="label-caption" style="color: var(--accent);">Friday</span>
+        </div>
+        <h4 class="proc-title" style="color: var(--accent-ink);">템플릿 귀속</h4>
+        <p class="proc-body" style="color: var(--accent-ink);">반복 가능한 질문은 팀 문서로 <b>귀속</b>시킨다. 주간 자산화.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="gm">이 네 단계를 <b>한 주</b>로 돌리면, 4주 뒤에는 팀 고유의 프롬프트 라이브러리가 남습니다. 주간 리듬에 루프를 얹는 것이 가장 저항 적은 도입 방식입니다.</p>
+</section>
+</body>
+</html>

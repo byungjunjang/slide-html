@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Jangpm Slide Deck — Interactive Index</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); font-family: var(--font-sans); color: var(--text); }
+  .shell {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 56px 32px 80px;
+  }
+  header.top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; }
+  header.top .brand { display: flex; gap: 14px; align-items: center; }
+  header.top img { width: 56px; height: 56px; object-fit: contain; }
+  header.top .brand-text h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.01em; }
+  header.top .brand-text p { font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px; }
+  header.top .meta { text-align: right; font-size: 0.8rem; color: var(--text-secondary); line-height: 1.7; }
+  header.top .meta b { color: var(--text); font-weight: 600; }
+
+  .section-title {
+    font-size: 0.8rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    margin: 40px 0 16px;
+    display: flex; align-items: baseline; gap: 12px;
+  }
+  .section-title .count {
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+  }
+  .section-title::before {
+    content: ''; width: 20px; height: 2px; background: var(--accent); border-radius: 1px;
+    display: inline-block;
+  }
+  .section-note {
+    font-size: 0.85rem; color: var(--text-secondary);
+    margin-top: -4px; margin-bottom: 20px;
+    max-width: 720px; line-height: 1.55;
+  }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .thumb {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.15s, transform 0.15s;
+  }
+  .thumb:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+  .thumb .frame {
+    aspect-ratio: 16/9;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    position: relative;
+    background: var(--bg);
+  }
+  .thumb iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 1280px; height: 720px;
+    border: 0;
+    transform: scale(0.316);
+    transform-origin: top left;
+    pointer-events: none;
+  }
+  .thumb .meta-row { padding: 14px 16px; display: flex; justify-content: space-between; align-items: baseline; }
+  .thumb .num { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; color: var(--accent); font-family: var(--font-mono); }
+  .thumb .label { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+  .thumb .caption { font-size: 0.72rem; color: var(--text-secondary); padding: 0 16px 14px; line-height: 1.45; }
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="top">
+    <div class="brand">
+      <img src="../../assets/jangpm-character.png" alt="Jangpm">
+      <div class="brand-text">
+        <h1>Jangpm Slide Deck</h1>
+        <p>AI 성과를 극대화하는 메타적인 접근법 · Slide pattern library</p>
+      </div>
+    </div>
+    <div class="meta">
+      <div><b>1280 × 720</b> · 16:9 fixed</div>
+      <div>Pretendard · #4633E3 accent</div>
+      <div>Pattern library · 24 slides</div>
+    </div>
+  </header>
+
+  <!-- =========================================================
+       Core lecture deck
+       ========================================================= -->
+  <div class="section-title">Core Lecture Deck <span class="count">01 — 12</span></div>
+  <p class="section-note">메타적 접근법 강의에서 쓰이는 기본 12장 구성. 오프닝부터 클로징까지 한 주제를 끌고 가는 완결된 시퀀스.</p>
+  <div class="grid">
+    <a class="thumb" href="../../slides/01-title.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/01-title.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">01</span><span class="label">Title</span></div>
+      <div class="caption">Hero · character + accent word</div>
+    </a>
+    <a class="thumb" href="../../slides/02-agenda.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/02-agenda.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">02</span><span class="label">Agenda</span></div>
+      <div class="caption">3 items · past / current / upcoming</div>
+    </a>
+    <a class="thumb" href="../../slides/03-section.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/03-section.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">03</span><span class="label">Section Divider</span></div>
+      <div class="caption">Light break · accent pin + dot pattern</div>
+    </a>
+    <a class="thumb" href="../../slides/04-three-point.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/04-three-point.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">04</span><span class="label">Three Point</span></div>
+      <div class="caption">3 cards · content-hugging · middle accent</div>
+    </a>
+    <a class="thumb" href="../../slides/05-comparison.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/05-comparison.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">05</span><span class="label">Before / After</span></div>
+      <div class="caption">Two-column comparison</div>
+    </a>
+    <a class="thumb" href="../../slides/06-stats.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/06-stats.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">06</span><span class="label">Big Stats</span></div>
+      <div class="caption">3 stat cards · content-hugging · one accent</div>
+    </a>
+    <a class="thumb" href="../../slides/07-table.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/07-table.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">07</span><span class="label">Report Table</span></div>
+      <div class="caption">Col-highlight · insight-bar</div>
+    </a>
+    <a class="thumb" href="../../slides/08-quote.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/08-quote.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">08</span><span class="label">Pull Quote</span></div>
+      <div class="caption">Editorial quote · accent phrase</div>
+    </a>
+    <a class="thumb" href="../../slides/09-process.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/09-process.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">09</span><span class="label">Process Steps</span></div>
+      <div class="caption">4 stages · last = accent · centered</div>
+    </a>
+    <a class="thumb" href="../../slides/10-checklist.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/10-checklist.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">10</span><span class="label">Checklist</span></div>
+      <div class="caption">6 items · 2 columns</div>
+    </a>
+    <a class="thumb" href="../../slides/11-summary.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/11-summary.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">11</span><span class="label">Summary</span></div>
+      <div class="caption">3 numbered takeaways</div>
+    </a>
+    <a class="thumb" href="../../slides/12-closing.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/12-closing.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">12</span><span class="label">Closing</span></div>
+      <div class="caption">CTA · accent circle behind character</div>
+    </a>
+  </div>
+
+  <!-- =========================================================
+       Concept variants
+       ========================================================= -->
+  <div class="section-title">Concept Grids <span class="count">Variants</span></div>
+  <p class="section-note">Three Point와 동일한 패턴(내용에 따라 세로로 줄어드는 카드, 세로 중앙 정렬)을 4칸·6칸으로 확장한 버전.</p>
+  <div class="grid">
+    <a class="thumb" href="../../slides/04-three-point.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/04-three-point.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">04</span><span class="label">Three Point</span></div>
+      <div class="caption">3 columns · 2nd = accent</div>
+    </a>
+    <a class="thumb" href="../../slides/04b-four-point.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/04b-four-point.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">04B</span><span class="label">Four Point</span></div>
+      <div class="caption">4 columns · 2nd = accent</div>
+    </a>
+    <a class="thumb" href="../../slides/07b-six-point.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/07b-six-point.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">07B</span><span class="label">Six Point</span></div>
+      <div class="caption">3 × 2 grid · 3rd = accent</div>
+    </a>
+  </div>
+
+  <!-- =========================================================
+       Exercise / practice
+       ========================================================= -->
+  <div class="section-title">Exercise · 실습 과제 <span class="count">1up / 2up</span></div>
+  <p class="section-note">보라색 pill + 큰 타이틀 헤드 + "│ 해결하고자 하는 문제" 형식의 문제 정의. 스크린샷 1장 또는 Before/After 2장으로 제시.</p>
+  <div class="grid">
+    <a class="thumb" href="../../slides/08a-exercise-1up.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/08a-exercise-1up.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">08A</span><span class="label">Exercise · 1up</span></div>
+      <div class="caption">Pill head · single screenshot slot</div>
+    </a>
+    <a class="thumb" href="../../slides/08b-exercise-2up.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/08b-exercise-2up.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">08B</span><span class="label">Exercise · 2up</span></div>
+      <div class="caption">Pill head · Before → After slots</div>
+    </a>
+  </div>
+
+  <!-- =========================================================
+       Image showcase
+       ========================================================= -->
+  <div class="section-title">Image Showcase <span class="count">1up / 2up</span></div>
+  <p class="section-note">사진·스크린샷을 슬라이드의 주인공으로 쓰는 타입. 타이틀 + 이미지 + 하단 GM만 있는 간결 구성.</p>
+  <div class="grid">
+    <a class="thumb" href="../../slides/22-image-1up.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/22-image-1up.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">22</span><span class="label">Image · 1up</span></div>
+      <div class="caption">Side bar index + big title + single image</div>
+    </a>
+    <a class="thumb" href="../../slides/23-image-2up.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/23-image-2up.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">23</span><span class="label">Image · 2up</span></div>
+      <div class="caption">Two images · before → after</div>
+    </a>
+  </div>
+
+  <!-- =========================================================
+       Terminal / Code
+       ========================================================= -->
+  <div class="section-title">Terminal / Code <span class="count">Split / Full</span></div>
+  <p class="section-note">터미널 화면과 설명이 함께 들어가는 데모형 슬라이드. 색상 하이라이트된 커맨드 출력과 단계별 설명으로 실행 흐름을 보여줌.</p>
+  <div class="grid">
+    <a class="thumb" href="../../slides/24-terminal-split.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/24-terminal-split.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">24</span><span class="label">Terminal · Split</span></div>
+      <div class="caption">Steps left + terminal right</div>
+    </a>
+    <a class="thumb" href="../../slides/25-terminal-full.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/25-terminal-full.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">25</span><span class="label">Terminal · Full</span></div>
+      <div class="caption">3 step cards + full-width terminal</div>
+    </a>
+  </div>
+
+  <!-- =========================================================
+       Business / Strategy patterns
+       ========================================================= -->
+  <div class="section-title">Business · Strategy <span class="count">Extended</span></div>
+  <p class="section-note">사업 보고서 스타일 슬라이드 — 개요, 매트릭스, 예측, 손익, 시즈널리티, 페어드 컨셉, KPI 대시보드, 마무리.</p>
+  <div class="grid">
+    <a class="thumb" href="../../slides/13-cover-vertical.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/13-cover-vertical.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">13</span><span class="label">Cover · Vertical</span></div>
+      <div class="caption">Editorial cover · vertical accent bar</div>
+    </a>
+    <a class="thumb" href="../../slides/14-overview-split.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/14-overview-split.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">14</span><span class="label">Overview Split</span></div>
+      <div class="caption">Info matrix + 6 metric cards (3×2)</div>
+    </a>
+    <a class="thumb" href="../../slides/15-matrix-trends.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/15-matrix-trends.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">15</span><span class="label">Matrix · Trends</span></div>
+      <div class="caption">3 cols · uniform title blocks (120px)</div>
+    </a>
+    <a class="thumb" href="../../slides/16-forecast-table.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/16-forecast-table.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">16</span><span class="label">Forecast Table</span></div>
+      <div class="caption">Multi-year forecast · trend indicators</div>
+    </a>
+    <a class="thumb" href="../../slides/17-pnl.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/17-pnl.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">17</span><span class="label">P&L Statement</span></div>
+      <div class="caption">Income table + cost strategy · centered</div>
+    </a>
+    <a class="thumb" href="../../slides/18-seasonal.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/18-seasonal.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">18</span><span class="label">Seasonal</span></div>
+      <div class="caption">Monthly bars · peak callout</div>
+    </a>
+    <a class="thumb" href="../../slides/19-paired-concept.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/19-paired-concept.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">19</span><span class="label">Paired Concept</span></div>
+      <div class="caption">Two-column strategic pairing</div>
+    </a>
+    <a class="thumb" href="../../slides/20-kpi-dashboard.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/20-kpi-dashboard.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">20</span><span class="label">KPI Dashboard</span></div>
+      <div class="caption">5 metrics + insight bar · centered</div>
+    </a>
+    <a class="thumb" href="../../slides/21-closing-big.html" target="_blank">
+      <div class="frame"><iframe src="../../slides/21-closing-big.html" scrolling="no"></iframe></div>
+      <div class="meta-row"><span class="num">21</span><span class="label">Closing · Big</span></div>
+      <div class="caption">Oversized closing statement</div>
+    </a>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Closing Big — Jangpm</title>
+<link rel="stylesheet" href="../design-system/slides/_slide.css">
+<link rel="stylesheet" href="../_pptx-slide.css">
+<style>
+  /* Override _slide.css 100vh body: html2pptx needs body == canvas (1280x720px = 960x540pt) */
+  html, body { width: 1280px; height: 720px; padding: 0; margin: 0; min-height: 0; overflow: hidden; display: block; background: {{TOKEN:colors.bg}}; }
+</style>
+</head>
+<body>
+<section class="slide" style="background: var(--text); color: var(--bg); padding: var(--space-16) var(--space-14); justify-content: space-between;">
+  <div class="flex-row justify-between items-center">
+    <span class="label-caption" style="color: rgba(250,250,249,0.6);">Closing · 2030, 다음 구간으로</span>
+    <span class="caption" style="color: rgba(250,250,249,0.6);">20 / 20</span>
+  </div>
+
+  <div class="flex-col gap-4" style="flex: 1; justify-content: center;">
+    <span style="font-size: 1rem; font-weight: 600; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">2030,</span>
+    <h1 style="font-size: 7rem; font-weight: 800; line-height: 0.98; letter-spacing: -0.04em; color: #fff;">
+      더 높은<br>
+      <span style="color: var(--accent);">도약</span>을 위하여.
+    </h1>
+    <hr class="rule-accent" style="width: 96px; margin-top: var(--space-4);">
+    <p style="font-size: 1.25rem; color: rgba(250,250,249,0.7); max-width: 640px; line-height: 1.5; margin-top: var(--space-2);">
+      안정적 매출 기반 위에 <b style="color:#fff;">수익성 개선과 채널 확장</b>의 다음 해를 엽니다.
+    </p>
+  </div>
+
+  <div class="flex-row justify-between items-end">
+    <div class="flex-col gap-1">
+      <span class="label-caption" style="color: rgba(250,250,249,0.6);">Next Review</span>
+      <span class="title" style="color: #fff;">2030 Q1 · 4월 첫째 주 / 월간 리포트</span>
+    </div>
+    <span class="caption" style="color: rgba(250,250,249,0.6); font-family: var(--font-mono);">JANGPM / H1-2030 / FIN.</span>
+  </div>
+</section>
+</body>
+</html>

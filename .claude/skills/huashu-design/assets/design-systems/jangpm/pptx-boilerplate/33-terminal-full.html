@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Terminal / Code Full Slide — Jangpm</title>
+<link rel="stylesheet" href="../design-system/slides/_slide.css">
+<link rel="stylesheet" href="../_pptx-slide.css">
+<style>
+  /* Override _slide.css 100vh body: html2pptx needs body == canvas (1280x720px = 960x540pt) */
+  html, body { width: 1280px; height: 720px; padding: 0; margin: 0; min-height: 0; overflow: hidden; display: block; background: #FAFAF9; }
+</style>
+<style>
+  /* Head — purple pill + subject */
+  .tm-head { display: flex; align-items: center; gap: var(--space-4); }
+  .tm-index {
+    display: inline-flex; width: 8px; align-self: stretch;
+    background: var(--accent); border-radius: 3px;
+  }
+  .tm-title {
+    font-size: 1.9rem; font-weight: 800; color: var(--text);
+    letter-spacing: -0.02em; line-height: 1.2;
+    margin: 0;
+  }
+  .tm-title .num { color: var(--accent); }
+  .tm-subtitle {
+    display: flex; align-items: center; gap: var(--space-3);
+    font-size: 1rem; font-weight: 600; color: var(--text);
+    margin: 0;
+  }
+  .tm-subtitle::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); flex-shrink: 0;
+  }
+
+  /* Side-by-side: 3 steps top, full-width terminal below */
+  .tm-steps {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+  .tm-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .tm-step .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-size: 0.78rem; font-weight: 700;
+  }
+  .tm-step .name {
+    font-size: 0.95rem; font-weight: 700; color: var(--text);
+    margin: 0;
+  }
+  .tm-step .body {
+    font-size: 0.78rem; color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* Terminal window */
+  .tm-window {
+    background: #1A1A1A;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.35);
+    display: flex; flex-direction: column;
+    flex: 1; min-height: 0;
+  }
+  .tm-chrome {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    background: #2a2a2a;
+    border-bottom: 1px solid #333;
+  }
+  .tm-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .tm-dot.r { background: #ff5f56; }
+  .tm-dot.y { background: #ffbd2e; }
+  .tm-dot.g { background: #27c93f; }
+  .tm-chrome-title {
+    flex: 1; text-align: center;
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.78rem; color: #888;
+    letter-spacing: 0.02em;
+  }
+  .tm-body {
+    flex: 1;
+    padding: var(--space-4) var(--space-5);
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: #D4D4D4;
+    overflow: auto;
+    min-height: 0;
+  }
+  .tm-body p { margin: 0; }
+  .tm-body p.blank::before { content: '\00a0'; }
+  .tm-body .prompt { color: #27c93f; user-select: none; }
+  .tm-body .cmd { color: #fff; }
+  .tm-body .out { color: #a8b1ba; }
+  .tm-body .kw  { color: #c084fc; }
+  .tm-body .key { color: #7dd3fc; }
+  .tm-body .str { color: #fbbf24; }
+  .tm-body .com { color: #6B7280; }
+  .tm-body .ok  { color: #4ade80; }
+  .tm-body .err { color: #f87171; }
+  .tm-body .cursor {
+    display: inline-block; width: 8px; height: 1em;
+    background: #27c93f; vertical-align: -2px;
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+</style>
+</head>
+<body>
+<section class="slide">
+  <div class="flex-row justify-between items-center">
+    <span class="label-caption">Section 03 · 실행 데모</span>
+    <span class="caption">10 / 12</span>
+  </div>
+
+  <div class="tm-head">
+    <div class="tm-index"></div>
+    <h2 class="tm-title"><span class="num">$</span>&nbsp;mask-agent · 실행 데모</h2>
+  </div>
+  <p class="tm-subtitle">한 명령어로 탐지 → 마스킹 → 검증까지</p>
+
+  <!-- content group: steps + terminal, centered in remaining space -->
+  <div style="flex: 1; display: flex; flex-direction: column; gap: var(--space-4); min-height: 0;">
+    <div class="tm-steps">
+      <div class="tm-step">
+        <span class="num">1</span>
+        <h4 class="name">실행</h4>
+        <p class="body">샘플 문서를 <b style="color:var(--text);">mask-agent</b>에 넘긴다.</p>
+      </div>
+      <div class="tm-step">
+        <span class="num">2</span>
+        <h4 class="name">탐지 · 적용</h4>
+        <p class="body">민감 필드를 식별하고 <b style="color:var(--text);">규칙별</b>로 가린다.</p>
+      </div>
+      <div class="tm-step">
+        <span class="num">3</span>
+        <h4 class="name">검증</h4>
+        <p class="body">누락·오탐을 <b style="color:var(--text);">diff</b>로 바로 확인한다.</p>
+      </div>
+    </div>
+
+    <div class="tm-window">
+      <div class="tm-chrome">
+        <span class="tm-dot r"></span><span class="tm-dot y"></span><span class="tm-dot g"></span>
+        <span class="tm-chrome-title">~/jangpm/exercises — zsh</span>
+      </div>
+      <div class="tm-body">
+        <p><span class="com"># 1. 에이전트 실행</span></p>
+        <p><span class="prompt">$</span> <span class="cmd">python -m mask_agent --input samples/voc-memo.md --out out/masked.md</span></p>
+        <p class="blank"></p>
+        <p><span class="out">[agent] loading document… </span><span class="ok">ok</span><span class="out"> (2.1 KB · 3 sections)</span></p>
+        <p><span class="out">[agent] detecting sensitive fields…</span></p>
+        <p><span class="out">&nbsp;&nbsp;· </span><span class="key">name</span><span class="out">        = </span><span class="str">"김연습"</span><span class="out">              </span><span class="com">→ rule: person_name</span></p>
+        <p><span class="out">&nbsp;&nbsp;· </span><span class="key">rrn</span><span class="out">         = </span><span class="str">"991332-1234567"</span><span class="out">     </span><span class="com">→ rule: korean_rrn</span></p>
+        <p><span class="out">&nbsp;&nbsp;· </span><span class="key">phone</span><span class="out">       = </span><span class="str">"010-0000-1234"</span><span class="out">      </span><span class="com">→ rule: phone_kr</span></p>
+        <p><span class="out">&nbsp;&nbsp;· </span><span class="key">email</span><span class="out">       = </span><span class="str">"yeonseub.k@example.com"</span><span class="out"> </span><span class="com">→ rule: email</span></p>
+        <p><span class="out">[agent] applying mask rules… </span><span class="ok">ok</span><span class="out"> (5 fields)</span></p>
+        <p><span class="out">[agent] writing → </span><span class="str">out/masked.md</span><span class="out"> … </span><span class="ok">done</span></p>
+        <p class="blank"></p>
+        <p><span class="com"># 2. 결과 비교</span></p>
+        <p><span class="prompt">$</span> <span class="cmd">diff samples/voc-memo.md out/masked.md | head</span></p>
+        <p><span class="err">−&nbsp;주민등록번호: 991332-1234567</span></p>
+        <p><span class="ok">+&nbsp;주민등록번호: ■■■■■■-■■■■■■■</span></p>
+        <p class="blank"></p>
+        <p><span class="prompt">$</span> <span class="cursor"></span></p>
+      </div>
+    </div>
+  </div>
+
+  <p class="gm">데모는 <b>한 장면에 한 명령</b>이 원칙 — 길면 나눠 보여주세요.</p>
+</section>
+</body>
+</html>

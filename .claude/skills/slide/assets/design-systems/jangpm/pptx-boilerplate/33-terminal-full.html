@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>P-33 Terminal Full</title>
+<link rel="stylesheet" href="../_pptx-slide.css">
+</head>
+<body>
+
+<!-- header -->
+<p class="t-cap-up" style="position: absolute; top: 42pt; left: 56pt;">SECTION 03 · 실행 데모</p>
+<p class="t-cap c-tertiary" style="position: absolute; top: 42pt; right: 56pt;">10 / 12</p>
+<div class="rule" style="position: absolute; top: 64pt; left: 56pt; right: 56pt;"></div>
+
+<!-- title with strip -->
+<div style="position: absolute; top: 88pt; left: 56pt; display: flex; gap: 12pt; align-items: center;">
+  <div class="strip-accent" style="height: 30pt;"></div>
+  <h2 class="t-h2"><span class="c-accent">$</span>&nbsp;mask-agent · 실행 데모</h2>
+</div>
+
+<!-- subtitle -->
+<div style="position: absolute; top: 130pt; left: 56pt; display: flex; gap: 10pt; align-items: center;">
+  <div style="width: 6pt; height: 6pt; background: #4633E3; border-radius: 50%;"></div>
+  <p class="t-body" style="font-weight: 600;">한 명령어로 탐지 → 마스킹 → 검증까지</p>
+</div>
+
+<!-- 3 step cards -->
+<div style="position: absolute; top: 168pt; left: 56pt; right: 56pt; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12pt;">
+  <div class="card" style="padding: 12pt 14pt;">
+    <div class="number-circle" style="margin-bottom: 6pt;">
+      <p class="t-cap c-white" style="line-height: 22pt; font-weight: 800;">1</p>
+    </div>
+    <p class="t-title">실행</p>
+    <p class="t-cap c-secondary" style="margin-top: 4pt; line-height: 1.5;">샘플 문서를 <b class="c-text">mask-agent</b>에 넘긴다.</p>
+  </div>
+  <div class="card" style="padding: 12pt 14pt;">
+    <div class="number-circle" style="margin-bottom: 6pt;">
+      <p class="t-cap c-white" style="line-height: 22pt; font-weight: 800;">2</p>
+    </div>
+    <p class="t-title">탐지 · 적용</p>
+    <p class="t-cap c-secondary" style="margin-top: 4pt; line-height: 1.5;">민감 필드를 식별하고 <b class="c-text">규칙별</b>로 가린다.</p>
+  </div>
+  <div class="card" style="padding: 12pt 14pt;">
+    <div class="number-circle" style="margin-bottom: 6pt;">
+      <p class="t-cap c-white" style="line-height: 22pt; font-weight: 800;">3</p>
+    </div>
+    <p class="t-title">검증</p>
+    <p class="t-cap c-secondary" style="margin-top: 4pt; line-height: 1.5;">누락·오탐을 <b class="c-text">diff</b>로 바로 확인한다.</p>
+  </div>
+</div>
+
+<!-- terminal -->
+<div class="term-window" style="position: absolute; top: 268pt; left: 56pt; right: 56pt; height: 168pt;">
+  <div class="term-chrome">
+    <span class="term-dot" style="background: #FF5F56;"></span>
+    <span class="term-dot" style="background: #FFBD2E;"></span>
+    <span class="term-dot" style="background: #27C93F;"></span>
+  </div>
+  <div class="term-body" style="padding: 12pt 16pt;">
+    <p class="t-mono" style="font-size: 9pt; color: #6B7280;"># 1. 에이전트 실행</p>
+    <p class="t-mono" style="font-size: 9pt; color: #FFFFFF;"><span style="color: #27C93F;">$</span> python -m mask_agent --input samples/voc-memo.md --out out/masked.md</p>
+    <p class="t-mono" style="font-size: 9pt; color: #A8B1BA;">[agent] loading document… <span style="color: #4ADE80;">ok</span> (2.1 KB · 3 sections)</p>
+    <p class="t-mono" style="font-size: 9pt; color: #A8B1BA;">[agent] detecting sensitive fields…</p>
+    <p class="t-mono" style="font-size: 9pt; color: #A8B1BA;">&nbsp;&nbsp;· <span style="color: #7DD3FC;">name</span> = <span style="color: #FBBF24;">"김연습"</span> <span style="color: #6B7280;">→ rule: person_name</span></p>
+    <p class="t-mono" style="font-size: 9pt; color: #A8B1BA;">&nbsp;&nbsp;· <span style="color: #7DD3FC;">rrn</span> = <span style="color: #FBBF24;">"991332-1234567"</span> <span style="color: #6B7280;">→ rule: korean_rrn</span></p>
+    <p class="t-mono" style="font-size: 9pt; color: #A8B1BA;">[agent] applying mask rules… <span style="color: #4ADE80;">ok</span> (5 fields)</p>
+    <p class="t-mono" style="font-size: 9pt;">&nbsp;</p>
+    <p class="t-mono" style="font-size: 9pt; color: #6B7280;"># 2. 결과 비교</p>
+    <p class="t-mono" style="font-size: 9pt; color: #FFFFFF;"><span style="color: #27C93F;">$</span> diff samples/voc-memo.md out/masked.md | head</p>
+    <p class="t-mono" style="font-size: 9pt; color: #F87171;">−&nbsp;주민등록번호: 991332-1234567</p>
+    <p class="t-mono" style="font-size: 9pt; color: #4ADE80;">+&nbsp;주민등록번호: ■■■■■■-■■■■■■■</p>
+  </div>
+</div>
+
+<!-- gm band -->
+<div class="gm-band">
+  <p class="t-body c-secondary">데모는 <b class="c-text">한 장면에 한 명령</b>이 원칙 — 길면 나눠 보여주세요.</p>
+</div>
+
+</body>
+</html>

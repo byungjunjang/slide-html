@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><title>21 P-07 Table</title>
+<link rel="stylesheet" href="../_pptx-slide.css"></head>
+<body>
+
+<div style="position:absolute; top:42pt; left:56pt; right:56pt;">
+  <div class="row between" style="align-items: flex-end;">
+    <p class="t-cap t-mono" style="color: {{TOKEN:colors.accent}}; font-weight: 700;">P-07 &nbsp; <span style="color: {{TOKEN:colors.text-tertiary}}; font-weight: 400;">slides/07-table.html</span></p>
+    <p class="t-cap-up" style="color: {{TOKEN:colors.text-secondary}};">21 / 41</p>
+  </div>
+  <h2 class="t-h2" style="margin-top: 18pt;">Report table — <span class="c-accent">하이라이트 컬럼</span> + 증감</h2>
+  <p class="t-body c-secondary" style="margin-top: 6pt;">accent-soft 헤더 · zebra row · col-highlight 1개. 증감은 semantic positive 컬러.</p>
+  <div class="rule" style="margin-top: 12pt;"></div>
+</div>
+
+<div style="position: absolute; top: 220pt; left: 56pt; right: 56pt;">
+  <div style="display: grid; grid-template-columns: 2fr 1fr 1.4fr 1fr; background: {{TOKEN:colors.accent-soft}};">
+    <p class="t-cap c-accent" style="padding: 10pt 14pt; font-weight: 700;">패턴 그룹</p>
+    <p class="t-cap c-accent" style="padding: 10pt 14pt; font-weight: 700; text-align: center;">패턴 수</p>
+    <p class="t-cap c-accent" style="padding: 10pt 14pt; font-weight: 700; text-align: center;">콘텐츠 자유도</p>
+    <p class="t-cap c-accent" style="padding: 10pt 14pt; font-weight: 700; text-align: center;">난이도</p>
+  </div>
+  <div style="display: grid; grid-template-columns: 2fr 1fr 1.4fr 1fr; border-bottom: 1px solid {{TOKEN:colors.border}};">
+    <p class="t-body" style="padding: 10pt 14pt; font-weight: 600;">표지/마감</p>
+    <p class="t-body" style="padding: 10pt 14pt; text-align: center;">4</p>
+    <div style="background: rgba(70,51,227,0.06); padding: 10pt 14pt;"><p class="t-body" style="text-align: center; font-weight: 600;">중</p></div>
+    <p class="t-body c-positive" style="padding: 10pt 14pt; text-align: center; font-weight: 600;">낮음</p>
+  </div>
+  <div style="display: grid; grid-template-columns: 2fr 1fr 1.4fr 1fr; border-bottom: 1px solid {{TOKEN:colors.border}}; background: {{TOKEN:colors.bg}};">
+    <p class="t-body" style="padding: 10pt 14pt; font-weight: 600;">목차/섹션</p>
+    <p class="t-body" style="padding: 10pt 14pt; text-align: center;">2</p>
+    <div style="background: rgba(70,51,227,0.06); padding: 10pt 14pt;"><p class="t-body" style="text-align: center; font-weight: 600;">낮음</p></div>
+    <p class="t-body c-positive" style="padding: 10pt 14pt; text-align: center; font-weight: 600;">낮음</p>
+  </div>
+  <div style="display: grid; grid-template-columns: 2fr 1fr 1.4fr 1fr; border-bottom: 1px solid {{TOKEN:colors.border}};">
+    <p class="t-body" style="padding: 10pt 14pt; font-weight: 600;">콘텐츠 카드</p>
+    <p class="t-body" style="padding: 10pt 14pt; text-align: center;">4</p>
+    <div style="background: rgba(70,51,227,0.06); padding: 10pt 14pt;"><p class="t-body" style="text-align: center; font-weight: 600;">높음</p></div>
+    <p class="t-body c-warning" style="padding: 10pt 14pt; text-align: center; font-weight: 600;">중</p>
+  </div>
+  <div style="display: grid; grid-template-columns: 2fr 1fr 1.4fr 1fr; border-bottom: 1px solid {{TOKEN:colors.border}}; background: {{TOKEN:colors.bg}};">
+    <p class="t-body" style="padding: 10pt 14pt; font-weight: 600;">데이터/표/KPI</p>
+    <p class="t-body" style="padding: 10pt 14pt; text-align: center;">7</p>
+    <div style="background: rgba(70,51,227,0.06); padding: 10pt 14pt;"><p class="t-body" style="text-align: center; font-weight: 600;">매우 높음</p></div>
+    <p class="t-body c-negative" style="padding: 10pt 14pt; text-align: center; font-weight: 600;">높음</p>
+  </div>
+  <div style="display: grid; grid-template-columns: 2fr 1fr 1.4fr 1fr;">
+    <p class="t-body" style="padding: 10pt 14pt; font-weight: 600;">실습/이미지/터미널</p>
+    <p class="t-body" style="padding: 10pt 14pt; text-align: center;">6</p>
+    <div style="background: rgba(70,51,227,0.06); padding: 10pt 14pt;"><p class="t-body" style="text-align: center; font-weight: 600;">매우 높음</p></div>
+    <p class="t-body c-warning" style="padding: 10pt 14pt; text-align: center; font-weight: 600;">중</p>
+  </div>
+</div>
+
+<div class="gm-band">
+  <p class="t-body c-secondary" style="font-weight: 700;">하이라이트 컬럼(col-highlight)은 한 표에 단 1개. 다중 강조는 의미 없습니다.</p>
+</div>
+
+</body></html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Overview Split — Jangpm</title>
+<link rel="stylesheet" href="../design-system/slides/_slide.css">
+<link rel="stylesheet" href="../_pptx-slide.css">
+<style>
+  /* Override _slide.css 100vh body: html2pptx needs body == canvas (1280x720px = 960x540pt) */
+  html, body { width: 1280px; height: 720px; padding: 0; margin: 0; min-height: 0; overflow: hidden; display: block; background: {{TOKEN:colors.bg}}; }
+
+  .ov-split { display: grid; grid-template-columns: 1fr 1.2fr; gap: var(--space-8); width: 100%; align-items: start; }
+
+  /* Info matrix — refactored to real <table> for E2 compliance */
+  .ov-matrix {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    align-self: start;
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .ov-matrix th,
+  .ov-matrix td { padding: 10px 14px; font-size: 0.95rem; line-height: 1.4; text-align: left; border-bottom: 1px solid var(--border); }
+  .ov-matrix tr:last-child th,
+  .ov-matrix tr:last-child td { border-bottom: none; }
+  .ov-matrix thead th { background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: var(--fs-caption); text-transform: uppercase; letter-spacing: 0.05em; }
+  .ov-matrix tbody th { background: var(--surface-alt); font-weight: 600; width: 120px; }
+
+  /* Metrics: 3 cols × 2 rows, content-hugging, tight */
+  .ov-metrics { display: flex; flex-direction: column; gap: var(--space-3); align-self: start; }
+  .ov-metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+  .ov-metric {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-self: start;
+  }
+  .ov-metric.accent { background: var(--accent-soft); border-color: var(--accent); }
+  .ov-metric-num {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 2.1rem;
+    line-height: 1;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .ov-metric-num .unit { font-size: 0.5em; margin-left: 2px; }
+  .ov-metric-name { font-size: 0.92rem; font-weight: 700; }
+  .ov-metric-desc { font-size: 0.72rem; color: var(--text-secondary); line-height: 1.4; }
+</style>
+</head>
+<body>
+<section class="slide">
+  <div class="flex-row justify-between items-center">
+    <span class="label-caption">Section 01 · 회사 개요</span>
+    <span class="caption">02 / 20</span>
+  </div>
+  <h2 class="headline" style="font-size: 2.3rem;">2030년 <span style="color: var(--accent);">한눈에</span> 보기.</h2>
+
+  <!-- content group: vertically centered between title and GM -->
+  <div style="flex: 1; display: flex; align-items: center;">
+    <div class="ov-split">
+      <!-- Left: Info Matrix as real <table> -->
+      <table class="ov-matrix">
+        <thead>
+          <tr>
+            <th>구분</th>
+            <th>상세 내용</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">사업 유형</th>
+            <td>라이프스타일 & 데일리 굿즈 소매</td>
+          </tr>
+          <tr>
+            <th scope="row">운영 채널</th>
+            <td>오프라인 매장 3곳 · 자사몰 1곳</td>
+          </tr>
+          <tr>
+            <th scope="row">현재 단계</th>
+            <td>안정적 매출 유지 — <b style="color: var(--accent);">수익성 개선 및 확장</b></td>
+          </tr>
+          <tr>
+            <th scope="row">핵심 과제</th>
+            <td>성장률 회복 + 운영 효율화</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Right: 6 metrics in 3×2 -->
+      <div class="ov-metrics">
+        <span class="label-caption">2030년 예측 및 주요 목표</span>
+        <div class="ov-metric-grid">
+          <div class="ov-metric">
+            <span class="ov-metric-num">+6<span class="unit">%</span></span>
+            <span class="ov-metric-name">평균 객단가</span>
+            <span class="ov-metric-desc">고객 한 명이 구매한 상품의 평균 가격</span>
+          </div>
+          <div class="ov-metric accent">
+            <span class="ov-metric-num" style="color: var(--accent);">45<span class="unit">%</span></span>
+            <span class="ov-metric-name" style="color: var(--accent-ink);">온라인 매출 비중</span>
+            <span class="ov-metric-desc" style="color: var(--accent-ink);">전체 매출 중 자사몰·D2C가 차지하는 비율</span>
+          </div>
+          <div class="ov-metric">
+            <span class="ov-metric-num">5.5<span class="unit">회</span></span>
+            <span class="ov-metric-name">재고 회전율</span>
+            <span class="ov-metric-desc">보유 재고가 얼마나 빨리 판매되는지</span>
+          </div>
+          <div class="ov-metric">
+            <span class="ov-metric-num">+12<span class="unit">%</span></span>
+            <span class="ov-metric-name">재방문율</span>
+            <span class="ov-metric-desc">90일 내 동일 고객 재구매 비율</span>
+          </div>
+          <div class="ov-metric">
+            <span class="ov-metric-num">28<span class="unit">%</span></span>
+            <span class="ov-metric-name">영업이익률</span>
+            <span class="ov-metric-desc">매출 대비 영업이익 — 수익성 지표</span>
+          </div>
+          <div class="ov-metric">
+            <span class="ov-metric-num">4.8<span class="unit">／5</span></span>
+            <span class="ov-metric-name">NPS · 고객만족</span>
+            <span class="ov-metric-desc">자사몰 구매 후 설문 평균 점수</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="gm">안정된 오프라인 기반 위에 <b>온라인 비중 확대와 효율화</b>로 다음 성장 구간 준비.</p>
+</section>
+</body>
+</html>

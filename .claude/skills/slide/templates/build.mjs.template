@@ -1,0 +1,54 @@
+#!/usr/bin/env node
+// build.mjs — slides/*.html → deck.pptx (editable PPTX)
+// Wraps the slide bundle's export_deck_pptx.mjs.
+
+import { spawn, execFileSync } from 'child_process';
+import { existsSync } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { prebuildSvg } from '../../.claude/skills/slide/scripts/prebuild-svg.mjs';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = path.resolve(__dirname, '../..');
+const SKILL_DIR = path.resolve(REPO_ROOT, '.claude/skills/slide');
+const SKILL_SCRIPT = path.join(SKILL_DIR, 'scripts/export_deck_pptx.mjs');
+
+// Project lives at output/<name>-pptx/. Build artifact (.pptx) lands in the
+// same folder alongside slides/, so each generation request stays self-contained.
+const slidesDir = path.join(__dirname, 'slides');
+const outFile   = path.join(__dirname, '__OUT_FILENAME__');
+
+// slide-plan integration — systematic path: slide_plan.json present.
+// Validate R2 (chart/table strategy ↔ takeaway pairing) and R5 (evidence
+// mapping). exit 1 from validator → block the build. simple path skips.
+const planPath = path.join(__dirname, 'slide_plan.json');
+if (existsSync(planPath)) {
+  console.log('[build] slide_plan.json detected → systematic path (R2/R5 validation)');
+  try {
+    execFileSync('python3', [
+      path.join(REPO_ROOT, '.claude/skills/slide-plan/scripts/validate_plan.py'),
+      planPath,
+    ], { stdio: 'inherit' });
+  } catch (e) {
+    console.error('\n✗ slide_plan.json 검증 실패. /slide-plan을 다시 돌려 R2/R5를 충족하세요.');
+    process.exit(1);
+  }
+} else {
+  console.log('[build] slide_plan.json not present → simple path (no R2/R5 enforcement)');
+}
+
+// Prebuild: PptxGenJS embeds <img src="…svg"> as a fake .png that PowerPoint
+// can't decode (chart shows as broken-image icon). Rasterize icons/*.svg to
+// real PNG and rewrite slide HTML to point at the PNG. See E11 in
+// .claude/skills/slide/references/error-patterns.md.
+await prebuildSvg({ projectDir: __dirname });
+
+// cwd=SKILL_DIR so Node module resolution finds the bundle's own node_modules
+// when present (claude.ai deployment), and falls back up the tree to the repo
+// root's node_modules for local use.
+const child = spawn('node', [SKILL_SCRIPT, '--slides', slidesDir, '--out', outFile], {
+  stdio: 'inherit',
+  cwd: SKILL_DIR,
+});
+
+child.on('exit', code => process.exit(code ?? 0));

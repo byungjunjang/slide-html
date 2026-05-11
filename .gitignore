@@ -1,0 +1,44 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Video render temp (render-video.js 产物)
+.video-tmp-*/
+**/.video-tmp-*/
+
+# Personal asset index（个人真实数据，只保留 .example.json 模板）
+assets/personal-asset-index.json
+
+# Node / editor / OS
+node_modules/
+*.swp
+.idea/
+.vscode/
+Thumbs.db
+
+# Verification artifacts（截图、临时测试脚本）
+demos/_frames_*.png
+demos/_verify.js
+demos/_verify.mjs
+
+# Python
+__pycache__/
+.pytest_cache/
+
+# Playwright runtime artifacts
+.playwright-mcp/
+
+# 슬라이드 작업 결과물 (재생성 가능한 빌드 산출물)
+output/
+
+# Git worktrees (using-git-worktrees skill)
+.worktrees/
+
+# Claude Code 로컬 설정 / 비밀
+.claude/settings.local.json
+.claude/logs/
+.claude/cache/
+.claude/worktrees/
+.env
+.env.local
+.env.*.local

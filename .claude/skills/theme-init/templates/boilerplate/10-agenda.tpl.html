@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Agenda — Jangpm</title>
+<link rel="stylesheet" href="../design-system/slides/_slide.css">
+<link rel="stylesheet" href="../_pptx-slide.css">
+<style>
+  /* Override _slide.css 100vh body: html2pptx needs body == canvas (1280x720px = 960x540pt) */
+  html, body { width: 1280px; height: 720px; padding: 0; margin: 0; min-height: 0; overflow: hidden; display: block; background: {{TOKEN:colors.bg}}; }
+</style>
+</head>
+<body>
+<section class="slide">
+  <div class="flex-row justify-between items-center">
+    <span class="label-caption">오늘 다룰 내용 · Agenda</span>
+    <span class="caption">02 / 12</span>
+  </div>
+  <h2 class="headline" style="font-size: 2.5rem;">세 가지 질문을 중심으로<br>이야기를 전개합니다.</h2>
+
+  <div class="flex-col" style="margin-top: var(--space-4); border-radius: var(--card-radius); overflow: hidden; border: 1px solid var(--border); background: var(--surface);">
+    <div class="agenda-item agenda-item-past">
+      <span class="number-badge">01</span>
+      <div style="flex:1;">
+        <p class="title">왜 대부분의 AI 도입이 성과로 이어지지 않는가</p>
+        <p class="caption">Framing · 관찰된 패턴과 가설</p>
+      </div>
+      <span class="caption">10 min</span>
+    </div>
+    <div class="agenda-item agenda-item-current">
+      <span class="number-badge">02</span>
+      <div style="flex:1;">
+        <p class="title" style="color: var(--accent);">메타적 접근 — 도구 위에서 도구를 바라보기</p>
+        <p class="caption" style="color: var(--accent); font-weight: 500;">Now · 핵심 프레임 & 세 가지 루프</p>
+      </div>
+      <span class="title" style="color: var(--accent);">20 min</span>
+    </div>
+    <div class="agenda-item">
+      <span class="number-badge">03</span>
+      <div style="flex:1;">
+        <p class="title">실무 적용 — 다음 주에 바로 시도할 것</p>
+        <p class="caption">Application · 체크리스트 & 사례 2선</p>
+      </div>
+      <span class="caption">15 min</span>
+    </div>
+  </div>
+
+  <p class="gm">메타적 접근 = 도구의 결과가 아니라, 도구를 쓰는 <b>나의 루프</b>를 관찰하고 바꾸는 작업</p>
+</section>
+</body>
+</html>

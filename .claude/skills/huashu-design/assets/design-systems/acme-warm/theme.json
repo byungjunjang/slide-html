@@ -1,0 +1,119 @@
+{
+  "version": "1.0",
+  "colors": {
+    "bg": "#FFF8F0",
+    "surface": "#FFFFFF",
+    "surface-alt": "#FAF3E8",
+    "text": "#1A1410",
+    "text-secondary": "#6B5A4F",
+    "text-tertiary": "#A89890",
+    "border": "#E8DFD4",
+    "border-strong": "#D4C8B8",
+    "accent": "#FF6B35",
+    "accent-soft": "#FFEDE0",
+    "accent-ink": "#C04818",
+    "positive": "#2E7D32",
+    "positive-soft": "#E8F5E9",
+    "negative": "#C62828",
+    "negative-soft": "#FFEBEE",
+    "warning": "#E65100",
+    "warning-soft": "#FFF3E0"
+  },
+  "typography": {
+    "font-chain": "'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif",
+    "display": {
+      "size": 56,
+      "weight": 800,
+      "line-height": 1.08,
+      "letter-spacing": -1.68,
+      "transform": "none"
+    },
+    "display-sm": {
+      "size": 40,
+      "weight": 800,
+      "line-height": 1.1,
+      "letter-spacing": -0.8,
+      "transform": "none"
+    },
+    "headline": {
+      "size": 32,
+      "weight": 700,
+      "line-height": 1.2,
+      "letter-spacing": -0.64,
+      "transform": "none"
+    },
+    "title": {
+      "size": 18.4,
+      "weight": 600,
+      "line-height": 1.3,
+      "letter-spacing": 0.0,
+      "transform": "none"
+    },
+    "body": {
+      "size": 15.2,
+      "weight": 400,
+      "line-height": 1.6,
+      "letter-spacing": 0.0,
+      "transform": "none"
+    },
+    "caption": {
+      "size": 12.8,
+      "weight": 500,
+      "line-height": 1.4,
+      "letter-spacing": 0.0,
+      "transform": "none"
+    },
+    "label": {
+      "size": 12.8,
+      "weight": 600,
+      "line-height": 1.4,
+      "letter-spacing": 0.64,
+      "transform": "uppercase"
+    }
+  },
+  "radius": {
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 12,
+    "xl": 20,
+    "pill": 9999
+  },
+  "stroke": {
+    "icon": 2,
+    "divider": 1,
+    "emphasis": 2
+  },
+  "spacing": {
+    "1": 4,
+    "2": 8,
+    "3": 12,
+    "4": 16,
+    "5": 20,
+    "6": 24,
+    "8": 32,
+    "10": 40,
+    "12": 48,
+    "14": 56,
+    "16": 64
+  },
+  "assets": {
+    "icon-pack-default": "tabler-outline",
+    "icon-pack-fallback": "tabler-filled",
+    "character": null
+  },
+  "voice": {
+    "tone": "warm, practical, conversational-but-precise",
+    "pov": "second-person direct (Korean존댓말)",
+    "register": "Korean B2B lecture / workshop",
+    "forbidden_phrases": [
+      "킹왕짱",
+      "혁신적인",
+      "압도적"
+    ],
+    "gm_style_hint": "One action-oriented sentence starting with a verb (가져가세요, 기억하세요, 시도하세요)."
+  },
+  "name": "acme-warm",
+  "display_name": "Acme Warm",
+  "description": "Editorial-forward warm theme for Korean B2B lecture decks — warm off-white paper with orange-600 accent and Noto Sans KR."
+}

@@ -1,0 +1,140 @@
+:root {
+  /* ---------- CORE COLOR TOKENS ---------- */
+  --bg:             {{TOKEN:colors.bg}};   /* warm off-white page background */
+  --surface:        {{TOKEN:colors.surface}};   /* card / container background */
+  --surface-alt:    {{TOKEN:colors.surface-alt}};   /* subtle grouped background */
+  --text:           {{TOKEN:colors.text}};   /* primary text, never pure black */
+  --text-secondary: {{TOKEN:colors.text-secondary}};   /* body secondary */
+  --text-tertiary:  {{TOKEN:colors.text-tertiary}};   /* captions / annotations */
+  --border:         {{TOKEN:colors.border}};   /* default divider / card border */
+  --border-strong:  {{TOKEN:colors.border-strong}};   /* stronger divider */
+
+  --accent:         {{TOKEN:colors.accent}};   /* singular indigo-violet accent */
+  --accent-soft:    {{TOKEN:colors.accent-soft}};   /* accent tinted background */
+  --accent-ink:     {{TOKEN:colors.accent-ink}};   /* accent pressed / darker */
+
+  /* ---------- SEMANTIC (data only) ---------- */
+  --positive:       {{TOKEN:colors.positive}};
+  --positive-soft:  {{TOKEN:colors.positive-soft}};
+  --negative:       {{TOKEN:colors.negative}};
+  --negative-soft:  {{TOKEN:colors.negative-soft}};
+  --warning:        {{TOKEN:colors.warning}};
+  --warning-soft:   {{TOKEN:colors.warning-soft}};
+
+  /* ---------- TYPOGRAPHY ---------- */
+  --font-sans: {{TOKEN:typography.font-chain}};
+  --font-mono: 'SF Mono', 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace;
+
+  /* Size scale */
+  --fs-display:    {{TOKEN:typography.display.size|rem}};   /* 56px — title slide */
+  --fs-display-sm: {{TOKEN:typography.display-sm.size|rem}};   /* 40px — hero stat */
+  --fs-headline:   {{TOKEN:typography.headline.size|rem}};     /* 32px — slide title */
+  --fs-title:      {{TOKEN:typography.title.size|rem}};  /* 18.4px — card title, sub */
+  --fs-body:       {{TOKEN:typography.body.size|rem}};  /* 15.2px — body copy */
+  --fs-caption:    {{TOKEN:typography.caption.size|rem}};   /* 12.8px — label / annotation */
+
+  /* Weight scale */
+  --fw-display:  {{TOKEN:typography.display.weight}};
+  --fw-headline: {{TOKEN:typography.headline.weight}};
+  --fw-title:    {{TOKEN:typography.title.weight}};
+  --fw-body:     {{TOKEN:typography.body.weight}};
+  --fw-caption:  {{TOKEN:typography.caption.weight}};
+
+  /* ---------- SPACING (8px grid) ---------- */
+  --space-1:  {{TOKEN:spacing.1|rem}};
+  --space-2:  {{TOKEN:spacing.2|rem}};
+  --space-3:  {{TOKEN:spacing.3|rem}};
+  --space-4:  {{TOKEN:spacing.4|rem}};
+  --space-5:  {{TOKEN:spacing.5|rem}};
+  --space-6:  {{TOKEN:spacing.6|rem}};
+  --space-8:  {{TOKEN:spacing.8|rem}};
+  --space-10: {{TOKEN:spacing.10|rem}};
+  --space-12: {{TOKEN:spacing.12|rem}};
+  --space-14: {{TOKEN:spacing.14|rem}};
+  --space-16: {{TOKEN:spacing.16|rem}};
+
+  /* ---------- RADIUS ---------- */
+  --radius-xs: {{TOKEN:radius.xs}}px;
+  --radius-sm: {{TOKEN:radius.sm}}px;
+  --radius-md: {{TOKEN:radius.md}}px;
+  --radius-lg: {{TOKEN:radius.lg}}px;  /* card default */
+  --radius-xl: {{TOKEN:radius.xl}}px;
+  --radius-pill: {{TOKEN:radius.pill}}px;
+
+  /* ---------- ELEVATION (sparse — reports, not SaaS) ---------- */
+  --shadow-sm: 0 1px 2px rgba(26,26,26,0.04);
+  --shadow-md: 0 2px 8px rgba(26,26,26,0.06);
+  --shadow-lg: 0 8px 24px rgba(26,26,26,0.08);
+
+  /* ---------- CARD ---------- */
+  --card-padding: var(--space-6);
+  --card-gap:     var(--space-6);
+  --card-radius:  var(--radius-lg);
+}
+
+/* ============================================================
+   SEMANTIC TYPOGRAPHY CLASSES
+   Use these directly; do not hardcode sizes.
+   ============================================================ */
+html { font-family: var(--font-sans); color: var(--text); background: var(--bg); }
+body { font-family: var(--font-sans); }
+
+.display {
+  font-size: var(--fs-display);
+  font-weight: var(--fw-display);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+.display-sm {
+  font-size: var(--fs-display-sm);
+  font-weight: var(--fw-display);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.headline, h2.headline {
+  font-size: var(--fs-headline);
+  font-weight: var(--fw-headline);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.title {
+  font-size: var(--fs-title);
+  font-weight: var(--fw-title);
+  line-height: 1.3;
+  color: var(--text);
+}
+.body, p {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-body);
+  line-height: 1.6;
+  color: var(--text);
+}
+.caption {
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-caption);
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+.label-caption {
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-title);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+code, .mono {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+/* Utility color */
+.text-primary   { color: var(--text); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary  { color: var(--text-tertiary); }
+.text-accent    { color: var(--accent); }
+.trend-positive { color: var(--positive); }
+.trend-negative { color: var(--negative); }
+.trend-warning  { color: var(--warning); }

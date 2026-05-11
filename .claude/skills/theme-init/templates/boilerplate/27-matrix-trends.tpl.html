@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Matrix Slide — Jangpm</title>
+<link rel="stylesheet" href="../design-system/slides/_slide.css">
+<link rel="stylesheet" href="../_pptx-slide.css">
+<style>
+  /* Override _slide.css 100vh body: html2pptx needs body == canvas (1280x720px = 960x540pt) */
+  html, body { width: 1280px; height: 720px; padding: 0; margin: 0; min-height: 0; overflow: hidden; display: block; background: {{TOKEN:colors.bg}}; }
+</style>
+<style>
+  .mx-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); width: 100%; align-items: start; }
+  .mx-col { display: flex; flex-direction: column; gap: var(--space-3); }
+
+  /* Uniform title block — fixed height regardless of content length */
+  .mx-title {
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--card-radius);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-1);
+    height: 120px;
+    box-sizing: border-box;
+  }
+  .mx-title.dark { background: var(--text); color: var(--bg); }
+  .mx-title.accent { background: var(--accent); color: #fff; }
+  .mx-title .kicker {
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .mx-title.dark .kicker { color: rgba(250,250,249,0.6); }
+  .mx-title.accent .kicker { color: rgba(255,255,255,0.75); }
+  .mx-title .headline-text {
+    font-size: 1.55rem;
+    font-weight: 800;
+    line-height: 1.15;
+    color: #fff;
+    letter-spacing: -0.01em;
+  }
+
+  .mx-bullets { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-2); }
+  .mx-bullet { display: flex; gap: var(--space-3); align-items: flex-start; }
+  .mx-dot { color: var(--accent); font-weight: 800; font-size: 1.1rem; line-height: 1.3; }
+  .mx-body { font-size: var(--fs-body); line-height: 1.6; }
+</style>
+</head>
+<body>
+<section class="slide">
+  <div class="flex-row justify-between items-center">
+    <span class="label-caption">Section 02 · 환경 분석</span>
+    <span class="caption">03 / 20</span>
+  </div>
+  <h2 class="headline" style="font-size: 2.3rem;">시장 및 트렌드 <span style="color: var(--accent);">전망</span>.</h2>
+
+  <!-- content group: vertically centered between title and GM -->
+  <div style="flex: 1; display: flex; align-items: center;">
+    <div class="mx-grid">
+      <!-- Col 1 -->
+      <div class="mx-col">
+        <div class="mx-title dark">
+          <span class="kicker">소비 심리</span>
+          <span class="headline-text">덜 사고,<br>더 따진다.</span>
+        </div>
+        <div class="mx-bullets">
+          <div class="mx-bullet"><span class="mx-dot">·</span><span class="mx-body">가격 민감도 상승 · 충동구매 감소 경향 높아짐.</span></div>
+          <div class="mx-bullet"><span class="mx-dot">·</span><span class="mx-body">가치·필요성 중심 소비 강화.</span></div>
+          <div class="mx-bullet"><span class="mx-dot">·</span><span class="mx-body">브랜드 신뢰 + 사용 경험이 <b>재구매에 결정적</b>.</span></div>
+        </div>
+      </div>
+
+      <!-- Col 2 -->
+      <div class="mx-col">
+        <div class="mx-title accent">
+          <span class="kicker">채널 변화</span>
+          <span class="headline-text">온라인 증가,<br>오프라인 감소.</span>
+        </div>
+        <div class="mx-bullets">
+          <div class="mx-bullet"><span class="mx-dot">·</span><span class="mx-body">자사몰·D2C 채널 <b>성장 지속</b>.</span></div>
+          <div class="mx-bullet"><span class="mx-dot">·</span><span class="mx-body">오프라인 매장은 체험·브랜드 접점으로 재정의.</span></div>
+          <div class="mx-bullet"><span class="mx-dot">·</span><span class="mx-body">채널 간 가격·재고 불일치에 대한 고객 민감도 증가.</span></div>
+        </div>
+      </div>
+
+      <!-- Col 3 -->
+      <div class="mx-col">
+        <div class="mx-title dark">
+          <span class="kicker">운영 트렌드</span>
+          <span class="headline-text">감(感) → <span style="color: var(--accent);">데이터</span>.</span>
+        </div>
+        <div class="mx-bullets">
+          <div class="mx-bullet"><span class="mx-dot">·</span><span class="mx-body">수요 예측 실패 = <b>재고 리스크</b>.</span></div>
+          <div class="mx-bullet"><span class="mx-dot">·</span><span class="mx-body">소규모 브랜드도 예측·자동화 도구 도입 가속.</span></div>
+          <div class="mx-bullet"><span class="mx-dot">·</span><span class="mx-body">재고·마케팅·매출 데이터의 <b>통합 관리</b> 필요성 증가.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="gm">세 축 모두 공통점 — <b>'감'에서 '체계'로</b>의 이동.</p>
+</section>
+</body>
+</html>

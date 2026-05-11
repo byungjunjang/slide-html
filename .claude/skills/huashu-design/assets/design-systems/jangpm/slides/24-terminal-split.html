@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Terminal / Code Slide — Jangpm</title>
+<link rel="stylesheet" href="_slide.css">
+<style>
+  .tm-split { display: grid; grid-template-columns: 1fr 1.2fr; gap: var(--space-6); width: 100%; align-items: stretch; }
+
+  /* Explanation column */
+  .tm-explain { display: flex; flex-direction: column; gap: var(--space-4); align-self: center; }
+  .tm-label {
+    position: relative;
+    padding-left: var(--space-4);
+    font-size: 1rem; font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .tm-label::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 2px; bottom: 2px;
+    width: 3px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+  .tm-lead {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+  }
+  .tm-lead b { color: var(--accent); font-weight: 700; }
+  .tm-steps { display: flex; flex-direction: column; gap: var(--space-3); margin-top: var(--space-2); }
+  .tm-step { display: grid; grid-template-columns: 28px 1fr; gap: var(--space-3); align-items: start; }
+  .tm-step .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-size: 0.78rem; font-weight: 700;
+    margin-top: 2px;
+  }
+  .tm-step .body { font-size: var(--fs-body); line-height: 1.55; color: var(--text-secondary); }
+  .tm-step .body b { color: var(--text); }
+
+  /* Terminal window */
+  .tm-window {
+    background: #1a1a1a;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.35);
+    display: flex; flex-direction: column;
+    min-height: 0;
+    align-self: stretch;
+  }
+  .tm-chrome {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    background: #2a2a2a;
+    border-bottom: 1px solid #333;
+  }
+  .tm-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .tm-dot.r { background: #ff5f56; }
+  .tm-dot.y { background: #ffbd2e; }
+  .tm-dot.g { background: #27c93f; }
+  .tm-title {
+    flex: 1; text-align: center;
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.78rem; color: #888;
+    letter-spacing: 0.02em;
+  }
+  .tm-body {
+    flex: 1;
+    padding: var(--space-5) var(--space-5);
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.82rem;
+    line-height: 1.65;
+    color: #d4d4d4;
+    overflow: auto;
+    min-height: 0;
+  }
+  .tm-body .prompt { color: #27c93f; user-select: none; }
+  .tm-body .cmd { color: #fff; }
+  .tm-body .out { color: #a8b1ba; }
+  .tm-body .key { color: #7dd3fc; }
+  .tm-body .str { color: #fbbf24; }
+  .tm-body .com { color: #6b7280; }
+  .tm-body .ok { color: #4ade80; }
+  .tm-body .err { color: #f87171; }
+  .tm-body .cursor {
+    display: inline-block; width: 8px; height: 1em;
+    background: #27c93f; vertical-align: -2px;
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+</style>
+</head>
+<body>
+<section class="slide">
+  <div class="flex-row justify-between items-center">
+    <span class="label-caption">Section 03 · 실습 · 실행</span>
+    <span class="caption">09 / 12</span>
+  </div>
+  <h2 class="headline" style="font-size: 2.3rem;">에이전트를 <span style="color: var(--accent);">직접 돌려보기</span>.</h2>
+
+  <!-- content group: centered between title and GM -->
+  <div style="flex: 1; display: flex; align-items: center; min-height: 0;">
+    <div class="tm-split">
+      <!-- Left: explanation -->
+      <div class="tm-explain">
+        <div class="tm-label">진행 순서</div>
+        <p class="tm-lead">프롬프트 하나로 <b>탐지 → 마스킹 → 저장</b>까지 이어지는 최소 파이프라인.</p>
+        <div class="tm-steps">
+          <div class="tm-step"><span class="num">1</span><span class="body">가상환경 활성화 후 <b>mask-agent</b>를 샘플 문서와 함께 실행.</span></div>
+          <div class="tm-step"><span class="num">2</span><span class="body">에이전트가 문서의 <b>의미 단위</b>를 파악하고 민감 필드를 식별.</span></div>
+          <div class="tm-step"><span class="num">3</span><span class="body">마스킹 규칙을 적용한 결과를 <b>out/masked.md</b>로 저장.</span></div>
+        </div>
+      </div>
+
+      <!-- Right: terminal -->
+      <div class="tm-window">
+        <div class="tm-chrome">
+          <span class="tm-dot r"></span><span class="tm-dot y"></span><span class="tm-dot g"></span>
+          <span class="tm-title">~/jangpm/exercises — zsh</span>
+        </div>
+        <div class="tm-body">
+<span class="com"># 가상환경 활성화</span>
+<span class="prompt">$</span> <span class="cmd">source .venv/bin/activate</span>
+
+<span class="com"># 에이전트 실행</span>
+<span class="prompt">$</span> <span class="cmd">python -m mask_agent \</span>
+    <span class="cmd">--input samples/voc-memo.md \</span>
+    <span class="cmd">--out out/masked.md</span>
+
+<span class="out">[agent] loading document… <span class="ok">ok</span> (2.1 KB)</span>
+<span class="out">[agent] detecting sensitive fields…</span>
+<span class="out">  · <span class="key">name</span>        = <span class="str">"김연습"</span></span>
+<span class="out">  · <span class="key">rrn</span>         = <span class="str">"991332-1234567"</span></span>
+<span class="out">  · <span class="key">phone</span>       = <span class="str">"010-0000-1234"</span></span>
+<span class="out">  · <span class="key">email</span>       = <span class="str">"yeonseub.k@…"</span></span>
+<span class="out">[agent] applying mask rules… <span class="ok">ok</span> (5 fields)</span>
+<span class="out">[agent] writing → out/masked.md … <span class="ok">done</span></span>
+
+<span class="prompt">$</span> <span class="cursor"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gm">코드 한 덩어리보다 <b>설명과 함께 보는 실행 화면</b>이 학습 속도를 높입니다.</div>
+</section>
+</body>
+</html>

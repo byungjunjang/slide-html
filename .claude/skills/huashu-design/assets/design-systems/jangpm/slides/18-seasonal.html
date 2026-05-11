@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Seasonal Calendar — Jangpm</title>
+<link rel="stylesheet" href="_slide.css">
+</head>
+<body>
+<section class="slide">
+  <div class="flex-row justify-between items-center">
+    <span class="label-caption">Section 04 · 마케팅 및 시즌 계획</span>
+    <span class="caption">06 / 20</span>
+  </div>
+  <h2 class="headline" style="font-size: 2.3rem;">12개월 <span style="color: var(--accent);">전략 리듬</span>.</h2>
+  <p class="body" style="color: var(--text-secondary); max-width: 820px;">연간을 4개 페이즈로 나눠 재고·마케팅 초점을 분리 운영.</p>
+
+  <div class="flex-col gap-3" style="margin-top: var(--space-4);">
+    <!-- month labels -->
+    <div style="display:grid; grid-template-columns: repeat(12, 1fr); gap: 4px;">
+      <div class="caption text-center" style="font-weight:600;">1월</div>
+      <div class="caption text-center" style="font-weight:600;">2월</div>
+      <div class="caption text-center" style="font-weight:600;">3월</div>
+      <div class="caption text-center" style="font-weight:600;">4월</div>
+      <div class="caption text-center" style="font-weight:600;">5월</div>
+      <div class="caption text-center" style="font-weight:600;">6월</div>
+      <div class="caption text-center" style="font-weight:600;">7월</div>
+      <div class="caption text-center" style="font-weight:600;">8월</div>
+      <div class="caption text-center" style="font-weight:600;">9월</div>
+      <div class="caption text-center" style="font-weight:600;">10월</div>
+      <div class="caption text-center" style="font-weight:600;">11월</div>
+      <div class="caption text-center" style="font-weight:600;">12월</div>
+    </div>
+    <!-- Gantt bars -->
+    <div style="display:grid; grid-template-columns: repeat(12, 1fr); gap: 4px;">
+      <div style="grid-column: 1 / span 3; padding: var(--space-4); background: var(--text); color: #fff; border-radius: var(--card-radius); display:flex; flex-direction:column; gap:4px;">
+        <span style="font-size: var(--fs-caption); color: rgba(250,250,249,0.6); font-weight:600; text-transform: uppercase; letter-spacing: 0.05em;">Phase 1 · Q1</span>
+        <span style="font-size: 1rem; font-weight: 700;">재구매 활성화, 재고 정리</span>
+      </div>
+      <div style="grid-column: 4 / span 3; padding: var(--space-4); background: var(--accent-soft); color: var(--accent-ink); border-radius: var(--card-radius); display:flex; flex-direction:column; gap:4px;">
+        <span style="font-size: var(--fs-caption); color: var(--accent); font-weight:600; text-transform: uppercase; letter-spacing: 0.05em;">Phase 2 · Q2</span>
+        <span style="font-size: 1rem; font-weight: 700;">핵심 상품 집중 판매</span>
+      </div>
+      <div style="grid-column: 7 / span 3; padding: var(--space-4); background: var(--surface-alt); color: var(--text-secondary); border: 1px dashed var(--border-strong); border-radius: var(--card-radius); display:flex; flex-direction:column; gap:4px;">
+        <span style="font-size: var(--fs-caption); font-weight:600; text-transform: uppercase; letter-spacing: 0.05em;">Phase 3 · Q3</span>
+        <span style="font-size: 1rem; font-weight: 700; color: var(--text);">비수기 매출 방어</span>
+      </div>
+      <div style="grid-column: 10 / span 3; padding: var(--space-4); background: var(--accent); color: #fff; border-radius: var(--card-radius); display:flex; flex-direction:column; gap:4px;">
+        <span style="font-size: var(--fs-caption); color: rgba(255,255,255,0.7); font-weight:600; text-transform: uppercase; letter-spacing: 0.05em;">Phase 4 · Q4</span>
+        <span style="font-size: 1rem; font-weight: 700;">최대 성수기 집중</span>
+      </div>
+    </div>
+
+    <!-- Focus rows -->
+    <div style="display: grid; grid-template-columns: 100px repeat(12, 1fr); gap: 4px; align-items:center; margin-top: var(--space-4);">
+      <span class="label-caption" style="text-align:right; padding-right: var(--space-3);">마케팅</span>
+      <div style="grid-column: span 3; height: 24px; background: rgba(70,51,227,0.25); border-radius: 4px;"></div>
+      <div style="grid-column: span 3; height: 24px; background: rgba(70,51,227,0.6); border-radius: 4px;"></div>
+      <div style="grid-column: span 3; height: 24px; background: rgba(70,51,227,0.25); border-radius: 4px;"></div>
+      <div style="grid-column: span 3; height: 24px; background: rgba(70,51,227,0.85); border-radius: 4px;"></div>
+    </div>
+    <div style="display: grid; grid-template-columns: 100px repeat(12, 1fr); gap: 4px; align-items:center;">
+      <span class="label-caption" style="text-align:right; padding-right: var(--space-3);">재고 투입</span>
+      <div style="grid-column: span 2; height: 24px; background: rgba(70,51,227,0.4); border-radius: 4px;"></div>
+      <div style="grid-column: 6 / span 2; height: 24px; background: rgba(70,51,227,0.6); border-radius: 4px;"></div>
+      <div style="grid-column: 9 / span 3; height: 24px; background: rgba(70,51,227,0.85); border-radius: 4px;"></div>
+    </div>
+  </div>
+
+  <div class="gm">Q4가 <b>최대 레버리지 구간</b> — 재고·마케팅 자원 집중 배치.</div>
+</section>
+</body>
+</html>

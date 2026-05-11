@@ -1,0 +1,542 @@
+{
+  "deck_meta": {
+    "working_title": "Q3 Board Review — 신규 채널 자가잠식 리스크",
+    "deck_goal": "이사회에 신규 채널의 지속가능성 의문을 제기하고 3대 의사결정 영역에 대한 승인을 요청",
+    "deck_type": "consulting",
+    "target_audience": "이사회 (CEO·CFO·사외이사 4인)",
+    "tone": "선언형·분석적·answer-first",
+    "target_length": {
+      "slides": 10,
+      "reasoning": "이사회 30분 발표 + 30분 Q&A. 10장이 cover/closing 포함 한계."
+    }
+  },
+  "design_dependency": {
+    "preset_name": "jangpm",
+    "design_md_path": ".claude/skills/slide/assets/design-systems/jangpm/DESIGN.md",
+    "allowed_layout_families": [
+      "cover",
+      "section-divider",
+      "agenda",
+      "overview-cards",
+      "three-point",
+      "four-point",
+      "six-point",
+      "comparison",
+      "process",
+      "paired-concept",
+      "kpi-grid",
+      "summary",
+      "quote",
+      "checklist",
+      "table-detailed",
+      "forecast-table",
+      "pnl-table",
+      "seasonal-table",
+      "matrix-trends",
+      "terminal-split",
+      "terminal-full",
+      "exercise-1up",
+      "exercise-2up",
+      "image-1up",
+      "image-2up",
+      "closing-light",
+      "closing-big",
+      "closing-dark",
+      "reference-utility"
+    ],
+    "consistency_notes": [
+      "악센트 1~2 events/슬라이드 강제",
+      "semantic color는 데이터 표시 전용",
+      "동일 layout_family 연속 3장 금지"
+    ]
+  },
+  "story_arc": {
+    "narrative_shape": "consulting (answer-first)",
+    "why_this_order_is_persuasive": "이사회 30분 한계 → 결론 먼저 박고(slide 2 bottom_line), evidence는 결론 정당화에만 필요한 만큼만 노출. comparison 1장으로 대안 비교 후 권고."
+  },
+  "content_inventory": [
+    {
+      "source_id": "q3_revenue_xlsx",
+      "source_type": "file",
+      "summary": "Q1~Q3 2026 채널별 매출·주문수·신규 고객 (CSV 추출)",
+      "relevance": "high",
+      "usable_for": [
+        "slide_2",
+        "slide_4",
+        "slide_5"
+      ]
+    },
+    {
+      "source_id": "ltv_cohort_md",
+      "source_type": "file",
+      "summary": "신규 채널 고객 LTV 코호트 6개월 추이",
+      "relevance": "high",
+      "usable_for": [
+        "slide_5",
+        "slide_6"
+      ]
+    },
+    {
+      "source_id": "channel_strategy_2025",
+      "source_type": "file",
+      "summary": "작년 채널 전략 보고 — 자가잠식 가설 부재",
+      "relevance": "medium",
+      "usable_for": [
+        "slide_3"
+      ]
+    },
+    {
+      "source_id": "competitor_benchmark",
+      "source_type": "prompt",
+      "summary": "사용자 brief에서 추출 — 경쟁사 D2C 비중 30~45%",
+      "relevance": "medium",
+      "usable_for": [
+        "slide_6"
+      ]
+    },
+    {
+      "source_id": "inference",
+      "source_type": "inference",
+      "summary": "내러티브·연결 문장은 LLM 추론",
+      "relevance": "low",
+      "usable_for": [
+        "slide_1",
+        "slide_3",
+        "slide_10"
+      ]
+    }
+  ],
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_role": "cover",
+      "page_family": "title",
+      "working_title": "Q3 보드 리뷰",
+      "core_message": "Q3 보드 리뷰 — 신규 채널의 지속가능성",
+      "audience_takeaway": "오늘 결정해야 할 3가지가 있다",
+      "why_here": "데크 진입점. 발표자 소개와 안건 톤 설정",
+      "recommended_layout_family": "cover",
+      "content_blocks": [
+        {
+          "block_type": "title",
+          "purpose": "데크 메인 타이틀",
+          "content_instruction": "'Q3 보드 리뷰 — 신규 채널의 지속가능성' 한 줄. t-display 42pt."
+        },
+        {
+          "block_type": "subtitle",
+          "purpose": "발표자·날짜",
+          "content_instruction": "발표자 (CMO) · 2026-04-28 · 이사회"
+        }
+      ],
+      "content_constraints": {
+        "must_include": [
+          "데크 정확한 제목",
+          "발표자",
+          "날짜"
+        ],
+        "must_not_include": [
+          "회사 로고 외 다른 브랜드 마크",
+          "agenda 미리보기"
+        ],
+        "evidence_to_use": []
+      },
+      "evidence_sources": [
+        "inference"
+      ],
+      "priority": "must"
+    },
+    {
+      "slide_number": 2,
+      "slide_role": "insight",
+      "page_family": "body",
+      "working_title": "Bottom Line — 자가잠식 신호",
+      "core_message": "신규 채널은 매출 +18% YoY를 만들고 있지만, 그 절반은 기존 채널 자기잠식이며 LTV는 이미 1.4× → 0.9×로 추락",
+      "audience_takeaway": "성장률 ≠ 가치 창출. 채널 mix 재설계가 필요하다",
+      "why_here": "answer-first 구조. 30분 한계라 결론을 표지 직후 박는다",
+      "recommended_layout_family": "kpi-grid",
+      "content_blocks": [
+        {
+          "block_type": "title",
+          "purpose": "한 문장 결론",
+          "content_instruction": "선언형 한 줄. accent로 '자기잠식' 강조."
+        },
+        {
+          "block_type": "metric_cards",
+          "purpose": "3개 핵심 KPI",
+          "content_instruction": "(1) 매출 +18% YoY (2) 자기잠식 비율 ~50% (3) LTV 1.4 → 0.9. 각 카드 t-display2 + 캡션."
+        },
+        {
+          "block_type": "footer_note",
+          "purpose": "GM band — so-what",
+          "content_instruction": "'성장률 ≠ 가치 창출' 한 줄 gm-band."
+        }
+      ],
+      "content_constraints": {
+        "must_include": [
+          "3개 KPI 숫자 정확히",
+          "LTV 추락 화살표"
+        ],
+        "must_not_include": [
+          "채널별 분해 (slide 4~5에서)",
+          "권고안 (slide 7에서)"
+        ],
+        "evidence_to_use": [
+          "q3_revenue_xlsx"
+        ]
+      },
+      "evidence_sources": [
+        "q3_revenue_xlsx"
+      ],
+      "priority": "must"
+    },
+    {
+      "slide_number": 3,
+      "slide_role": "executive_summary",
+      "page_family": "body",
+      "working_title": "오늘의 안건",
+      "core_message": "3대 의사결정 영역 — 채널 mix · LTV 회복 · 측정체계",
+      "audience_takeaway": "오늘 다룰 결정 영역이 무엇인지 미리 보여준다",
+      "why_here": "bottom_line(slide 2) 직후. evidence로 들어가기 전에 데크 전체 지도 제시",
+      "recommended_layout_family": "summary",
+      "content_blocks": [
+        {
+          "block_type": "title",
+          "purpose": "슬라이드 타이틀",
+          "content_instruction": "'오늘의 의사결정 영역' 한 줄."
+        },
+        {
+          "block_type": "metric_cards",
+          "purpose": "3가지 의사결정",
+          "content_instruction": "(1) 채널 mix 재설계 (slide 7) (2) LTV 회복 KPI (slide 7) (3) 측정·실험 체계 (slide 8). 각 카드에 슬라이드 번호 reference."
+        }
+      ],
+      "content_constraints": {
+        "must_include": [
+          "3개 의사결정 영역",
+          "각 영역의 슬라이드 번호"
+        ],
+        "must_not_include": [
+          "evidence 데이터",
+          "권고안 디테일"
+        ],
+        "evidence_to_use": [
+          "channel_strategy_2025"
+        ]
+      },
+      "evidence_sources": [
+        "channel_strategy_2025",
+        "inference"
+      ],
+      "priority": "must"
+    },
+    {
+      "slide_number": 4,
+      "slide_role": "evidence",
+      "page_family": "body",
+      "working_title": "신규 채널 매출 추이 — 표면 성장",
+      "core_message": "신규 채널은 Q1 12% → Q3 28%로 빠르게 비중 확대. 표면적으로는 성공",
+      "audience_takeaway": "성장은 사실이다. 다음 슬라이드에서 그 성장의 출처를 본다",
+      "why_here": "bottom_line의 첫 절(매출 +18%) 뒷받침. 표면 성공을 먼저 보여주고 다음에 자기잠식을 보여주는 2-단 구조",
+      "recommended_layout_family": "forecast-table",
+      "content_blocks": [
+        {
+          "block_type": "title",
+          "purpose": "슬라이드 타이틀",
+          "content_instruction": "'신규 채널 매출 비중 추이' 한 줄. accent로 '비중 추이' 강조."
+        },
+        {
+          "block_type": "table",
+          "purpose": "Q1~Q3 분기별 채널 매출 비중 + Q4 예측",
+          "content_instruction": "row: 기존채널 / 신규채널. col: Q1 Q2 Q3 (실측) | Q4 (예측). 신규채널 행 hi-column 처리. 예측 컬럼은 캡션에 '예측' 명시."
+        },
+        {
+          "block_type": "footer_note",
+          "purpose": "transition",
+          "content_instruction": "'그러나 다음 슬라이드 — 매출의 출처는?' 한 줄 gm-band로 다음 페이지 유도."
+        }
+      ],
+      "chart_strategy": "forecast",
+      "table_strategy": "forecast",
+      "table_takeaway": "신규 채널 비중 12% → 28% → (예측) 32%.",
+      "content_constraints": {
+        "must_include": [
+          "Q1~Q3 실측",
+          "Q4 예측 (시각 구분)",
+          "신규 채널 hi-column"
+        ],
+        "must_not_include": [
+          "LTV 데이터",
+          "고객 cohort"
+        ],
+        "evidence_to_use": [
+          "q3_revenue_xlsx"
+        ]
+      },
+      "evidence_sources": [
+        "q3_revenue_xlsx"
+      ],
+      "priority": "must"
+    },
+    {
+      "slide_number": 5,
+      "slide_role": "evidence",
+      "page_family": "body",
+      "working_title": "그 매출의 출처 — 자기잠식",
+      "core_message": "신규 채널 신규 고객의 ~50%는 6개월 내 기존 채널 활동 이력 보유. 신규가 아니라 채널 이동",
+      "audience_takeaway": "+18% 성장 중 절반은 사실상 좌측 주머니에서 우측 주머니로 옮긴 것",
+      "why_here": "slide 4의 표면 성장에 대한 '실은 그 출처가...' 답변. 결론(slide 2)의 두 번째 절 뒷받침",
+      "recommended_layout_family": "matrix-trends",
+      "content_blocks": [
+        {
+          "block_type": "title",
+          "purpose": "슬라이드 타이틀",
+          "content_instruction": "'신규 고객의 출처 분해' 한 줄. accent로 '출처' 강조."
+        },
+        {
+          "block_type": "chart",
+          "purpose": "신규 채널 신규 고객 segment",
+          "content_instruction": "matrix-trends 레이아웃. 좌: 진짜 신규 (51%), 우: 기존 채널 이동 (49%). 우 박스에 6개월 내 기존 거래 이력 캡션."
+        },
+        {
+          "block_type": "callout",
+          "purpose": "한 줄 인사이트",
+          "content_instruction": "'2명 중 1명은 신규가 아니다' 한 줄 callout."
+        }
+      ],
+      "chart_strategy": "structural-break",
+      "chart_takeaway": "신규 채널 신규 고객의 49%는 사실상 채널 이동 — 자가잠식.",
+      "content_constraints": {
+        "must_include": [
+          "50% 자기잠식 비율",
+          "6개월 lookback 정의"
+        ],
+        "must_not_include": [
+          "LTV (다음 슬라이드)",
+          "권고안"
+        ],
+        "evidence_to_use": [
+          "q3_revenue_xlsx",
+          "ltv_cohort_md"
+        ]
+      },
+      "evidence_sources": [
+        "q3_revenue_xlsx",
+        "ltv_cohort_md"
+      ],
+      "priority": "must"
+    },
+    {
+      "slide_number": 6,
+      "slide_role": "comparison",
+      "page_family": "body",
+      "working_title": "LTV 추락 — 신규 채널 고객 가치",
+      "core_message": "신규 채널 고객 LTV는 기존 채널의 64% 수준. 채널 mix 변화는 곧 평균 고객가치 하락",
+      "audience_takeaway": "비중이 늘수록 평균 LTV가 떨어진다 — 가치 잠식",
+      "why_here": "결론(slide 2)의 세 번째 절(LTV 추락) 뒷받침. comparison으로 두 채널 직접 대비",
+      "recommended_layout_family": "comparison",
+      "content_blocks": [
+        {
+          "block_type": "title",
+          "purpose": "슬라이드 타이틀",
+          "content_instruction": "'채널별 LTV — 6개월 코호트' 한 줄."
+        },
+        {
+          "block_type": "metric_cards",
+          "purpose": "좌우 비교",
+          "content_instruction": "좌: 기존 채널 LTV ₩142k / 우: 신규 채널 LTV ₩91k. accent는 우측에."
+        },
+        {
+          "block_type": "callout",
+          "purpose": "경쟁사 reference",
+          "content_instruction": "'D2C 비중 30~45% 경쟁사들의 평균 LTV ₩118k' 한 줄 (competitor_benchmark)."
+        }
+      ],
+      "chart_strategy": "focus-comparison",
+      "chart_takeaway": "신규 채널 LTV는 기존의 64%. 비중이 늘수록 평균 가치 하락.",
+      "content_constraints": {
+        "must_include": [
+          "LTV 절대값 두 채널",
+          "코호트 정의"
+        ],
+        "must_not_include": [
+          "권고안",
+          "투자 ROI"
+        ],
+        "evidence_to_use": [
+          "ltv_cohort_md",
+          "competitor_benchmark"
+        ]
+      },
+      "evidence_sources": [
+        "ltv_cohort_md",
+        "competitor_benchmark"
+      ],
+      "priority": "must"
+    },
+    {
+      "slide_number": 7,
+      "slide_role": "solution",
+      "page_family": "body",
+      "working_title": "권고 — 채널 mix 재설계 + LTV 회복 KPI",
+      "core_message": "신규 채널 비중 28% 동결 + 신규 고객 LTV 회복 KPI 도입 + 자기잠식 제외 incremental 매출만 카운트",
+      "audience_takeaway": "성장 정의를 바꿔야 한다 — gross가 아니라 incremental",
+      "why_here": "evidence 3장 후 권고안. 결론을 행동 가능한 형태로 변환",
+      "recommended_layout_family": "four-point",
+      "content_blocks": [
+        {
+          "block_type": "title",
+          "purpose": "슬라이드 타이틀",
+          "content_instruction": "'권고 — 4가지 행동' 한 줄. accent는 '권고'에."
+        },
+        {
+          "block_type": "metric_cards",
+          "purpose": "4가지 권고",
+          "content_instruction": "(1) 신규 채널 비중 28% 동결 (2) 신규 고객 LTV 회복 KPI (목표 ₩118k) (3) Incremental 매출만 카운트 (4) 자기잠식 측정 분기별 보고. four-point 그리드."
+        }
+      ],
+      "content_constraints": {
+        "must_include": [
+          "4가지 권고가 행동 단위",
+          "측정 가능한 KPI"
+        ],
+        "must_not_include": [
+          "evidence 재인용",
+          "roadmap 디테일 (slide 8)"
+        ],
+        "evidence_to_use": [
+          "q3_revenue_xlsx",
+          "ltv_cohort_md"
+        ]
+      },
+      "evidence_sources": [
+        "q3_revenue_xlsx",
+        "ltv_cohort_md"
+      ],
+      "priority": "must"
+    },
+    {
+      "slide_number": 8,
+      "slide_role": "roadmap",
+      "page_family": "body",
+      "working_title": "12주 실행 로드맵",
+      "core_message": "Wk1~4 측정체계 / Wk5~8 신규 LTV 실험 / Wk9~12 mix 동결 정책 시행",
+      "audience_takeaway": "12주 안에 결과를 검증할 수 있는 일정이다",
+      "why_here": "권고(slide 7)를 시간축에 박아 의사결정 가능 단위로 변환",
+      "recommended_layout_family": "process",
+      "content_blocks": [
+        {
+          "block_type": "title",
+          "purpose": "슬라이드 타이틀",
+          "content_instruction": "'12주 실행 로드맵' 한 줄."
+        },
+        {
+          "block_type": "diagram_flow",
+          "purpose": "3단 프로세스",
+          "content_instruction": "Wk1~4 측정체계 도입 → Wk5~8 신규 LTV 실험 → Wk9~12 mix 동결 시행. 각 단계 산출물·책임자 캡션."
+        }
+      ],
+      "content_constraints": {
+        "must_include": [
+          "3단 시간축",
+          "각 단계 산출물"
+        ],
+        "must_not_include": [
+          "권고안 재인용",
+          "예산 (slide 9)"
+        ],
+        "evidence_to_use": []
+      },
+      "evidence_sources": [
+        "inference"
+      ],
+      "priority": "must"
+    },
+    {
+      "slide_number": 9,
+      "slide_role": "summary",
+      "page_family": "body",
+      "working_title": "요약 — 의사결정 요청",
+      "core_message": "오늘 의사회의 승인이 필요한 3가지 — 채널 mix 동결 / LTV 회복 KPI 도입 / Incremental 회계 정의",
+      "audience_takeaway": "표결 가능한 형태로 정리된 3건",
+      "why_here": "권고·로드맵 후 의사결정 요청 직전 요약. cta(slide 10)로 가기 전 최종 정리",
+      "recommended_layout_family": "summary",
+      "content_blocks": [
+        {
+          "block_type": "title",
+          "purpose": "슬라이드 타이틀",
+          "content_instruction": "'오늘의 승인 요청' 한 줄. accent는 '승인 요청'에."
+        },
+        {
+          "block_type": "checklist",
+          "purpose": "3건 표결 항목",
+          "content_instruction": "체크리스트 3건. 각 항목에 책임자·시한 캡션."
+        }
+      ],
+      "content_constraints": {
+        "must_include": [
+          "3건 표결 항목 정확히"
+        ],
+        "must_not_include": [
+          "새 evidence",
+          "예산 디테일"
+        ],
+        "evidence_to_use": []
+      },
+      "evidence_sources": [
+        "inference"
+      ],
+      "priority": "must"
+    },
+    {
+      "slide_number": 10,
+      "slide_role": "cta",
+      "page_family": "end",
+      "working_title": "Closing — 다음 단계",
+      "core_message": "오늘 승인 시 4월 30일 측정체계 발주. 6주 후 중간 보고",
+      "audience_takeaway": "결정 즉시 발주 → 6주 후 중간 보고 일정",
+      "why_here": "데크 종결. 의사결정과 후속 일정 박기",
+      "recommended_layout_family": "closing-big",
+      "content_blocks": [
+        {
+          "block_type": "title",
+          "purpose": "마무리 메시지",
+          "content_instruction": "'결정 즉시 발주 · 6주 후 중간 보고' 한 줄. t-display."
+        },
+        {
+          "block_type": "footer_note",
+          "purpose": "발표자·연락처",
+          "content_instruction": "발표자 이름·이메일·다음 미팅 일자."
+        }
+      ],
+      "content_constraints": {
+        "must_include": [
+          "다음 보고 일정",
+          "연락처"
+        ],
+        "must_not_include": [
+          "evidence 재인용",
+          "추가 권고"
+        ],
+        "evidence_to_use": []
+      },
+      "evidence_sources": [
+        "inference"
+      ],
+      "priority": "must"
+    }
+  ],
+  "ordering_notes": {
+    "split_topics": [
+      "slide 4와 slide 5는 원래 한 슬라이드(매출 + 출처) — 자기잠식 강조 위해 분리"
+    ],
+    "merged_topics": [
+      "권고안과 KPI 도입은 slide 7 four-point에 함께 묶음"
+    ],
+    "deferred_topics": [
+      "경쟁사 D2C 전략 디테일은 다음 분기 데크로 미룸 (이사회 30분 한계)"
+    ],
+    "appendix_constraints": [
+      "필요 시 q3_revenue_xlsx 원본 표를 부록으로 추가 (현재 데크에는 없음)"
+    ]
+  }
+}

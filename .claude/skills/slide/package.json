@@ -1,0 +1,11 @@
+{
+  "name": "slide-skill-bundle",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Self-contained editable PPTX slide builder skill (HTML → .pptx via Playwright + pptxgenjs)",
+  "dependencies": {
+    "playwright": "^1.59.1",
+    "pptxgenjs": "^4.0.1",
+    "sharp": "^0.34.5"
+  }
+}
