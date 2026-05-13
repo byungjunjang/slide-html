@@ -14,7 +14,7 @@ REPO = Path(__file__).resolve().parents[4]
 SCRIPTS = SKILL / "scripts"
 FIXTURES = SKILL / "tests" / "fixtures"
 GOLDEN = FIXTURES / "golden" / "jangpm-colors_and_type.css"
-JANGPM_FONTS = REPO / ".claude/skills/huashu-design/assets/design-systems/jangpm/_fonts.css"
+JANGPM_FONTS = REPO / ".claude/skills/slide/assets/design-systems/jangpm/_fonts.css"
 
 
 def _normalize(text: str) -> str:

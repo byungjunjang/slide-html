@@ -7,7 +7,7 @@ from pathlib import Path
 # tests dir → theme-init → skills → .claude → repo root
 REPO = Path(__file__).resolve().parents[4]
 SKILL = Path(__file__).resolve().parents[1]
-JANGPM_THEME = REPO / ".claude/skills/huashu-design/assets/design-systems/jangpm/theme.json"
+JANGPM_THEME = REPO / ".claude/skills/slide/assets/design-systems/jangpm/theme.json"
 
 
 def test_jangpm_theme_validates():

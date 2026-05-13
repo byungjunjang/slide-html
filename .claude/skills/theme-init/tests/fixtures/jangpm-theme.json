@@ -38,7 +38,7 @@
   "assets":  {
     "icon-pack-default": "tabler-outline",
     "icon-pack-fallback": "tabler-filled",
-    "character": "huashu-design/assets/design-systems/jangpm/assets/jangpm-character.png"
+    "character": "slide/assets/design-systems/jangpm/assets/jangpm-character.png"
   },
   "voice": {
     "tone":     "editorial, analytical, declarative",

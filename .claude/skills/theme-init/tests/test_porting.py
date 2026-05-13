@@ -64,8 +64,8 @@ def test_validate_rejects_invalid_hex(tmp_path):
     assert "accent" in r.stderr
 
 
-def test_presets_root_points_at_huashu_design():
-    """PRESETS_ROOT must resolve to huashu-design/assets/design-systems (not doubled .claude/.claude/...)."""
+def test_presets_root_points_at_slide_design_systems():
+    """PRESETS_ROOT must resolve to slide/assets/design-systems (not doubled .claude/.claude/...)."""
     import importlib.util
     spec = importlib.util.spec_from_file_location(
         "fill_theme_defaults",
@@ -73,7 +73,7 @@ def test_presets_root_points_at_huashu_design():
     )
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
-    expected = SKILL.parent / "huashu-design" / "assets" / "design-systems"
+    expected = SKILL.parent / "slide" / "assets" / "design-systems"
     assert mod.PRESETS_ROOT == expected, \
         f"PRESETS_ROOT={mod.PRESETS_ROOT}, expected {expected}"
     assert mod.PRESETS_ROOT.exists(), \

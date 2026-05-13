@@ -32,7 +32,7 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
-PRESETS_ROOT = Path(__file__).resolve().parents[2] / "huashu-design" / "assets" / "design-systems"
+PRESETS_ROOT = Path(__file__).resolve().parents[2] / "slide" / "assets" / "design-systems"
 
 # Monochrome grayscale safe defaults — used only for tokens the agent left as
 # null (or omitted entirely). The goal is a readable-if-bland theme rather
