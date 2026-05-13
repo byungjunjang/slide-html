@@ -110,6 +110,79 @@ DESIGN.md가 없으면 (status: draft 상태이거나 백필 안 됨): preset의
 
 스키마 전체: `references/slide-plan-schema.md`.
 
+#### 5.5. Fact-check (인터넷 검색 기반 팩트 체크)
+
+**언제 활성:**
+- 슬라이드 ≥ 7장 (auto-on)
+- 슬라이드 ≤ 6장이라도 brief에 `사실 확인` / `출처 확인` / `fact check` / `verify` 키워드 → 강제 ON
+- 슬라이드 ≤ 6장이고 강제 키워드 없으면 SKIP (overhead 감안)
+
+**무엇을 검증 (claim 자동 추출):**
+
+각 슬라이드의 `core_message`, `audience_takeaway`, `chart_data` 안 수치, `content_constraints.must_include`에서 다음 종류를 추출:
+
+| 우선순위 | 패턴 | 예 |
+|---|---|---|
+| HIGH | 명시 수치 (chart_data 시리즈 / must_include의 숫자·퍼센트·통화·단위) | "매출 +18% YoY", "≈2,700개", "$2.3B" |
+| HIGH | 최근 3년 이내 사건·발표·출시 | "2025년 6월 출시", "2026 Q1 발표" |
+| HIGH | 외부 인물/조직 인용 | "OpenAI가", "맥킨지 보고서에 따르면" |
+| MEDIUM | core_message 안 수치/연도 | "한국 IT 인력 약 100만 명" |
+| MEDIUM | 고유명사 (회사명·제품명·인물명) | "GPT-5", "이재용 회장" |
+| LOW (SKIP) | 일반 통념·정의 | "AI는 머신러닝의 한 분야" |
+
+HIGH/MEDIUM만 fact-check. 슬라이드별로 최대 3개까지 자동 추출(많을수록 overhead).
+
+**실행:**
+
+1. 도구 로드:
+   ```
+   ToolSearch("select:WebSearch,WebFetch")
+   ```
+2. 각 claim에 대해:
+   ```
+   WebSearch("<claim text> source authoritative 2025 2026")
+   ```
+3. 검색 결과에서 신뢰 source 1-2개 선별 (정부/공식 발표/주요 매체/위키 등). 의심스러우면 WebFetch로 본문 확인.
+4. claim과 source 내용을 비교 → `verified` / `corrected` / `unverified` 분류.
+
+**결과 plan 반영:**
+
+- **verified**: `content_inventory`에 새 source 추가 → 해당 슬라이드 `evidence_sources`에 추가
+  ```json
+  {"source_id": "web_03", "source_type": "web", "summary": "통계청 2025 산업별 종사자 — https://kosis.kr/...", "relevance": "high", "usable_for": ["evidence"]}
+  ```
+- **corrected**: 잘못된 수치/날짜를 plan에서 즉시 수정 + `fact_check_log`에 before/after 기록
+- **unverified**: claim을 약화 표현으로 수정 ("약 2,700개" → "추정 2,700~3,000개"), `evidence_sources`에 `"inference-unverified"` 추가
+
+**plan 루트에 fact_check_log[] 추가:**
+
+```json
+"fact_check_log": [
+  {
+    "claim": "메가커피 가맹점 ≈2,700개",
+    "slide_number": 4,
+    "priority": "HIGH",
+    "status": "verified" | "corrected" | "unverified",
+    "source": "https://...",
+    "original": "≈2,700개",
+    "corrected_to": null,
+    "checked_at": "2026-05-13"
+  }
+]
+```
+
+**사용자 알림 (Step 8 검토 때 함께 출력):**
+
+```
+Fact-check 결과: verified N / corrected M / unverified K
+unverified claim:
+  - slide #N: "<claim>" — 공신력 있는 source 미확인, evidence_sources에 `inference-unverified` 표기
+corrected claim:
+  - slide #M: "<원본>" → "<수정>" (source: <URL>)
+```
+
+> 설계 의도: Non-blocking. 검증 실패가 critical하면 사용자가 Step 8 stop keyword로 plan 수정 요청. plan을 BLOCKING으로 막지 않는 이유 — 데이터가 검증 안 되는 경우(internal data, 미공개 자료)도 정상 케이스다.
+
 #### 6. 검증
 
 자체 점검:
@@ -132,7 +205,7 @@ exit 1이면 R2/R5 위반 — 수정 후 재검증.
 
 스키마 변형은 자유 (preset마다 layout_family 어휘가 다르므로 통일 안 함). 단 핵심 공통 필드(`deck_meta`, `design_dependency`, `slides[]`의 R1 4필드 + R2 takeaway + R5 evidence_sources)는 고정.
 
-#### 8. 사용자 검토 체크포인트
+#### 8. 사용자 검토 체크포인트 (soft notice — non-blocking by default)
 
 `slide_plan.json`과 함께 **슬라이드별 1줄 markdown 요약**을 사용자에게 제시:
 
@@ -142,9 +215,23 @@ exit 1이면 R2/R5 위반 — 수정 후 재검증.
 3. executive_summary — "3대 의사결정 필요 영역" / summary
 4. evidence (chart) — "신규 채널 매출 비중 추이" / forecast-table / forecast
 ...
+
+체계적 모드 — Plan 작성 완료. 같은 턴 안에서 /slide로 진행합니다.
+수정이 필요하면 `다시` / `수정` / `멈춰` / `잠깐` / `wait` / `stop` 중 하나로 응답하세요.
 ```
 
-사용자 confirm 후 `/slide`로 진행.
+**진행 분기 (3개 슬라이드 파이프라인 공통):**
+
+| 사용자 다음 메시지 | 행동 |
+|---|---|
+| `다시` / `수정` / `멈춰` / `잠깐` / `wait` / `stop` / `다른` / 슬라이드 N번 수정 같은 명시적 변경 요청 | plan 수정 모드 — 해당 필드/슬라이드만 갱신 후 `validate_plan.py` 재실행 → summary 재출력 |
+| 그 외 (`/slide`, `OK`, `진행`, 응답 없음) | `/slide`로 즉시 진입 — plan 그대로 소비 |
+
+**원격 환경 (Slack / OpenClaw / Telegram 등):** BLOCKING 대기 금지. summary 출력 + 같은 턴에 `/slide` 자동 진입. 사용자가 다음 턴에서 stop keyword를 주면 그때 plan 수정 모드로.
+
+**로컬 + 명시적 BLOCKING 요청:** 사용자가 `--confirm-plan` / "확인하고 진행" 같이 명시한 경우에만 BLOCKING 유지.
+
+> 설계 의도: BLOCKING은 plan dropped(채택률 0%)의 주된 원인이었다. 기본을 auto-proceed로 두고, stop keyword를 명시적으로 안내한다.
 
 ### 출력
 
