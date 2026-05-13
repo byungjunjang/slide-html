@@ -25,7 +25,6 @@
 - **결과물:**
   - **editable PPTX** (`output/<주제>-pptx/<주제>.pptx`) — PowerPoint/Keynote에서 텍스트 더블클릭 편집
   - 슬라이드별 HTML (`output/<주제>-pptx/slides/NN-name.html`) — 브라우저로 미리보기·인쇄
-  - Google Slides (`/upload-drive` 실행 시) — Drive 자동 업로드 + Slides 변환
 
 **예시 한 줄:**
 > "사내 AI 도구 도입 효과 슬라이드 12장 만들어줘. KPI 위주로."
@@ -90,12 +89,53 @@ npm install                          # playwright, pptxgenjs, sharp
 npx playwright install chromium      # html2pptx의 브라우저 캡처용
 ```
 
-### 4단계. (선택) Google Drive 업로드 도구
+### 4단계. (선택) AI 이미지 생성 — `/codex-image`
 
-| 변환 종류 | 필요 도구 | 설치 |
-|---|---|---|
-| editable PPTX | 위 의존성 (이미 설치됨) | — |
-| Google Slides 업로드 | `gws-drive-upload` 스킬 + Google 인증 | Claude Code Skills 안내 따라 인증 |
+표지·인포그래픽·세로 카드에 AI 이미지가 필요할 때 `/slide` 2.5단계가 자동으로 호출하는 기본 경로입니다.
+**API 키 발급·관리 없이 Codex CLI OAuth(ChatGPT 로그인)만으로** `gpt-image-2`를 호출하고, 슬라이드 빌더가 미리 정한 슬롯명 그대로 (`images/<slot>.png`) 파일을 떨굽니다.
+
+**최초 1회 준비 (한 번만 하면 됩니다):**
+
+```bash
+npm install -g @openai/codex      # Codex CLI 설치
+codex login                        # ChatGPT 계정으로 OAuth 인증 (브라우저 자동 오픈)
+codex login status                 # "Logged in using ChatGPT" 표시되면 끝
+```
+
+`codex login`은 OAuth 토큰을 `~/.codex/auth.json`에 한 번 저장하고, 이후 모든 이미지 호출은 그 토큰을 자동 재사용합니다.
+**`sk-*` 형식 API 키는 어디에도 저장되지 않습니다.** Codex OAuth 토큰은 ChatGPT 세션 토큰이라 OpenAI REST API로 직접 던지면 401이 떨어지지만, `codex exec`의 내부 브릿지가 OAuth → 내장 `image_gen` 도구 → `gpt-image-2` 경로로 라우팅해줍니다.
+
+`/slide` 외에 직접 호출하고 싶을 때는 Claude Code 채팅창에 그대로:
+
+```
+/codex-image --size 1536x1024 --out output/my-deck-pptx/images --filename hero-cover \
+  "minimal flat line-art illustration of a globe, single accent color, neutral palette"
+```
+
+| 증상 | 해결 |
+|---|---|
+| `auth expired` / 401 | `codex login` 재실행 (토큰 갱신) |
+| `NOT_FOUND` | `npm install -g @openai/codex` |
+| 트러스트 오류 | 스킬이 `--skip-git-repo-check` 사용 — 자세한 내용은 `.claude/skills/codex-image/README.md` |
+| 생성 파일이 슬롯명과 다름 | `--filename <slot>` 인자 확인. 슬라이드 HTML의 `<img src>` 경로와 정확히 일치해야 함 |
+| 16:9 인데 양옆이 좀 잘림 | 정상. `gpt-image-2`는 1536×1024(약 3:2)만 가능 → CSS `object-fit: cover`로 960×540 슬롯에 맞춰 자동 크롭 |
+
+**스킬 위치:** `.claude/skills/codex-image/` (이 저장소에 vendored. 업스트림: [wjb127/codex-image](https://github.com/wjb127/codex-image))
+**비용:** ChatGPT Plus/Team/Enterprise 계정의 OpenAI 사용량에 청구 (`1024x1024 high` ≈ $0.04, `1536x1024 high` ≈ $0.06).
+
+**(옵션) API 키 백엔드로 강제 전환:**
+
+별도 API 키로 다른 백엔드(gemini / openai / stability / bfl / ideogram / qwen / zhipu / volcengine / siliconflow / fal / replicate)를 쓰고 싶을 때만:
+
+```bash
+# 셸 또는 .env 둘 다 인식 (slide-html은 .env.example 미동봉 — 직접 만들거나 export로 설정)
+export IMAGE_BACKEND=gemini  # 또는 openai 등
+export GEMINI_API_KEY=...    # 백엔드별 키
+```
+
+`IMAGE_BACKEND`가 설정되면 codex-image 대신 외부 멀티 백엔드 스크립트(`image_gen.py` 등 — 사용자가 별도 제공)로 분기합니다. 이 경로에선 진짜 16:9 출력 호출이 가능합니다.
+
+두 경로 모두 비워두면 (Codex CLI 미설치 + `IMAGE_BACKEND` 미설정) 슬라이드는 **이미지 슬롯 없이 텍스트·아이콘·도형**만으로 생성됩니다 (Jangpm 기본 동작에서도 충분히 임팩트 있는 데크가 됩니다).
 
 > 💡 슬라이드별 HTML 미리보기는 별도 빌드 없이 브라우저로 그대로 열면 됩니다 (`output/<주제>-pptx/slides/01-title.html` 더블클릭).
 
@@ -143,12 +183,6 @@ Claude는 자동으로 다음 5단계를 순서대로 실행합니다 (slide_pla
 
 R2/R5 위반 시 빌드 자동 차단 (exit 1). 자세한 사양은 `.claude/skills/slide-plan/SKILL.md`.
 
-### 추가로 변환하기
-
-```
-/upload-drive          ← PPTX → Google Drive 업로드 + Slides 변환
-```
-
 > PDF가 필요하면 PowerPoint/Keynote에서 직접 export하세요. 이 저장소는 **editable PPTX 단일 경로**로 설계되어 있어 별도 PDF 파이프라인을 두지 않습니다.
 
 ### 디자인 테마 자체를 바꾸고 싶으면
@@ -178,7 +212,7 @@ npx playwright install chromium
 권장 동봉 안 하는 것:
 
 - **`/theme-init` 스킬** — 새 디자인 시스템을 굽는 용도라 Claude Code 로컬 전용. theme-init은 자기 출력물을 `slide/assets/design-systems/`에 직접 떨궈 카탈로그(`README.md`)까지 자동 갱신하므로, 로컬에서 새 프리셋을 굽고 그 결과가 박힌 slide 번들을 claude.ai에 올리는 흐름.
-- **`/upload-drive` 스킬** — Google Drive 인증 토큰이 필요해 claude.ai 샌드박스에서 동작하지 않음.
+- **`/codex-image` 스킬** — Codex CLI 바이너리가 claude.ai 샌드박스에 설치되지 않음. claude.ai 환경에서 이미지가 필요한 슬롯은 텍스트·아이콘·도형으로 대체되거나, 사용자가 직접 이미지를 슬롯 경로에 떨궈서 사용.
 
 번들 사용 가이드는 `.claude/skills/slide/README.md`에 더 자세히 적혀 있습니다.
 
