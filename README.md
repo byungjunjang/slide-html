@@ -52,10 +52,14 @@ cd ~/Desktop/slide-html
 
 ### 3단계. 의존성 설치 (한 번만)
 
+Node 18 이상이 필요합니다.
+
 ```bash
 npm install                          # playwright, pptxgenjs, sharp
 npx playwright install chromium      # html2pptx의 브라우저 캡처용
 ```
+
+> 루트의 `package.json` / `package-lock.json`은 로컬 사용용이고, `.claude/skills/slide/package.json`은 claude.ai에 zip으로 올렸을 때 self-contained로 동작하도록 동일한 의존성을 따로 들고 있습니다. 의존성 버전을 바꿀 때는 **두 파일을 같이 갱신**하세요 (드리프트 시 claude.ai 번들이 어긋남).
 
 ### 4단계. (선택) AI 이미지 생성 — `/codex-image`
 

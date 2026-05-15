@@ -1,4 +1,8 @@
 {
+  "name": "slide-html",
+  "version": "1.0.0",
+  "private": true,
+  "description": "per-slide HTML × html2pptx editable PPTX builder — root deps mirror .claude/skills/slide/package.json (self-contained skill bundle).",
   "dependencies": {
     "playwright": "^1.59.1",
     "pptxgenjs": "^4.0.1",
