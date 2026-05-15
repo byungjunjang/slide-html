@@ -200,16 +200,9 @@ codex --version 2>/dev/null || { echo "NOT_FOUND — run: npm install -g @openai
 codex login status 2>&1 | grep -q "Logged in using ChatGPT" || { echo "NOT_LOGGED_IN — run: codex login"; exit 1; }
 ```
 
-위 preflight가 실패하면 이 단계 중단 — 사용자에게 `codex login` 안내하고 이미지 슬롯이 있는 슬라이드는 `<img>` 슬롯을 placeholder 도형(예: `<div class="img-placeholder">…</div>`)으로 대체하거나, `IMAGE_BACKEND` 백엔드 사용을 요청한다.
+위 preflight가 실패하면 이 단계 중단 — 사용자에게 `codex login` 안내하고 이미지 슬롯이 있는 슬라이드는 `<img>` 슬롯을 placeholder 도형(예: `<div class="img-placeholder">…</div>`)으로 대체한다. slide-html은 codex-image 외 다른 이미지 백엔드를 동봉하지 않는다.
 
-**백엔드 분기 — 이미지 1장마다 per-slot 결정 (배치 단위 ❌):**
-
-| 조건 | 백엔드 |
-|---|---|
-| `IMAGE_BACKEND` 환경변수 **미설정** (기본값, API 키 불필요) | **Method A** — `codex-image` (Codex CLI OAuth → `gpt-image-2`) |
-| `IMAGE_BACKEND` 설정됨 (gemini/openai/stability/…) | **Method B** — `scripts/image_gen.py` 등 외부 멀티 백엔드 (현재 slide-html에는 미동봉; 별도 스크립트가 있을 때만) |
-
-**Method A — codex-image (기본, 직접 `codex exec` 호출):**
+**이미지 1장마다 per-slot 호출 (배치 단위 ❌). 직접 `codex exec` 호출:**
 
 ```bash
 codex exec "Perform the following tasks:
@@ -445,7 +438,7 @@ Converting N slides via html2pptx...
 | `scripts/init-project.sh` | 프로젝트 셋업 자동화 (preset → output 복사) |
 | `scripts/export_deck_pptx.mjs` + `html2pptx.js` | HTML → editable PPTX 변환 엔진 (Playwright + pptxgenjs) |
 | `scripts/prebuild-svg.mjs` | 빌드 직전 icons/*.svg를 PNG로 래스터화 (PptxGenJS의 SVG embed 버그 우회) |
-| `../codex-image/SKILL.md` | **AI 이미지 생성 (기본 백엔드, OAuth)** — Codex CLI `image_gen` 도구로 `gpt-image-2` 호출. `IMAGE_BACKEND` env 미설정 시 자동 사용. 2.5단계 참조 |
+| `../codex-image/SKILL.md` | **AI 이미지 생성 (단일 백엔드, OAuth)** — Codex CLI `image_gen` 도구로 `gpt-image-2` 호출. 2.5단계 참조 |
 
 ---
 

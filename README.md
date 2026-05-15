@@ -95,19 +95,7 @@ codex login status                 # "Logged in using ChatGPT" 표시되면 끝
 **스킬 위치:** `.claude/skills/codex-image/` (이 저장소에 vendored. 업스트림: [wjb127/codex-image](https://github.com/wjb127/codex-image))
 **비용:** ChatGPT Plus/Team/Enterprise 계정의 OpenAI 사용량에 청구 (`1024x1024 high` ≈ $0.04, `1536x1024 high` ≈ $0.06).
 
-**(옵션) API 키 백엔드로 강제 전환:**
-
-별도 API 키로 다른 백엔드(gemini / openai / stability / bfl / ideogram / qwen / zhipu / volcengine / siliconflow / fal / replicate)를 쓰고 싶을 때만:
-
-```bash
-# 셸 또는 .env 둘 다 인식 (slide-html은 .env.example 미동봉 — 직접 만들거나 export로 설정)
-export IMAGE_BACKEND=gemini  # 또는 openai 등
-export GEMINI_API_KEY=...    # 백엔드별 키
-```
-
-`IMAGE_BACKEND`가 설정되면 codex-image 대신 외부 멀티 백엔드 스크립트(`image_gen.py` 등 — 사용자가 별도 제공)로 분기합니다. 이 경로에선 진짜 16:9 출력 호출이 가능합니다.
-
-두 경로 모두 비워두면 (Codex CLI 미설치 + `IMAGE_BACKEND` 미설정) 슬라이드는 **이미지 슬롯 없이 텍스트·아이콘·도형**만으로 생성됩니다 (Jangpm 기본 동작에서도 충분히 임팩트 있는 데크가 됩니다).
+Codex CLI가 미설치 또는 `codex login` 미인증 상태면 슬라이드는 **이미지 슬롯 없이 텍스트·아이콘·도형**만으로 생성됩니다 (Jangpm 기본 동작에서도 충분히 임팩트 있는 데크가 됩니다). 필요하면 슬롯 경로(`output/<주제>-pptx/images/<slot>.png`)에 직접 그린·다운로드한 이미지를 떨궈도 됩니다.
 
 > 💡 슬라이드별 HTML 미리보기는 별도 빌드 없이 브라우저로 그대로 열면 됩니다 (`output/<주제>-pptx/slides/01-title.html` 더블클릭).
 
