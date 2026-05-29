@@ -8,7 +8,7 @@ status: draft
 
 # {{TOKEN:display_name}} · DESIGN.md
 
-> **Status:** `draft` — 자동 생성 초안. 사용자 검토 후 빈 섹션을 채우고 frontmatter `status: confirmed`로 변경하세요.
+> **작성 안내:** 자동 생성 초안입니다. 사용자 검토 후 빈 섹션(특히 §1·§5·§6·§10)을 채우고 frontmatter `status:`를 `draft → confirmed`로 변경하세요. 현재 상태는 frontmatter `status:` 한 곳에만 기록합니다 — 본문에 중복 표기하지 않으므로 frontmatter와 어긋날 일이 없습니다.
 >
 > 이 문서는 slide-plan introduction guide §Layer 3의 산출물입니다. slide-plan은 이 어휘로 `recommended_layout_family`를 채우고, simple `/slide` 경로의 LLM도 이를 참조해 layout 일관성과 **변형 자유도**를 유지합니다.
 >

@@ -1208,13 +1208,23 @@ async function html2pptx(htmlFile, pres, options = {}) {
   } = options;
 
   try {
-    // Use Chrome on macOS, default Chromium on Unix
-    const launchOptions = { env: { TMPDIR: tmpDir } };
+    // Prefer the system Google Chrome channel on macOS, but fall back to the
+    // bundled Playwright Chromium if Chrome isn't installed (fresh macOS / CI).
+    // On non-darwin we always use bundled Chromium. Channel branch only — no
+    // other launch logic changes (this file is shared by every preset).
+    const baseLaunch = { env: { TMPDIR: tmpDir } };
+    let browser;
     if (process.platform === 'darwin') {
-      launchOptions.channel = 'chrome';
+      try {
+        browser = await chromium.launch({ ...baseLaunch, channel: 'chrome' });
+      } catch (e) {
+        const reason = (e && e.message ? e.message.split('\n')[0] : String(e));
+        console.warn(`[html2pptx] Google Chrome channel unavailable (${reason}); falling back to bundled Chromium.`);
+        browser = await chromium.launch(baseLaunch);
+      }
+    } else {
+      browser = await chromium.launch(baseLaunch);
     }
-
-    const browser = await chromium.launch(launchOptions);
 
     let bodyDimensions;
     let slideData;

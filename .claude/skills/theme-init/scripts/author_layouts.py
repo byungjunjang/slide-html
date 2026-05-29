@@ -123,6 +123,40 @@ def _design_status(args) -> str | None:
     return m.group(1) if m else None
 
 
+# Leftover template placeholders that mean §5/§6 were never filled. Scanned at
+# confirm time so slide-plan never inherits an empty visual vocabulary.
+_PLACEHOLDER_MARKERS = ("(LLM 추출 자리", "(예:")
+_PLACEHOLDER_GUIDE_RE = re.compile(
+    r"^\(.*(채우세요|작성하세요|명시하세요|보강하세요).*$"
+)
+
+
+def _design_placeholders(args) -> list[str]:
+    """Scan DESIGN.md §5 (visual vocabulary) + §6 (chrome) for unfilled template
+    placeholder lines. Returns short samples of each finding ([] = clean)."""
+    design = _preset_dir(args) / "DESIGN.md"
+    if not design.exists():
+        return []
+    text = design.read_text(encoding="utf-8")
+    m5 = re.search(r"^## 5\.", text, re.MULTILINE)
+    m7 = re.search(r"^## 7\.", text, re.MULTILINE)
+    if not m5:
+        return []
+    section = text[m5.start():(m7.start() if m7 else len(text))]
+    hits: list[str] = []
+    seen: set[str] = set()
+    for ln in section.splitlines():
+        s = ln.strip()
+        if not s:
+            continue
+        if any(mk in s for mk in _PLACEHOLDER_MARKERS) or _PLACEHOLDER_GUIDE_RE.match(s):
+            sample = s[:60]
+            if sample not in seen:
+                seen.add(sample)
+                hits.append(sample)
+    return hits
+
+
 # ----------------------------------------------------------------------------
 # commands
 # ----------------------------------------------------------------------------
@@ -298,6 +332,20 @@ def cmd_confirm(args) -> int:
               "  Author at least one identity slide, or pass --allow-empty to confirm token-tone as-is.",
               file=sys.stderr)
         return 1
+    # §5/§6 must be filled — slide-plan consumes this visual vocabulary, so a
+    # skeleton DESIGN.md (template placeholders intact) must not confirm.
+    placeholders = _design_placeholders(args)
+    if placeholders:
+        preview = "\n".join(f"    · {p}" for p in placeholders[:6])
+        more = f"\n    … (+{len(placeholders) - 6} more)" if len(placeholders) > 6 else ""
+        msg = (f"[confirm] DESIGN.md §5/§6 still contain {len(placeholders)} template "
+               f"placeholder line(s) — slide-plan would inherit an empty vocabulary:\n"
+               f"{preview}{more}\n"
+               f"  Fill §5 (어휘 표) + §6 (chrome) in {_preset_dir(args) / 'DESIGN.md'}.")
+        if args.strict:
+            print(msg + "\n[confirm] blocked (--strict).", file=sys.stderr)
+            return 1
+        print("⚠ " + msg + "\n  (continuing — pass --strict to enforce)\n", file=sys.stderr)
     m["status"] = "confirmed"
     ac.save_manifest(bp, m)
 
@@ -364,6 +412,8 @@ def main() -> int:
         if name == "confirm":
             sp.add_argument("--allow-empty", action="store_true",
                             help="Confirm even if no identity slides were authored (token-tone as-is)")
+            sp.add_argument("--strict", action="store_true",
+                            help="Block confirm if DESIGN.md §5/§6 still contain template placeholders")
         if name == "restore":
             sp.add_argument("--stems", type=str, default=None,
                             help="Comma-separated stems; default = all identity slides")
