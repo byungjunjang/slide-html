@@ -160,6 +160,8 @@ python3 .claude/skills/theme-init/scripts/author_layouts.py thumbs --preset <nam
 
 # 6. confirm — validate 통과 + authored ≥ 1 전제로 status: confirmed + DESIGN.md provenance 기록
 #    (아무것도 작곡 안 했으면 거부. token-tone 그대로 confirm하려면 --allow-empty)
+#    DESIGN.md §5/§6에 템플릿 placeholder가 남아 있으면 기본 차단(strict 기본값) — 검토 없이
+#    넘기려면 --no-strict.
 python3 .claude/skills/theme-init/scripts/author_layouts.py confirm --preset <name>
 
 # (필요 시) restore — 작곡 취소, identity 슬라이드를 .stock으로 되돌림
