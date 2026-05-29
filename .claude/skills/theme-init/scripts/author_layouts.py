@@ -158,6 +158,93 @@ def _design_placeholders(args) -> list[str]:
 
 
 # ----------------------------------------------------------------------------
+# reference-deck ingestion (Task 9) — recommend, never apply
+# ----------------------------------------------------------------------------
+
+_REF_BLOCK_START = "<!-- REF-INGEST:start -->"
+_REF_BLOCK_END = "<!-- REF-INGEST:end -->"
+
+
+def _current_card_style(args) -> str | None:
+    tp = _preset_dir(args) / "theme.json"
+    if not tp.exists():
+        return None
+    try:
+        return json.loads(tp.read_text(encoding="utf-8")).get("surface", {}).get("card_style")
+    except (json.JSONDecodeError, OSError):
+        return None
+
+
+def _seed_design_from_reference(args, result: dict) -> None:
+    """Insert an additive, marker-fenced reference-hint blockquote into DESIGN.md §5.
+
+    Does NOT touch the section's placeholder prompts — the strict confirm gate
+    still requires the user to fill the canonical §5/§6 by hand. Re-running prep
+    replaces the fenced block in place (idempotent).
+    """
+    design = _preset_dir(args) / "DESIGN.md"
+    if not design.exists():
+        return
+    d = result["devices"]
+    cs = d["card_style"]
+    block = (
+        f"{_REF_BLOCK_START}\n"
+        f"> **참조 자동추출 초안** — `{result['source']}` ({result['slides_analyzed']} slides) 에서 측정한 "
+        f"레이아웃 신호. 힌트일 뿐이며, 정식 §5/§6 항목은 아래에서 직접 검토·작성해야 합니다.\n"
+        f"> - card_style: **{cs['value']}** [{cs['confidence']}]\n"
+        f"> - surface 교차: {d['surface_alternation']['slides_using']}/{result['slides_analyzed']} slides\n"
+        f"> - hairline divider: {d['hairline_dividers']['count']} · "
+        f"CTA: {d['cta']['count']} · kicker: {d['kicker']['count']}\n"
+        f"{_REF_BLOCK_END}"
+    )
+    text = design.read_text(encoding="utf-8")
+    if _REF_BLOCK_START in text and _REF_BLOCK_END in text:
+        text = re.sub(re.escape(_REF_BLOCK_START) + r".*?" + re.escape(_REF_BLOCK_END),
+                      block, text, flags=re.DOTALL)
+    else:
+        m5 = re.search(r"^## 5\..*$", text, re.MULTILINE)
+        if m5:
+            text = text[:m5.end()] + "\n\n" + block + text[m5.end():]
+        else:
+            text = text.rstrip() + "\n\n" + block + "\n"
+    design.write_text(text, encoding="utf-8")
+    print("  · seeded DESIGN.md §5 reference-hint block (additive — placeholders intact)",
+          file=sys.stderr)
+
+
+def _ingest_reference(args, manifest: dict) -> None:
+    """Parse --reference deck → store devices in manifest.blueprint, print a
+    card_style recommendation (+ re-init command if it differs), seed DESIGN.md.
+    Recommends only: never edits theme.json or re-renders."""
+    try:
+        import ingest_reference as ir
+        result = ir.extract(args.reference)
+    except Exception as e:  # noqa: BLE001 — ingestion is best-effort
+        print(f"⚠ [prep] reference ingestion skipped ({e}); path recorded only", file=sys.stderr)
+        return
+    if not result.get("slides_analyzed"):
+        print(f"⚠ [prep] reference has no *.html slides ({args.reference}); path recorded only",
+              file=sys.stderr)
+        return
+    devices = result["devices"]
+    manifest["blueprint"]["reference_devices"] = devices
+    print("\n--- reference deck layout devices ---", file=sys.stderr)
+    print(ir.summarize(result), file=sys.stderr)
+    rec = devices["card_style"]["value"]
+    current = _current_card_style(args)
+    if rec and current and rec != current:
+        init = SCRIPTS / "init_theme.py"
+        print(f"\n⚠ reference suggests surface.card_style = '{rec}' (preset is '{current}').\n"
+              f"  card_style is a Phase 1 token — to apply, re-run with the draft's "
+              f"surface.card_style set to '{rec}':\n"
+              f"    python3 {init} --from <draft.json> --preset {args.preset} --force",
+              file=sys.stderr)
+    elif rec and current:
+        print(f"\n✓ reference card_style '{rec}' matches the preset.", file=sys.stderr)
+    _seed_design_from_reference(args, result)
+
+
+# ----------------------------------------------------------------------------
 # commands
 # ----------------------------------------------------------------------------
 
@@ -187,7 +274,9 @@ def cmd_prep(args) -> int:
     sa = m["source_artifacts"]
     if args.design_md:          sa["design_md"] = str(args.design_md)
     if args.original_design_md: sa["original_design_md"] = str(args.original_design_md)
-    if args.reference:          sa["reference_blueprint"] = str(args.reference)
+    if args.reference:
+        sa["reference_blueprint"] = str(args.reference)
+        _ingest_reference(args, m)
     if args.direction:          sa["user_direction"] = args.direction
     m["verification"] = {"lint": None, "build": None, "unzip": None, "thumbs": None}
     ac.save_manifest(bp, m)
@@ -343,9 +432,10 @@ def cmd_confirm(args) -> int:
                f"{preview}{more}\n"
                f"  Fill §5 (어휘 표) + §6 (chrome) in {_preset_dir(args) / 'DESIGN.md'}.")
         if args.strict:
-            print(msg + "\n[confirm] blocked (--strict).", file=sys.stderr)
+            print(msg + "\n[confirm] blocked (strict gate is default — pass --no-strict to "
+                  "confirm with placeholders still present).", file=sys.stderr)
             return 1
-        print("⚠ " + msg + "\n  (continuing — pass --strict to enforce)\n", file=sys.stderr)
+        print("⚠ " + msg + "\n  (continuing — --no-strict given)\n", file=sys.stderr)
     m["status"] = "confirmed"
     ac.save_manifest(bp, m)
 
@@ -412,8 +502,9 @@ def main() -> int:
         if name == "confirm":
             sp.add_argument("--allow-empty", action="store_true",
                             help="Confirm even if no identity slides were authored (token-tone as-is)")
-            sp.add_argument("--strict", action="store_true",
-                            help="Block confirm if DESIGN.md §5/§6 still contain template placeholders")
+            sp.add_argument("--strict", action=argparse.BooleanOptionalAction, default=True,
+                            help="Block confirm if DESIGN.md §5/§6 still contain template "
+                                 "placeholders (default: on). Use --no-strict to only warn.")
         if name == "restore":
             sp.add_argument("--stems", type=str, default=None,
                             help="Comma-separated stems; default = all identity slides")
