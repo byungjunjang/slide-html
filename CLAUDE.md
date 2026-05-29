@@ -8,7 +8,7 @@
 
 **per-slide HTML × html2pptx 기반의 editable PPTX 생성기.** 슬라이드 한 장당 독립 HTML 파일(960pt × 540pt = LAYOUT_WIDE) → Playwright로 DOM의 computedStyle을 캡처 → `pptxgenjs`로 PPTX 객체 1:1 번역 → `output/<slug>-pptx/<slug>.pptx`. PowerPoint/Keynote에서 텍스트를 더블클릭으로 편집할 수 있는 진짜 .pptx (이미지 플래튼된 가짜 PPTX 아님).
 
-활성 테마는 `assets/design-systems/<preset>/` 가 결정하며 `init-project.sh <project> <preset>` 으로 선택, `/theme-init`로 새 프리셋 추가. 기본 프리셋은 **jangpm** (모노크롬 + 단일 `#4633E3` 인디고 액센트, Pretendard 9 weights).
+활성 테마는 `assets/design-systems/active.json`(SSOT)이 가리키는 프리셋이 결정한다 — `/slide` Step 0가 이를 읽어 선언하고, `init-project.sh`를 프리셋 인자 없이 호출하면 이 프리셋이 자동 선택된다. `init-project.sh <project> <preset>`로 명시 지정하면 그게 최우선. `/theme-init`은 새 프리셋을 구울 때 자동으로 active로 표기한다(`--no-set-active`로 끌 수 있음). active.json이 없으면 카탈로그 시드 기본값 **jangpm** (모노크롬 + 단일 `#4633E3` 인디고 액센트, Pretendard 9 weights)으로 폴백.
 
 ## 핵심 제약 (non-negotiable)
 

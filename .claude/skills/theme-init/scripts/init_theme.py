@@ -91,6 +91,10 @@ def main() -> int:
                     help="Overwrite an existing preset folder (preserves _fonts.css if present)")
     ap.add_argument("--fonts-prelude", type=Path, default=None,
                     help="Optional CSS file (typically @font-face) prepended to colors_and_type.css")
+    ap.add_argument("--set-active", action=argparse.BooleanOptionalAction, default=True,
+                    help="Mark this preset active in active.json so /slide + init-project.sh "
+                         "default to it (default: on). Use --no-set-active to only add it to "
+                         "the catalog without changing the active preset.")
     args = ap.parse_args()
 
     out_dir = args.presets_root / args.preset
@@ -204,9 +208,33 @@ def main() -> int:
          [sys.executable, str(SCRIPTS / "render_presets_readme.py"),
           "--presets-root", str(args.presets_root)])
 
+    # Step 11: mark this preset active (the SSOT /slide + init-project.sh read).
+    # "방금 적용한 디자인 시스템"이 곧 active가 되도록 — 이것이 빠지면 새 프리셋을
+    # 구워도 슬라이드가 조용히 옛 기본값으로 만들어지는 사고가 난다.
+    if args.set_active:
+        print("\n=== set_active ===")
+        active_path = args.presets_root / "active.json"
+        active_path.write_text(
+            json.dumps(
+                {
+                    "active": args.preset,
+                    "_comment": "활성 디자인 시스템 SSOT. init-project.sh가 프리셋 인자 없이 "
+                                "호출되면 이 값을 사용한다. /theme-init이 갱신한다.",
+                },
+                ensure_ascii=False,
+                indent=2,
+            ) + "\n",
+            encoding="utf-8",
+        )
+        print(f"active preset → {args.preset}  ({active_path})", file=sys.stderr)
+
     print(f"\n=== /theme-init complete ===")
     print(f"preset: {theme.get('display_name')} ({args.preset})")
     print(f"location: {out_dir}")
+    if args.set_active:
+        print(f"active: {args.preset} (이후 /slide·init-project.sh가 이 프리셋을 기본 사용)")
+    else:
+        print(f"active: unchanged (--no-set-active — 카탈로그에만 추가)")
     print(f"DESIGN.md: {out_dir / 'DESIGN.md'} (status: draft — review before /slide-plan use)")
     print(f"next (token tone only): bash .claude/skills/slide/scripts/init-project.sh <project> {args.preset}")
     print(f"next (brand layouts):   confirm DESIGN.md §5/§6, then run Phase 2 — "

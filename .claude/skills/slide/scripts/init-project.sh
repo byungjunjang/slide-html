@@ -21,20 +21,36 @@ set -e
 if [ -z "$1" ]; then
   echo "Usage: bash init-project.sh <project-name> [<design-system>]"
   echo "  project-name : 프로젝트 식별자 (e.g., q3-board-report)"
-  echo "  design-system: 디자인 시스템 프리셋 (default: jangpm)"
+  echo "  design-system: 디자인 시스템 프리셋 (생략 시 active.json의 active 프리셋, 없으면 jangpm)"
   exit 1
 fi
 
 PROJECT_NAME="$1"
-DESIGN_SYSTEM="${2:-jangpm}"
 
-# --- 경로 계산 ---
+# --- 경로 계산 (DS_ROOT는 active.json 조회 때문에 프리셋 결정보다 먼저) ---
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILL_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 TEMPLATES_DIR="$SKILL_DIR/templates"
 REPO_ROOT="$(cd "$SKILL_DIR/../../.." && pwd)"
 PROJECT_DIR="$REPO_ROOT/output/${PROJECT_NAME}-pptx"
 DS_ROOT="$SKILL_DIR/assets/design-systems"
+
+# --- 프리셋 결정: 명시 인자 > active.json(SSOT) > 폴백(jangpm) ---
+# 인자를 생략해도 "조용히 jangpm"으로 떨어지지 않고 active.json이 가리키는
+# 프리셋을 따른다. 무엇이/왜 선택됐는지 한 줄로 출력해 불일치를 즉시 드러낸다.
+ACTIVE_JSON="$DS_ROOT/active.json"
+if [ -n "$2" ]; then
+  DESIGN_SYSTEM="$2"
+  DS_REASON="명시 지정"
+elif [ -f "$ACTIVE_JSON" ]; then
+  DESIGN_SYSTEM="$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['active'])" "$ACTIVE_JSON")"
+  DS_REASON="active.json"
+else
+  DESIGN_SYSTEM="jangpm"
+  DS_REASON="폴백 기본값"
+fi
+echo "[design-system] ${DESIGN_SYSTEM} (${DS_REASON})"
+
 DS_SOURCE="$DS_ROOT/$DESIGN_SYSTEM"
 
 # --- 검증 ---

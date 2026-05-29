@@ -20,7 +20,23 @@ trigger: 슬라이드, PPT, 프레젠테이션, pptx, 발표 자료, 강의 슬�
 
 ## 워크플로우 (5단계, 순차)
 
-### 0. 경로 분기 — slide-plan 사용 여부 자동 감지
+### 0. 활성 디자인 시스템 로드 & 선언 (필수 — 가장 먼저)
+
+슬라이드를 한 장이라도 만들기 전에 **반드시** 활성 프리셋을 읽고 한 줄로 선언한다. 이 announce-게이트가 "잘못된 테마로 데크 전체를 만든 뒤에야 깨닫는" 사고를 시작 시점에 차단한다.
+
+```bash
+python3 -c "import json; r='.claude/skills/slide/assets/design-systems'; \
+a=json.load(open(f'{r}/active.json'))['active']; \
+t=json.load(open(f'{r}/{a}/theme.json')); \
+print(f\"[active design-system] {a} — accent {t['colors']['accent']}\")"
+```
+출력 예: `[active design-system] notion — accent #7C3AED` (active.json이 없으면 `jangpm` 폴백).
+
+- **활성 프리셋 SSOT는 `assets/design-systems/active.json` 한 곳**이다. `/theme-init`이 새 프리셋을 구우면 자동으로 이 값을 갱신한다.
+- `init-project.sh`를 **프리셋 인자 없이** 호출하면 이 active 프리셋이 자동 선택된다 (인자를 주면 그게 최우선).
+- 사용자가 말한 디자인 시스템과 active가 **다르면** 빌드 전에 멈추고 확인한다 — 사용자 의도가 우선이며, `init-project.sh <project> <preset>`로 명시 전달하거나 `/theme-init`으로 active를 바꾼다.
+
+### 0b. 경로 분기 — slide-plan 사용 여부 자동 감지
 
 이 스킬은 두 경로를 지원한다. `output/<project-name>-pptx/slide_plan.json` 존재 여부로 자동 분기:
 

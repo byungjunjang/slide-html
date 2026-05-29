@@ -1,0 +1,4 @@
+{
+  "active": "jangpm",
+  "_comment": "활성 디자인 시스템 SSOT. init-project.sh가 프리셋 인자 없이 호출되면 이 값을 사용한다. /theme-init이 새 프리셋을 구울 때 자동으로 갱신한다(--no-set-active로 끌 수 있음). 직접 바꾸려면 active 값만 교체."
+}

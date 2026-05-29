@@ -27,11 +27,21 @@ def _load_theme(theme_path: Path) -> dict | None:
         return None
 
 
-def _row(name: str, theme: dict) -> str:
+def _active_preset(presets_root: Path) -> str | None:
+    """Read the active-preset SSOT (active.json) if present."""
+    try:
+        data = json.loads((presets_root / "active.json").read_text(encoding="utf-8"))
+        return data.get("active")
+    except (OSError, json.JSONDecodeError):
+        return None
+
+
+def _row(name: str, theme: dict, active: str | None) -> str:
     display = theme.get("display_name", name)
     description = (theme.get("description") or "").replace("|", "\\|")
     accent = theme.get("colors", {}).get("accent", "—")
-    return f"| `{name}` | {display} | {description} | {accent} |"
+    mark = "●" if name == active else ""
+    return f"| {mark} | `{name}` | {display} | {description} | {accent} |"
 
 
 def render_readme(presets_root: Path) -> Path:
@@ -39,6 +49,7 @@ def render_readme(presets_root: Path) -> Path:
     if not presets_root.is_dir():
         raise FileNotFoundError(f"presets_root does not exist: {presets_root}")
 
+    active = _active_preset(presets_root)
     rows: list[str] = []
     for sub in sorted(presets_root.iterdir()):
         if not sub.is_dir():
@@ -46,19 +57,22 @@ def render_readme(presets_root: Path) -> Path:
         theme = _load_theme(sub / "theme.json")
         if theme is None:
             continue
-        rows.append(_row(sub.name, theme))
+        rows.append(_row(sub.name, theme, active))
 
     body = [
         "# 사용 가능한 디자인 시스템",
         "",
         "_이 파일은 `theme-init`이 자동 생성합니다. 직접 편집하지 마세요 — 다음 실행 시 덮어씁니다._",
         "",
-        "| 프리셋 | 표시명 | 설명 | 액센트 |",
-        "|---|---|---|---|",
+        f"활성 프리셋(●): **{active or '(active.json 없음 — jangpm 폴백)'}** "
+        "— `init-project.sh`를 프리셋 인자 없이 호출하면 이 프리셋이 선택됩니다.",
+        "",
+        "| 활성 | 프리셋 | 표시명 | 설명 | 액센트 |",
+        "|---|---|---|---|---|",
     ]
-    body.extend(rows if rows else ["| _(no presets found)_ |  |  |  |"])
+    body.extend(rows if rows else ["| | _(no presets found)_ |  |  |  |"])
     body.append("")
-    body.append("사용법: `bash .claude/skills/slide/scripts/init-project.sh <project> <preset>`")
+    body.append("사용법: `bash .claude/skills/slide/scripts/init-project.sh <project> [<preset>]`")
     body.append("")
 
     out = presets_root / "README.md"
