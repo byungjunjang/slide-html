@@ -19,20 +19,20 @@ Multiple validation errors found:
 - 표 셀의 하이라이트 컬럼:
   ```html
   <!-- ❌ -->
-  <p class="t-body" style="padding: 10pt 14pt; text-align: center; background: rgba(70,51,227,0.06); font-weight: 600;">중</p>
+  <p class="t-body tbl-hi" style="padding: 10pt 14pt; text-align: center; font-weight: 600;">중</p>
 
   <!-- ✅ -->
-  <div style="background: rgba(70,51,227,0.06); padding: 10pt 14pt;">
+  <div class="tbl-hi" style="padding: 10pt 14pt;">
     <p class="t-body" style="text-align: center; font-weight: 600;">중</p>
   </div>
   ```
 - 라벨 셀 (회색 배경):
   ```html
   <!-- ❌ -->
-  <p class="t-cap" style="padding: 8pt 12pt; font-weight: 600; background: #F5F5F4;">캔버스</p>
+  <p class="t-cap" style="padding: 8pt 12pt; font-weight: 600; background: var(--surface-alt);">캔버스</p>
 
   <!-- ✅ -->
-  <div style="background: #F5F5F4; padding: 8pt 12pt;">
+  <div style="background: var(--surface-alt); padding: 8pt 12pt;">
     <p class="t-cap" style="font-weight: 600;">캔버스</p>
   </div>
   ```
@@ -72,7 +72,7 @@ DIV element contains unwrapped text "Color Tokens"
   background: linear-gradient(135deg, var(--surface) 0%, var(--surface-alt) 100%);
 
   /* ✅ */
-  background: #F5F5F4;
+  background: var(--surface-alt);
   ```
 - bg-dots 패턴:
   ```css
@@ -87,7 +87,7 @@ DIV element contains unwrapped text "Color Tokens"
   <div style="background: radial-gradient(...); ..."></div>
 
   <!-- ✅ — 단색 원으로 대체 -->
-  <div style="background: #E8E5FC; border-radius: 50%; width: 280pt; height: 280pt;"></div>
+  <div style="background: var(--accent-soft); border-radius: 50%; width: 280pt; height: 280pt;"></div>
   ```
 
 ---
@@ -176,7 +176,7 @@ DIV element contains unwrapped text "Color Tokens"
 
 **에러 예**:
 ```
-Error: ENOENT: no such file or directory, open '/.../slides/design-system/assets/jangpm-character.png'
+Error: ENOENT: no such file or directory, open '/.../slides/design-system/assets/character.png'
 ```
 
 **원인**: 이미지 src 가 슬라이드 HTML 위치 기준이 아님. CSS 의 @import 와 달리 `<img src>` 는 HTML 파일 위치 기준.
@@ -185,10 +185,10 @@ Error: ENOENT: no such file or directory, open '/.../slides/design-system/assets
 
 ```html
 <!-- ❌ HTML이 slides/ 안에 있는데 design-system/ 으로 직접 -->
-<img src="design-system/assets/jangpm-character.png">
+<img src="design-system/assets/character.png">
 
 <!-- ✅ ../ 로 한 단계 위 -->
-<img src="../design-system/assets/jangpm-character.png">
+<img src="../design-system/assets/character.png">
 
 <!-- icons/ 폴더도 마찬가지 -->
 <img src="../icons/arrow-right.svg">

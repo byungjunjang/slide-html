@@ -20,12 +20,14 @@
 
 | 클래스 | 배경 | 보더 | 용도 |
 |---|---|---|---|
-| `.card` | #FFFFFF | 1px #E5E7EB | 기본 카드 |
-| `.card-accent` | #E8E5FC | 1px #4633E3 | 강조 카드 (페이지당 1개) |
-| `.card-alt` | #F5F5F4 | 1px #E5E7EB | 그룹 카드 |
-| `.card-dark` | #1A1A1A | none | 다크 카드 (안에 흰 텍스트) |
+| `.card` | surface | 1px border\* | 기본 카드 |
+| `.card-accent` | accent-soft | 1px accent\* | 강조 카드 (페이지당 1개) |
+| `.card-alt` | surface-alt | 1px border\* | 그룹 카드 |
+| `.card-dark` | text | none | 다크 카드 (안에 흰 텍스트) |
 
-모두 `border-radius: 12pt`, `padding: 18pt 20pt`.
+색은 모두 활성 프리셋 토큰. `.card-dark` 제외 `border-radius: 12pt`, `padding: 18pt 20pt`.
+
+\* 카드 chrome는 프리셋의 `surface.card_style`을 따른다: `hairline`=배경+1px 보더(에디토리얼 기본), `filled`=배경만(보더 없음), `borderless`=배경·보더 없이 패딩만(여백으로 구분). 직접 hex/보더를 박지 말고 `.card*` 헬퍼를 쓰면 프리셋 전환 시 자동 반영된다.
 
 ---
 
@@ -53,9 +55,9 @@
 
 | 클래스 | 용도 |
 |---|---|
-| `.rule` | 가로 1px 회색선 (E5E7EB) — 헤더 아래 디바이더 |
-| `.rule-accent` | 가로 2pt 인디고선 — 강조 디바이더 |
-| `.strip-accent` | 세로 3pt 인디고 strip — 좌측 accent 라벨용 (`::before` 대체) |
+| `.rule` | 가로 1px border 색 선 — 헤더 아래 디바이더 |
+| `.rule-accent` | 가로 2pt accent선 — 강조 디바이더 |
+| `.strip-accent` | 세로 3pt accent strip — 좌측 accent 라벨용 (`::before` 대체) |
 
 ---
 
@@ -64,26 +66,26 @@
 `<table>` 대신 div grid 사용 (html2pptx 가 더 안정적).
 
 ```html
-<div style="display: grid; grid-template-columns: 2fr 1fr 1fr; background: #E8E5FC;">
+<div style="display: grid; grid-template-columns: 2fr 1fr 1fr; background: var(--accent-soft);">
   <p class="t-cap c-accent" style="padding: 8pt 12pt; font-weight: 700;">지표</p>
   <p class="t-cap c-accent" style="padding: 8pt 12pt; font-weight: 700; text-align: center;">2025</p>
   <p class="t-cap c-accent" style="padding: 8pt 12pt; font-weight: 700; text-align: center;">2026</p>
 </div>
-<div style="display: grid; grid-template-columns: 2fr 1fr 1fr; border-bottom: 1px solid #E5E7EB;">
+<div style="display: grid; grid-template-columns: 2fr 1fr 1fr; border-bottom: 1px solid var(--border);">
   <p class="t-body" style="padding: 8pt 12pt;">매출</p>
   <p class="t-body" style="padding: 8pt 12pt; text-align: center;">48억</p>
   <p class="t-body" style="padding: 8pt 12pt; text-align: center;">58억</p>
 </div>
 ```
 
-**하이라이트 컬럼**: p에 직접 background 못 하므로 div wrap:
+**하이라이트 컬럼**: p에 직접 background 못 하므로 div wrap — `.tbl-hi` 헬퍼 사용 (활성 accent 6% 틴트 + 좌우 accent 보더, 표당 1개):
 ```html
-<div style="background: rgba(70,51,227,0.06); padding: 8pt 12pt;">
+<div class="tbl-hi" style="padding: 8pt 12pt;">
   <p class="t-body" style="text-align: center; font-weight: 700;">58억</p>
 </div>
 ```
 
-zebra row 는 grid div 의 background 로 OK: `background: #FAFAF9;`.
+zebra row 는 grid div 의 background 로 OK: `background: var(--bg);` (또는 `.tbl-zebra`).
 
 ---
 
@@ -94,7 +96,7 @@ zebra row 는 grid div 의 background 로 OK: `background: #FAFAF9;`.
 | `.ph-frame` | 회색 점선 프레임 (스크린샷 영역) |
 | `.ph-frame-accent` | 인디고 점선 프레임 (강조 슬롯, after) |
 
-배경은 순색 (`#F5F5F4` / `#E8E5FC`), 그라디언트 사용 안 함.
+배경은 순색 (`var(--surface-alt)` / `var(--accent-soft)`), 그라디언트 사용 안 함.
 
 ---
 
@@ -145,7 +147,9 @@ zebra row 는 grid div 의 background 로 OK: `background: #FAFAF9;`.
 | `.t-body-sec` | 12pt | 400 | 본문 secondary 색 |
 | `.t-cap` | 9pt | 500 | caption / annotation |
 | `.t-cap-up` | 9pt | 600 | UPPERCASE caption (라벨용) |
-| `.t-mono` | inherit | inherit | 모노스페이스 폰트 (코드/경로) |
+| `.t-mono` | inherit | inherit | 모노스페이스 폰트 (`--font-mono`, 코드/경로) |
+
+> 사이즈는 캔버스(960pt×540pt)에 calibrated된 고정값(잠금). 굵기 열은 jangpm 기준이며, 실제 굵기는 활성 프리셋의 타입스케일 weight를 따른다 (다른 프리셋은 해당 weight가 자동 적용). 임의 hex·폰트를 박지 말고 헬퍼 클래스나 `var(--*)`를 쓸 것.
 
 ---
 
@@ -211,7 +215,7 @@ zebra row 는 grid div 의 background 로 OK: `background: #FAFAF9;`.
 ### Insight bar (강조 박스)
 
 ```html
-<div style="background: #E8E5FC; border-radius: 12pt; padding: 14pt 20pt; text-align: center;">
+<div style="background: var(--accent-soft); border-radius: 12pt; padding: 14pt 20pt; text-align: center;">
   <p class="t-body c-text"><b>Highlight</b> — 짧은 강조 메시지.</p>
 </div>
 ```
@@ -220,6 +224,6 @@ zebra row 는 grid div 의 background 로 OK: `background: #FAFAF9;`.
 
 ```html
 <div style="position: absolute; bottom: 44pt; right: 56pt;">
-  <p class="t-cap-up" style="color: #6B7280;">12 / 41</p>
+  <p class="t-cap-up" style="color: var(--text-secondary);">12 / 41</p>
 </div>
 ```

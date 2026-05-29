@@ -58,8 +58,12 @@ SAFE_DEFAULTS: dict[str, Any] = {
         "warning":        "#D97706",
         "warning-soft":   "#FFFBEB",
     },
+    "surface": {
+        "card_style": "hairline",
+    },
     "typography": {
         "font-chain": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+        "font-mono":  "ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace",
         "display":    {"size": 56,   "weight": 800, "line-height": 1.08, "letter-spacing": -1.68, "transform": "none"},
         "display-sm": {"size": 40,   "weight": 800, "line-height": 1.10, "letter-spacing": -0.80, "transform": "none"},
         "headline":   {"size": 32,   "weight": 700, "line-height": 1.20, "letter-spacing": -0.64, "transform": "none"},

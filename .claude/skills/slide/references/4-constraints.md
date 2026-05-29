@@ -41,7 +41,7 @@ background: #FF6B6B;
 
 **자주 위반하는 곳**:
 - `.bg-dots` 같은 radial-gradient 도트 패턴 → 삭제 또는 `<img>` 텍스처
-- placeholder frame 의 `linear-gradient(135deg, #fff 0%, #f5f5f4 100%)` → 단색 `#F5F5F4`
+- placeholder frame 의 `linear-gradient(135deg, #fff 0%, #f5f5f4 100%)` → 단색 `var(--surface-alt)`
 - 캐릭터 뒤 그라디언트 글로우 → 단색 원 (`border-radius: 50%`)
 
 ---

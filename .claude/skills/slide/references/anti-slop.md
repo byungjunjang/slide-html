@@ -65,13 +65,13 @@ DESIGN.md §5 의 6 카테고리(Hero / Visual-Primary / Editorial / Density / S
 
 ---
 
-## 6. 카피·언어 (Voice 규약 — jangpm 디폴트)
+## 6. 카피·언어 (Voice 규약 — 활성 프리셋 디폴트)
 
 - ❌ "여러분", "당신", "저는" — 1·2인칭 금지 (third-person institutional)
 - ❌ 의문형 슬라이드 타이틀 (e.g., "AI는 정말 위협일까?") — 선언형으로 결론 진술 ("AI는 보조도구일 뿐 위협이 아니다.")
 - ❌ "~합니다만", "~할 수도 있습니다" hedging — analytical declarative ("~다", "~한다")
 - ❌ 50자 넘는 한 줄 본문 — 강제 줄바꿈 또는 카드 분리
-- ✅ 슬라이드 타이틀: 키워드만 `c-accent` 인라인 span (jangpm 시그니처)
+- ✅ 슬라이드 타이틀: 키워드만 `c-accent` 인라인 span (활성 프리셋 시그니처)
 
 ---
 
@@ -85,9 +85,9 @@ DESIGN.md §5 의 6 카테고리(Hero / Visual-Primary / Editorial / Density / S
 
 ---
 
-## 8. 캐릭터 / 데코 (jangpm 특수)
+## 8. 캐릭터 / 데코 (활성 프리셋 특수 — character는 preset-specific, assets.character 정의 시에만)
 
-- ❌ 본문 슬라이드에 jangpm-character 등장 — character는 cover 한정.
+- ❌ 본문 슬라이드에 프리셋 character 등장 — character는 cover 한정.
 - ❌ 표지 우측 캐릭터 자리에 도형(원/halo/dot) 데코 — 어색해진다. 캐릭터 또는 빈 공간만.
 - ❌ 모든 표지가 `01-title` 변형 — 23(친근) / 25(세로형) 중 데크 톤에 맞게 선택.
 
@@ -99,7 +99,7 @@ DESIGN.md §5 의 6 카테고리(Hero / Visual-Primary / Editorial / Density / S
 - ❌ section eyebrow ("SECTION 02 · 핵심") 폰트·색 슬라이드별 변동.
 - ❌ gm-band 어떤 슬라이드는 있고 어떤 슬라이드는 없는데 일관 기준 없음.
 - ✅ chrome (header eyebrow + page counter + footer/gm-band)는 모든 슬라이드 통일 — preset의 시그니처.
-- ✅ body 영역(시각 주역)만 다양화 — chrome 통일 + body 다양 = jangpm 톤 유지하면서 다양성 회복.
+- ✅ body 영역(시각 주역)만 다양화 — chrome 통일 + body 다양 = 프리셋 톤 유지하면서 다양성 회복.
 
 ---
 
@@ -109,31 +109,31 @@ LLM이 데크 작성을 마치고 빌드 직전:
 
 1. 카테고리 분포 카운트 — Hero/Visual-Primary/Editorial/Density/Sequence/Narrative 별로 몇 장씩
 2. 위 §1 ~ §9 체크리스트 항목 위반 여부 점검
-3. **§11 jangpm 시그니처 self-check** — preset 정체성 보존 확인
+3. **§11 활성 프리셋 시그니처 self-check** — preset 정체성 보존 확인
 4. **§12 미세 서식 self-check** — `references/text-formatting-rules.md` 통과
 5. 위반 발견 시 슬라이드 재할당 또는 어휘 교체
 6. 재빌드 후 PPTX 검증
 
-**한 항목이라도 ❌면 빌드를 mark complete 하지 말 것**. 위반은 필연적으로 "매번 비슷한 패턴" 또는 "jangpm 톤 옅어짐" 결과로 이어진다.
+**한 항목이라도 ❌면 빌드를 mark complete 하지 말 것**. 위반은 필연적으로 "매번 비슷한 패턴" 또는 "프리셋 톤 옅어짐" 결과로 이어진다.
 
 ---
 
-## 11. jangpm 시그니처 self-check (preset 정체성)
+## 11. 활성 프리셋 시그니처 self-check (preset 정체성)
 
-> 새 어휘로 작곡한 슬라이드도 jangpm 톤이 살아 있어야 한다. 어휘 다양성은 늘리되 **preset 정체성은 모든 슬라이드에서 보존**.
+> 새 어휘로 작곡한 슬라이드도 활성 프리셋 톤이 살아 있어야 한다. 어휘 다양성은 늘리되 **preset 정체성은 모든 슬라이드에서 보존**.
 
 ### 데크 전체 체크
 
 - [ ] **모든 본문 슬라이드 chrome 동일**: top eyebrow + page counter + .rule divider 위치/스타일이 N장 모두 일치
 - [ ] **모든 본문 슬라이드가 anchor 보일러플레이트에서 chrome 골격 복사**: §5 어휘 표의 anchor 컬럼 따랐는지
 - [ ] **Density 카테고리 50% 이하** (절대 cap). 카테고리 분포는 양 권장하지 않음 — 어휘 다양성·변형 자유도가 우선. 50% 안 넘기면 자유
-- [ ] **jangpm 토큰만 사용**: `colors_and_type.css` 변수 + `_pptx-slide.css` 헬퍼만. 임의 hex / 임의 폰트 / 외부 색 ❌
-- [ ] **single-accent 정책**: accent 색은 `#4633E3` 인디고만. 슬라이드별 임의 accent 색 ❌
+- [ ] **활성 프리셋 토큰만 사용**: `colors_and_type.css` 변수 + `_pptx-slide.css` 헬퍼만. 임의 hex / 임의 폰트 / 외부 색 ❌
+- [ ] **single-accent 정책**: accent 색은 활성 프리셋의 단일 accent 토큰만 (jangpm 기본: 인디고 `#4633E3`). 슬라이드별 임의 accent 색 ❌
 - [ ] **monochrome 무드**: 전체 데크가 warm off-white 배경 + indigo accent로 통일. 다크 배경은 closing/terminal 만
 
 ### 슬라이드별 시그니처 1개 이상
 
-각 본문 슬라이드는 다음 jangpm 시그니처 중 **1개 이상** 포함:
+각 본문 슬라이드는 다음 활성 프리셋 시그니처 중 **1개 이상** 포함:
 
 - [ ] 슬라이드 타이틀의 키워드 인라인 c-accent (`<h2 class="t-h2">...<span class="c-accent">키워드</span>...</h2>`)
 - [ ] `tbl-row`/`tbl-cell` div grid 표 (Density 카테고리)
@@ -141,7 +141,7 @@ LLM이 데크 작성을 마치고 빌드 직전:
 - [ ] `number-circle` / `number-circle-lg` 번호 패턴 (line-height = 컨테이너 height 의무)
 - [ ] `gm-band` 한 줄 인사이트
 - [ ] `t-cap-up` uppercase eyebrow (chrome 또는 카드 헤드)
-- [ ] Pretendard 9 weights 활용 (가벼운 본문 + 굵은 강조 대비)
+- [ ] 프리셋 폰트의 weight 다양성 활용 (가벼운 본문 + 굵은 강조 대비)
 
 ### 시그니처 0개 슬라이드 = ❌
 
@@ -149,7 +149,7 @@ LLM이 데크 작성을 마치고 빌드 직전:
 
 ### Hero/Editorial 카테고리 예외
 
-- Hero/Impact 슬라이드는 chrome 간소화 가능 (mega-quote, dramatic-type 등) — 단 anchor의 메타 표기(JANGPM × ... · EP.NN, 페이지 번호) 패턴은 유지
+- Hero/Impact 슬라이드는 chrome 간소화 가능 (mega-quote, dramatic-type 등) — 단 anchor의 메타 표기(활성 프리셋 명 × ... · EP.NN, 페이지 번호) 패턴은 유지
 - Editorial 카테고리는 chrome 그대로 + body만 magazine-style — 시그니처 자동 보존
 
 ---

@@ -4,6 +4,13 @@ Placeholder grammar:
     {{TOKEN:<dotted.path>}}              — raw token value
     {{TOKEN:<dotted.path>|<filter>}}     — value run through a named filter
     {{IF:<dotted.path>}}...{{/IF}}      — keep block iff path resolves to truthy
+    {{IFEQ:<dotted.path>:<value>}}...{{/IFEQ}}
+                                         — keep block iff str(path) == value
+                                           (value-switch; e.g. surface.card_style)
+    {{IFNEQ:<dotted.path>:<value>}}...{{/IFNEQ}}
+                                         — keep block iff path resolves AND
+                                           str(path) != value (complement of IFEQ;
+                                           both drop when the path is missing)
 
 Supported filters:
     rgb       — hex string  → "r, g, b" decimal tuple (for rgba() literals)
@@ -23,6 +30,12 @@ from typing import Any
 
 _PLACEHOLDER_RE = re.compile(r"\{\{TOKEN:([a-zA-Z0-9_.\-]+)(?:\|([a-z]+))?\}\}")
 _BLOCK_RE = re.compile(r"\{\{IF:([a-zA-Z0-9_.\-]+)\}\}(.*?)\{\{/IF\}\}", re.DOTALL)
+_IFEQ_RE = re.compile(
+    r"\{\{IFEQ:([a-zA-Z0-9_.\-]+):([a-zA-Z0-9_.\-]+)\}\}(.*?)\{\{/IFEQ\}\}", re.DOTALL
+)
+_IFNEQ_RE = re.compile(
+    r"\{\{IFNEQ:([a-zA-Z0-9_.\-]+):([a-zA-Z0-9_.\-]+)\}\}(.*?)\{\{/IFNEQ\}\}", re.DOTALL
+)
 
 
 def _lookup(theme: dict[str, Any], dotted: str) -> Any:
@@ -75,11 +88,35 @@ def _format(value: Any, fmt: str | None) -> str:
 
 
 def _render_blocks(tpl_text: str, theme: dict[str, Any]) -> str:
-    """Resolve {{IF:dotted.path}}...{{/IF}} blocks before token substitution.
+    """Resolve {{IFEQ}} value-switches and {{IF}} truthy blocks before token sub.
 
-    Block kept (without wrappers) if path resolves to a truthy value.
-    Block removed entirely if path is missing or resolves to None / "" / [] / {}.
+    {{IFEQ:path:value}}: body kept iff str(lookup(path)) == value (exact match);
+        a missing path resolves to "not equal" → removed (mirrors {{IF}}).
+    {{IF:path}}: body kept iff path resolves to a truthy value; removed if the
+        path is missing or resolves to None / "" / [] / {}.
+
+    Inner {{TOKEN}} placeholders inside a surviving block are left untouched here
+    and resolved by the subsequent token-substitution pass in render().
     """
+    def _sub_ifeq(match: re.Match[str]) -> str:
+        path, expected, body = match.group(1), match.group(2), match.group(3)
+        try:
+            actual = _lookup(theme, path)
+        except KeyError:
+            return ""
+        return body if str(actual) == expected else ""
+
+    def _sub_ifneq(match: re.Match[str]) -> str:
+        path, expected, body = match.group(1), match.group(2), match.group(3)
+        try:
+            actual = _lookup(theme, path)
+        except KeyError:
+            return ""
+        return body if str(actual) != expected else ""
+
+    tpl_text = _IFEQ_RE.sub(_sub_ifeq, tpl_text)
+    tpl_text = _IFNEQ_RE.sub(_sub_ifneq, tpl_text)
+
     def _sub(match: re.Match[str]) -> str:
         path, body = match.group(1), match.group(2)
         try:

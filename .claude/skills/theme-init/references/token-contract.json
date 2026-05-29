@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "slide-svg/theme-init/token-contract/v1",
-  "title": "slide-svg theme token contract v1",
-  "description": "Locked token NAMES for slide-svg themes. Values are theme-specific and provided via theme-active.json. Adding/removing names is a major version bump.",
+  "$id": "slide-html/theme-init/token-contract/v1",
+  "title": "slide-html theme token contract v1",
+  "description": "Locked token NAMES for slide-html themes. Values are theme-specific and provided via the preset's theme.json. Adding/removing names is a major version bump.",
   "type": "object",
-  "required": ["version", "name", "colors", "typography", "radius", "stroke", "spacing", "assets", "voice"],
+  "required": ["version", "name", "colors", "surface", "typography", "radius", "stroke", "spacing", "assets", "voice"],
   "additionalProperties": false,
   "properties": {
     "version": { "const": "1.0" },
@@ -45,14 +45,31 @@
         "warning-soft":    { "$ref": "#/$defs/hex" }
       }
     },
+    "surface": {
+      "type": "object",
+      "description": "Surface / container treatment. Distinct from colors.surface (the fill hex) — this group governs HOW cards & tiles are chromed.",
+      "required": ["card_style"],
+      "additionalProperties": false,
+      "properties": {
+        "card_style": {
+          "type": "string",
+          "enum": ["filled", "hairline", "borderless"],
+          "description": "Card & feature-tile chrome. hairline = surface fill + 1px border (editorial default, jangpm). filled = solid fill, no border (flatter). borderless = no fill / no border, content separated by whitespace only."
+        }
+      }
+    },
     "typography": {
       "type": "object",
-      "required": ["font-chain", "display", "display-sm", "headline", "title", "body", "caption", "label"],
+      "required": ["font-chain", "font-mono", "display", "display-sm", "headline", "title", "body", "caption", "label"],
       "additionalProperties": false,
       "properties": {
         "font-chain": {
           "type": "string",
           "description": "Full CSS font-family chain with fallbacks. Written verbatim into every SVG <text> font-family attribute."
+        },
+        "font-mono": {
+          "type": "string",
+          "description": "Monospace font-family chain for code / terminal / numeric-tabular contexts (e.g. .t-mono, code, --font-mono)."
         },
         "display":    { "$ref": "#/$defs/typeScale", "description": "Title slide large text." },
         "display-sm": { "$ref": "#/$defs/typeScale", "description": "Hero stat, closing accent." },

@@ -19,8 +19,12 @@
     "warning": "#D97706",
     "warning-soft": "#FFFBEB"
   },
+  "surface": {
+    "card_style": "hairline"
+  },
   "typography": {
     "font-chain": "'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Segoe UI', Roboto, sans-serif",
+    "font-mono": "'SF Mono', 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace",
     "display": {
       "size": 56,
       "weight": 800,

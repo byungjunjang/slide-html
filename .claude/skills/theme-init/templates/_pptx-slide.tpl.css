@@ -22,10 +22,12 @@ html, body {
 /* GM (governing message) — bottom centered text */
 .gm-band     { position: absolute; bottom: 18pt; left: 56pt; right: 56pt; text-align: center; }
 
-/* card */
-.card        { background: {{TOKEN:colors.surface}}; border: 1px solid {{TOKEN:colors.border}}; border-radius: 12pt; padding: 18pt 20pt; }
-.card-accent { background: {{TOKEN:colors.accent-soft}}; border: 1px solid {{TOKEN:colors.accent}}; border-radius: 12pt; padding: 18pt 20pt; }
-.card-alt    { background: {{TOKEN:colors.surface-alt}}; border: 1px solid {{TOKEN:colors.border}}; border-radius: 12pt; padding: 18pt 20pt; }
+/* card — chrome governed by surface.card_style:
+   hairline = fill + 1px border (editorial default); filled = fill, no border;
+   borderless = no fill / no border (content separated by whitespace only). */
+.card        { {{IFNEQ:surface.card_style:borderless}}background: {{TOKEN:colors.surface}}; {{/IFNEQ}}{{IFEQ:surface.card_style:hairline}}border: 1px solid {{TOKEN:colors.border}}; {{/IFEQ}}{{IFNEQ:surface.card_style:borderless}}border-radius: 12pt; {{/IFNEQ}}padding: 18pt 20pt; }
+.card-accent { {{IFNEQ:surface.card_style:borderless}}background: {{TOKEN:colors.accent-soft}}; {{/IFNEQ}}{{IFEQ:surface.card_style:hairline}}border: 1px solid {{TOKEN:colors.accent}}; {{/IFEQ}}{{IFNEQ:surface.card_style:borderless}}border-radius: 12pt; {{/IFNEQ}}padding: 18pt 20pt; }
+.card-alt    { {{IFNEQ:surface.card_style:borderless}}background: {{TOKEN:colors.surface-alt}}; {{/IFNEQ}}{{IFEQ:surface.card_style:hairline}}border: 1px solid {{TOKEN:colors.border}}; {{/IFEQ}}{{IFNEQ:surface.card_style:borderless}}border-radius: 12pt; {{/IFNEQ}}padding: 18pt 20pt; }
 .card-dark   { background: {{TOKEN:colors.text}}; border-radius: 12pt; padding: 18pt 20pt; }
 
 /* badges (div-wrapped: bg on div, p inside) */
@@ -56,7 +58,7 @@ html, body {
 
 /* terminal */
 .term-window { background: {{TOKEN:colors.text}}; border-radius: 8pt; padding: 0; overflow: hidden; }
-.term-chrome { background: #2A2A2A; padding: 8pt 12pt; }
+.term-chrome { background: rgba(255, 255, 255, 0.07); padding: 8pt 12pt; }
 .term-dot    { display: inline-block; width: 9pt; height: 9pt; border-radius: 50%; margin-right: 4pt; }
 .term-body   { background: {{TOKEN:colors.text}}; padding: 14pt 16pt; }
 
@@ -77,18 +79,22 @@ html, body {
 .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12pt; }
 .grid-6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12pt; }
 
-/* typography classes — for use INSIDE p/h* (override colors_and_type.css rem with pt) */
-.t-display  { font-size: 42pt; font-weight: 800; line-height: 1.05; letter-spacing: -1pt; color: {{TOKEN:colors.text}}; }
-.t-display2 { font-size: 36pt; font-weight: 800; line-height: 1.05; letter-spacing: -1pt; color: {{TOKEN:colors.text}}; }
-.t-h1       { font-size: 30pt; font-weight: 800; line-height: 1.1;  letter-spacing: -0.6pt; color: {{TOKEN:colors.text}}; }
-.t-h2       { font-size: 24pt; font-weight: 700; line-height: 1.2;  letter-spacing: -0.4pt; color: {{TOKEN:colors.text}}; }
-.t-h3       { font-size: 18pt; font-weight: 700; line-height: 1.25; color: {{TOKEN:colors.text}}; }
-.t-title    { font-size: 14pt; font-weight: 600; line-height: 1.3;  color: {{TOKEN:colors.text}}; }
-.t-body     { font-size: 12pt; font-weight: 400; line-height: 1.5;  color: {{TOKEN:colors.text}}; }
-.t-body-sec { font-size: 12pt; font-weight: 400; line-height: 1.5;  color: {{TOKEN:colors.text-secondary}}; }
-.t-cap      { font-size: 9pt;  font-weight: 500; line-height: 1.4;  color: {{TOKEN:colors.text-secondary}}; }
-.t-cap-up   { font-size: 9pt;  font-weight: 600; line-height: 1.4;  color: {{TOKEN:colors.text-secondary}}; letter-spacing: 0.4pt; text-transform: uppercase; }
-.t-mono     { font-family: 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace; }
+/* typography classes — for use INSIDE p/h* (override colors_and_type.css rem with pt).
+   Sizes / line-height / letter-spacing are canvas-calibrated (960pt×540pt) literals and
+   stay locked; font-weight follows the theme type-scale step it maps to so a preset's
+   weight intent is honored. t-h1 tracks display weight (heavy-heading tier); t-cap-up
+   maps to the label step (uppercase eyebrow). */
+.t-display  { font-size: 42pt; font-weight: {{TOKEN:typography.display.weight}}; line-height: 1.05; letter-spacing: -1pt; color: {{TOKEN:colors.text}}; }
+.t-display2 { font-size: 36pt; font-weight: {{TOKEN:typography.display-sm.weight}}; line-height: 1.05; letter-spacing: -1pt; color: {{TOKEN:colors.text}}; }
+.t-h1       { font-size: 30pt; font-weight: {{TOKEN:typography.display.weight}}; line-height: 1.1;  letter-spacing: -0.6pt; color: {{TOKEN:colors.text}}; }
+.t-h2       { font-size: 24pt; font-weight: {{TOKEN:typography.headline.weight}}; line-height: 1.2;  letter-spacing: -0.4pt; color: {{TOKEN:colors.text}}; }
+.t-h3       { font-size: 18pt; font-weight: {{TOKEN:typography.headline.weight}}; line-height: 1.25; color: {{TOKEN:colors.text}}; }
+.t-title    { font-size: 14pt; font-weight: {{TOKEN:typography.title.weight}}; line-height: 1.3;  color: {{TOKEN:colors.text}}; }
+.t-body     { font-size: 12pt; font-weight: {{TOKEN:typography.body.weight}}; line-height: 1.5;  color: {{TOKEN:colors.text}}; }
+.t-body-sec { font-size: 12pt; font-weight: {{TOKEN:typography.body.weight}}; line-height: 1.5;  color: {{TOKEN:colors.text-secondary}}; }
+.t-cap      { font-size: 9pt;  font-weight: {{TOKEN:typography.caption.weight}}; line-height: 1.4;  color: {{TOKEN:colors.text-secondary}}; }
+.t-cap-up   { font-size: 9pt;  font-weight: {{TOKEN:typography.label.weight}}; line-height: 1.4;  color: {{TOKEN:colors.text-secondary}}; letter-spacing: 0.4pt; text-transform: uppercase; }
+.t-mono     { font-family: {{TOKEN:typography.font-mono}}; }
 
 /* color modifiers */
 .c-accent     { color: {{TOKEN:colors.accent}}; }
@@ -134,9 +140,9 @@ html, body {
 .btn-cta-sq  { display: inline-block; background: {{TOKEN:colors.accent}}; border-radius: 8pt;    padding: 11pt 22pt; }
 .btn-outline { display: inline-block; background: {{TOKEN:colors.surface}}; border: 1.5px solid {{TOKEN:colors.accent}}; border-radius: 9999pt; padding: 10pt 22pt; }
 
-/* feature-board tiles — pastel/surface card variants */
-.feature-tile        { background: {{TOKEN:colors.surface-alt}}; border-radius: 14pt; padding: 20pt 22pt; }
-.feature-tile-accent { background: {{TOKEN:colors.accent-soft}}; border-radius: 14pt; padding: 20pt 22pt; }
+/* feature-board tiles — pastel/surface card variants (chrome dropped when borderless) */
+.feature-tile        { {{IFNEQ:surface.card_style:borderless}}background: {{TOKEN:colors.surface-alt}}; border-radius: 14pt; {{/IFNEQ}}padding: 20pt 22pt; }
+.feature-tile-accent { {{IFNEQ:surface.card_style:borderless}}background: {{TOKEN:colors.accent-soft}}; border-radius: 14pt; {{/IFNEQ}}padding: 20pt 22pt; }
 
 /* chip — eyebrow pill on a band (color inline when on dark band) */
 .chip { display: inline-block; border-radius: 9999pt; padding: 5pt 14pt; }

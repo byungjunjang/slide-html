@@ -23,7 +23,7 @@
 </div>
 
 <!-- Q 표시같은 작은 원 -->
-<div style="background: #4633E3; border-radius: 50%; width: 20pt; height: 20pt; text-align: center;">
+<div style="background: var(--accent); border-radius: 50%; width: 20pt; height: 20pt; text-align: center;">
   <p class="t-cap c-white" style="line-height: 20pt; font-weight: 800; font-size: 10pt;">Q</p>
 </div>
 ```
@@ -51,7 +51,7 @@
 ```html
 <!-- ✅ 권장 -->
 <div style="display: flex; gap: 10pt; align-items: center;">
-  <div class="number-circle-lg" style="background: #1A1A1A;">
+  <div class="number-circle-lg" style="background: var(--text);">
     <p class="t-cap c-white" style="line-height: 28pt; font-weight: 800;">01</p>
   </div>
   <p class="t-h3" style="line-height: 28pt;">Express</p>  <!-- 원 height와 동일 -->
@@ -74,13 +74,13 @@
 
 - `card` / `card-accent` / `card-alt` / `card-dark`: `18pt 20pt` 기본
 - 변형 시 ±4pt 이내 (예: `padding: 16pt`, `padding: 22pt`)
-- 카드 내부 첫 텍스트는 카드 top에서 18pt(padding) 떨어짐 — 이게 jangpm의 시그니처 호흡
+- 카드 내부 첫 텍스트는 카드 top에서 18pt(padding) 떨어짐 — 이게 활성 프리셋의 시그니처 호흡
 
 ### 카드 내 텍스트 vertical 정렬
 
 - 카드 텍스트는 기본 **top-aligned** (PPT에서 자연 흐름)
 - line-height: 1.5 (`t-body`) 또는 1.25 (`t-h3`) 이미 헬퍼 클래스에 박혀있음
-- vertical-center 강제 안 함 — top-aligned 가 jangpm의 인쇄물 톤에 맞음
+- vertical-center 강제 안 함 — top-aligned 가 활성 프리셋의 리포트(인쇄물) 톤에 맞음
 
 ### 카드 사이 간격
 
@@ -128,7 +128,7 @@
 
 ---
 
-## 5. 인라인 강조 (jangpm 시그니처)
+## 5. 인라인 강조 (활성 프리셋 시그니처)
 
 ### 키워드만 색 강조
 
@@ -142,7 +142,7 @@
 
 ### 규칙
 
-- 슬라이드 타이틀(`t-h2`)에서 키워드 1개만 `c-accent` 인라인 — jangpm 시그니처
+- 슬라이드 타이틀(`t-h2`)에서 키워드 1개만 `c-accent` 인라인 — 활성 프리셋 시그니처
 - 본문에서 굵기 강조는 `<b class="c-text">` (`t-body c-secondary` 위에서 검정으로 doubly contrast)
 - accent inline span은 슬라이드당 1-2 events 한도 (모든 단어 accent → ❌)
 - **inline `<span>`에 margin 절대 금지** (4 hard constraint 위반) — 줄바꿈/간격 필요시 `&nbsp;` 또는 별도 block 요소
@@ -153,8 +153,10 @@
 
 ```html
 <!-- ✅ 권장: 캐릭터 이미지 또는 빈 공간 -->
-<img src="../design-system/assets/jangpm-character.png" alt="Jangpm"
+<img src="../design-system/assets/character.png" alt="Character"
      style="position: absolute; top: 70pt; right: 60pt; width: 360pt; height: 360pt;">
+<!-- 캐릭터 에셋은 프리셋 종속 — 활성 프리셋이 assets.character를 정의한 경우에만 존재 -->
+
 
 <!-- ❌ 금지: halo / dot / 도형 데코 -->
 <!-- 이전 세션에서 제거됨 — 어색해진다 -->
@@ -200,7 +202,7 @@ closing은 항상 `closing-light` (21-closing-light) 사용. **`closing-big` (22
 - [ ] 카드 padding 18pt 20pt (또는 ±4pt 이내)
 - [ ] gm-band 가 있으면 bottom: 18pt + text-align: center
 - [ ] BR 직후 들여쓰기 공백 OK (auto-fix 처리되지만 깔끔하게)
-- [ ] 슬라이드 타이틀에 키워드 1개 c-accent 인라인 (jangpm 시그니처)
+- [ ] 슬라이드 타이틀에 키워드 1개 c-accent 인라인 (활성 프리셋 시그니처)
 - [ ] inline span에 margin 없음
 - [ ] 표지 우측 도형 데코 없음 (캐릭터 또는 빈 공간만)
 - [ ] closing은 항상 `closing-light` (다크 closing 사용 금지)

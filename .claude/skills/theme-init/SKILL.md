@@ -37,13 +37,14 @@ description: >
 - (a) 디자인 가이드 마크다운 (예: `.claude/skills/theme-init/examples/acme-warm.md`)
 - (b) huashu-design 이 만든 완결된 프리셋 폴더 (`brand-spec.md` + `colors_and_type.css` + `fonts/` 등)
 
-에이전트(LLM)가 가이드 전체를 읽고 다음 35개 토큰을 추출한다:
+에이전트(LLM)가 가이드 전체를 읽고 다음 토큰을 추출한다:
 
 | 그룹 | 토큰 |
 |---|---|
 | Identity | `name`, `display_name`, `description` |
 | Colors (17) | `bg`, `surface`, `surface-alt`, `text`, `text-secondary`, `text-tertiary`, `border`, `border-strong`, `accent`, `accent-soft`, `accent-ink`, `positive`, `positive-soft`, `negative`, `negative-soft`, `warning`, `warning-soft` |
-| Typography | `font-chain`, 7-step type scale (display, display-sm, headline, title, body, caption, label) — 각각 size/weight/line-height/letter-spacing/transform |
+| Surface | `card_style` (filled / hairline / borderless) — 카드·타일 chrome 처리 (기본 hairline) |
+| Typography | `font-chain`, `font-mono`, 7-step type scale (display, display-sm, headline, title, body, caption, label) — 각각 size/weight/line-height/letter-spacing/transform |
 | Radius (6) | xs, sm, md, lg, xl, pill |
 | Stroke (3) | icon, divider, emphasis |
 | Spacing (11) | 1, 2, 3, 4, 5, 6, 8, 10, 12, 14, 16 (8px grid) |
@@ -217,7 +218,9 @@ theme-init은 결과물을 slide 번들의 `assets/design-systems/` 안에 직�
 
 ## 알려진 제약
 
-- **타이포 사이즈는 토큰화 안 됨** — `_pptx-slide.css`의 pt 사이즈(.t-display 42pt 등)는 hardcoded. 캔버스 960pt × 540pt 에 calibrated 됐기 때문. 새 프리셋이 사이즈를 다르게 가져가려면 템플릿 직접 수정.
+- **타이포 사이즈·줄높이·자간은 토큰화 안 됨** — `_pptx-slide.css`의 pt 사이즈/line-height/letter-spacing(.t-display 42pt 등)은 캔버스 960pt × 540pt 에 calibrated 된 고정값(잠금). 단 **font-weight 는 타입스케일 토큰을 따른다** (프리셋의 weight 의도 반영 — 사이즈는 다르게 하려면 템플릿 직접 수정).
+- **카드 chrome 는 `surface.card_style` 토큰** — `hairline`(배경+1px 보더, 에디토리얼 기본 = jangpm) / `filled`(배경만) / `borderless`(배경·보더 없이 패딩만). `.card*`·`.feature-tile*` 헬퍼가 `_token_render.py`의 `{{IFEQ}}`/`{{IFNEQ}}` 스위치로 렌더된다.
+- **모노 폰트는 `typography.font-mono` 토큰** — `.t-mono` / `--font-mono` / code. 프리셋이 명시 안 하면 모노크롬 기본 mono 체인.
 - **01-title.html 의 한국어 카피·캐릭터 이미지 경로는 jangpm 특이** — 새 프리셋 첫 슬라이드는 색만 reskin. 카피·이미지는 프리셋 폴더에서 직접 수정.
 - **타이포·간격 등 일부 토큰은 가이드가 명시 안 하면 monochrome 기본값** — 의도. 잘못된 브랜드 값보다 안전한 기본값 우선.
 - **DESIGN.md는 draft 상태로 생성됨** — LLM 자동 본문 추출은 의도적으로 stub. 사용자 손글씨가 잘못된 자동 추출보다 안전 (slide-plan introduction guide §살아남은 염려점 #4).
