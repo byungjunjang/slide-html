@@ -1,81 +1,61 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<title>Three Point Slide — Jangpm</title>
-<link rel="stylesheet" href="../design-system/slides/_slide.css">
-<link rel="stylesheet" href="../_pptx-slide.css">
-<style>
-  /* Override _slide.css 100vh body: html2pptx needs body == canvas (1280x720px = 960x540pt) */
-  html, body { width: 1280px; height: 720px; padding: 0; margin: 0; min-height: 0; overflow: hidden; display: block; background: {{TOKEN:colors.bg}}; }
-</style>
-<style>
-  /* Override card padding for this layout — content-hugging cards */
-  .tp-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--card-radius);
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-self: start;
-  }
-  .tp-card.accent { background: var(--accent-soft); border-color: var(--accent); }
-  .tp-card > * { padding-left: var(--space-6); padding-right: var(--space-6); }
-  .tp-card > *:first-child { padding-top: var(--space-6); }
-  .tp-card > *:last-child { padding-bottom: var(--space-6); }
-  .tp-head { display:flex; align-items:center; gap: var(--space-3); }
-  .tp-title { font-size: 1.4rem; font-weight: 700; margin-top: var(--space-3); }
-  .tp-body { font-size: var(--fs-body); line-height: 1.6; margin-top: var(--space-3); }
-  .tp-rule { border: none; border-top: 1px solid var(--border); margin: var(--space-4) var(--space-6); padding: 0 !important; width: auto; }
-  .tp-rule.accent { border-color: rgba(70,51,227,0.2); }
-  .tp-caption { font-size: var(--fs-caption); color: var(--text-secondary); line-height: 1.4; margin-top: 0; }
-</style>
-</head>
+<html lang="ko"><head><meta charset="UTF-8"><title>11 Three Point</title>
+<link rel="stylesheet" href="../_pptx-slide.css"></head>
 <body>
-<section class="slide">
-  <div class="flex-row justify-between items-center">
-    <span class="label-caption">Section 02 · 핵심 프레임</span>
-    <span class="caption">04 / 12</span>
+
+<!-- HEADER -->
+<div style="position:absolute; top:42pt; left:56pt; right:56pt;">
+  <div class="row between" style="align-items: flex-end;">
+    <div>
+      <p class="t-cap-up" style="margin-bottom: 6pt;">SECTION 02 · 핵심 프레임</p>
+      <h2 class="t-h2">메타적 접근은 <span class="c-accent">세 개의 루프</span>로 구성됩니다</h2>
+    </div>
+    <p class="t-cap c-tertiary">04 / 12</p>
   </div>
-  <h2 class="headline" style="font-size: 2.3rem;">메타적 접근은 <span style="color: var(--accent);">세 개의 루프</span>로 구성됩니다.</h2>
+  <div class="rule" style="margin-top: 14pt;"></div>
+</div>
 
-  <!-- content group: vertically centered between title and GM -->
-  <div style="flex: 1; display: flex; align-items: center;">
-    <div class="grid-3" style="width: 100%; align-items: start;">
-      <div class="tp-card">
-        <div class="tp-head"><span class="number-badge">01</span><span class="label-caption">Observe</span></div>
-        <h3 class="tp-title">관찰 루프</h3>
-        <p class="tp-body" style="color: var(--text-secondary);">
-          프롬프트 결과를 평가하기 전에 <b style="color: var(--text);">나의 기대</b>부터 글로 적는다. 기대와 결과의 간격이 개선의 시작점.
-        </p>
-        <hr class="tp-rule">
-        <span class="tp-caption">예: "내가 원했던 건 사실 요약이 아니라 구조였다."</span>
+<!-- 3 CARDS -->
+<div style="position: absolute; top: 150pt; left: 56pt; right: 56pt;">
+  <div class="grid-3" style="align-items: start;">
+    <div class="card">
+      <div class="row center gap-3" style="margin-bottom: 12pt;">
+        <div class="number-circle"><p class="t-cap c-white" style="line-height: 22pt; font-weight: 800;">1</p></div>
+        <p class="t-cap-up">OBSERVE</p>
       </div>
+      <h3 class="t-h3" style="margin-bottom: 8pt;">관찰 루프</h3>
+      <p class="t-body c-secondary" style="margin-bottom: 12pt;">프롬프트 결과를 평가하기 전에 <b style="color: {{TOKEN:colors.text}};">나의 기대</b>부터 글로 적는다. 기대와 결과의 간격이 개선의 시작점.</p>
+      <div class="rule" style="margin-bottom: 10pt;"></div>
+      <p class="t-cap c-secondary">예: "내가 원했던 건 사실 요약이 아니라 구조였다."</p>
+    </div>
 
-      <div class="tp-card accent">
-        <div class="tp-head"><span class="number-badge">02</span><span class="label-caption" style="color: var(--accent);">Structure</span></div>
-        <h3 class="tp-title" style="color: var(--accent-ink);">구조화 루프</h3>
-        <p class="tp-body" style="color: var(--accent-ink);">
-          답이 아닌 <b>질문의 형태</b>를 설계한다. 좋은 질문은 거의 항상 재사용 가능하고, 팀에 전파 가능하다.
-        </p>
-        <hr class="tp-rule accent">
-        <span class="tp-caption" style="color: var(--accent-ink);">핵심: Prompt ≠ 도구 사용법, Prompt = 사고의 뼈대</span>
+    <div class="card-accent">
+      <div class="row center gap-3" style="margin-bottom: 12pt;">
+        <div class="number-circle"><p class="t-cap c-white" style="line-height: 22pt; font-weight: 800;">2</p></div>
+        <p class="t-cap-up c-accent">STRUCTURE</p>
       </div>
+      <h3 class="t-h3 c-accent-ink" style="margin-bottom: 8pt;">구조화 루프</h3>
+      <p class="t-body c-accent-ink" style="margin-bottom: 12pt;">답이 아닌 <b>질문의 형태</b>를 설계한다. 좋은 질문은 거의 항상 재사용 가능하고, 팀에 전파 가능하다.</p>
+      <div class="rule" style="margin-bottom: 10pt;"></div>
+      <p class="t-cap c-accent-ink">핵심: Prompt ≠ 도구 사용법, Prompt = 사고의 뼈대</p>
+    </div>
 
-      <div class="tp-card">
-        <div class="tp-head"><span class="number-badge">03</span><span class="label-caption">Delegate</span></div>
-        <h3 class="tp-title">위임 루프</h3>
-        <p class="tp-body" style="color: var(--text-secondary);">
-          AI에게 넘긴 판단이 <b style="color: var(--text);">내 책임 범위</b> 안인지 다시 본다. 위임은 자동화가 아니라 기준 설계다.
-        </p>
-        <hr class="tp-rule">
-        <span class="tp-caption">경고: 위임 없는 자동화 → 품질 표준의 상실</span>
+    <div class="card">
+      <div class="row center gap-3" style="margin-bottom: 12pt;">
+        <div class="number-circle"><p class="t-cap c-white" style="line-height: 22pt; font-weight: 800;">3</p></div>
+        <p class="t-cap-up">DELEGATE</p>
       </div>
+      <h3 class="t-h3" style="margin-bottom: 8pt;">위임 루프</h3>
+      <p class="t-body c-secondary" style="margin-bottom: 12pt;">AI에게 넘긴 판단이 <b style="color: {{TOKEN:colors.text}};">내 책임 범위</b> 안인지 다시 본다. 위임은 자동화가 아니라 기준 설계다.</p>
+      <div class="rule" style="margin-bottom: 10pt;"></div>
+      <p class="t-cap c-secondary">경고: 위임 없는 자동화 → 품질 표준의 상실</p>
     </div>
   </div>
+</div>
 
-  <p class="gm">세 루프를 의식적으로 돌릴 때, AI는 '빠른 도구'에서 <b>사고의 증폭기</b>로 바뀝니다.</p>
-</section>
-</body>
-</html>
+<!-- GM -->
+<div class="gm-band">
+  <p class="t-body c-secondary" style="font-weight: 700;">세 루프를 의식적으로 돌릴 때, AI는 '빠른 도구'에서 사고의 증폭기로 바뀝니다.</p>
+</div>
+
+</body></html>

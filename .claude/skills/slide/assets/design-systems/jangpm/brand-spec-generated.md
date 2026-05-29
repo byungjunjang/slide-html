@@ -49,7 +49,7 @@ schema_version: 1.0
 
 - **Icon pack (default):** tabler-outline
 
-- **Brand character:** `slide/assets/design-systems/jangpm/assets/jangpm-character.png`
+- **Brand character:** `.claude/skills/slide/assets/design-systems/jangpm/assets/jangpm-character.png`
 
 
 ---

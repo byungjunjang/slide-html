@@ -151,20 +151,51 @@ def main() -> int:
           "--out", str(out_dir / "brand-spec-generated.md")])
 
     # Step 8: boilerplate
+    boilerplate_dir = out_dir / "pptx-boilerplate"
     _run("render_boilerplate_slides",
          [sys.executable, str(SCRIPTS / "render_boilerplate_slides.py"),
           "--theme", str(theme_path),
-          "--out-dir", str(out_dir / "pptx-boilerplate")])
+          "--out-dir", str(boilerplate_dir)])
+
+    # Step 8b: snapshot the token-rendered baseline + write the Phase 2
+    # (Layout Authoring) manifest stub. This does NOT modify the token-render
+    # output — it only copies it into pptx-boilerplate/.stock/ so the brand
+    # layout-authoring step (author_layouts.py) can recompose idempotently
+    # from a recoverable baseline. See _authoring_common.py.
+    print("\n=== snapshot_stock + authoring manifest ===")
+    sys.path.insert(0, str(SCRIPTS))
+    import _authoring_common as ac  # noqa: E402
+    ac.snapshot_stock(boilerplate_dir, force=True)
+    manifest = ac.new_manifest(args.preset, boilerplate_dir)
+    ac.save_manifest(boilerplate_dir, manifest)
+    print(f"snapshot: {boilerplate_dir / ac.STOCK_DIRNAME} "
+          f"({len(manifest['data_set']) + len(manifest['identity_set'])} groups), "
+          f"manifest: {ac.manifest_path(boilerplate_dir)} (status: not_authored)",
+          file=sys.stderr)
 
     # Step 9: DESIGN.md draft (Layer 3 of slide-plan introduction).
     # Generates a draft with token-substituted frontmatter/colors/icons.
     # Non-token sections are left as guidance text — user reviews and
     # fills them, then flips frontmatter status: draft → confirmed.
-    _run("render_design_md",
-         [sys.executable, str(SCRIPTS / "render_design_md.py"),
-          "--theme", str(theme_path),
-          "--out", str(out_dir / "DESIGN.md"),
-          "--boilerplate-dir", str(out_dir / "pptx-boilerplate")])
+    #
+    # SAFETY: never clobber a hand-confirmed DESIGN.md. A re-run (--force) is
+    # for refreshing rendered assets (CSS/boilerplate), not for destroying the
+    # user's confirmed §5/§6 editorial vocabulary. Skip if status: confirmed.
+    design_md = out_dir / "DESIGN.md"
+    design_confirmed = (
+        design_md.exists()
+        and "status: confirmed" in design_md.read_text(encoding="utf-8")[:1200]
+    )
+    if design_confirmed:
+        print("\n=== render_design_md ===")
+        print(f"[init_theme] preserving confirmed DESIGN.md (not overwriting): {design_md}",
+              file=sys.stderr)
+    else:
+        _run("render_design_md",
+             [sys.executable, str(SCRIPTS / "render_design_md.py"),
+              "--theme", str(theme_path),
+              "--out", str(design_md),
+              "--boilerplate-dir", str(out_dir / "pptx-boilerplate")])
 
     # Step 10: refresh the slide bundle's preset catalog (README.md in
     # presets_root). This lets /slide and humans see the new preset without
@@ -177,7 +208,9 @@ def main() -> int:
     print(f"preset: {theme.get('display_name')} ({args.preset})")
     print(f"location: {out_dir}")
     print(f"DESIGN.md: {out_dir / 'DESIGN.md'} (status: draft — review before /slide-plan use)")
-    print(f"next: bash .claude/skills/slide/scripts/init-project.sh <project> {args.preset}")
+    print(f"next (token tone only): bash .claude/skills/slide/scripts/init-project.sh <project> {args.preset}")
+    print(f"next (brand layouts):   confirm DESIGN.md §5/§6, then run Phase 2 — "
+          f"python3 {SCRIPTS / 'author_layouts.py'} prep --preset {args.preset} ...")
     return 0
 
 

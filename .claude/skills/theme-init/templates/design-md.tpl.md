@@ -64,6 +64,8 @@ status: draft
 > **이 섹션은 시각 주역(visual main-character) 어휘**입니다. 슬라이드는 보일러플레이트 카탈로그에서 "복사"하는 게 아니라, 이 어휘에서 골라 preset 토큰으로 **즉흥 작곡**합니다.
 >
 > **위상**: 보일러플레이트는 어휘의 일부 — "메뉴"가 아니라 "참고 갤러리". 어휘 항목 옆에 매칭되는 보일러플레이트가 있으면 anchor로 링크하지만, 보일러플레이트가 없거나 살짝 다른 변형을 원하면 preset 토큰으로 **새로 작곡**합니다 (4 hard constraint만 통과).
+>
+> **brand 작곡**: identity 슬라이드(cover/section/closing/feature-board/hero/summary/agenda)는 theme-init **Phase 2 (Layout Authoring)** 에서 이미 브랜드 구성으로 재작곡되어 `pptx-boilerplate/*.html`에 박제됩니다 — html2pptx-safe 레이아웃 레시피는 `theme-init/references/layout-recipes.md` 참조.
 
 ### 6 카테고리
 

@@ -1,79 +1,75 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<title>KPI Dashboard — Jangpm</title>
-<link rel="stylesheet" href="../design-system/slides/_slide.css">
-<link rel="stylesheet" href="../_pptx-slide.css">
-<style>
-  /* Override _slide.css 100vh body: html2pptx needs body == canvas (1280x720px = 960x540pt) */
-  html, body { width: 1280px; height: 720px; padding: 0; margin: 0; min-height: 0; overflow: hidden; display: block; background: {{TOKEN:colors.bg}}; }
-</style>
-</head>
+<html lang="ko"><head><meta charset="UTF-8"><title>31 KPI Dashboard</title>
+<link rel="stylesheet" href="../_pptx-slide.css"></head>
 <body>
-<section class="slide">
-  <div class="flex-row justify-between items-center">
-    <span class="label-caption">Section 06 · 성과 측정</span>
-    <span class="caption">08 / 20</span>
-  </div>
-  <h2 class="headline" style="font-size: 2.3rem;">성과 측정 <span style="color: var(--accent);">지표</span>.</h2>
 
-  <!-- content group: vertically centered between title and GM -->
-  <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: var(--space-5);">
-  <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-3);">
+<div style="position:absolute; top:42pt; left:56pt; right:56pt;">
+  <div class="row between" style="align-items: flex-end;">
+    <div>
+      <p class="t-cap-up" style="margin-bottom: 6pt;">SECTION 06 · 성과 측정</p>
+      <h2 class="t-h2">성과 측정 <span class="c-accent">지표</span></h2>
+    </div>
+    <p class="t-cap c-tertiary">08 / 20</p>
+  </div>
+  <div class="rule" style="margin-top: 14pt;"></div>
+</div>
+
+<div style="position: absolute; top: 168pt; left: 56pt; right: 56pt;">
+  <div class="grid-5">
     <!-- KPI 1 -->
-    <div class="card" style="padding: var(--space-4); gap: var(--space-2);">
-      <span class="label-caption">고객 만족도</span>
-      <span class="stat-number" style="font-size: 2.3rem; color: var(--positive);">99.5<span style="font-size:0.55em;">점</span></span>
-      <div style="height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-top: 4px;">
-        <div style="height: 100%; width: 99.5%; background: var(--positive);"></div>
+    <div class="card" style="padding: 14pt 16pt;">
+      <p class="t-cap-up" style="margin-bottom: 8pt;">고객 만족도</p>
+      <p style="font-size: 24pt; font-weight: 800; color: {{TOKEN:colors.positive}}; line-height: 1; letter-spacing: -0.6pt;">99.5<span style="font-size: 13pt;">점</span></p>
+      <div style="height: 6pt; background: {{TOKEN:colors.border}}; border-radius: 3pt; overflow: hidden; margin: 10pt 0;">
+        <div style="height: 6pt; width: 99.5%; background: {{TOKEN:colors.positive}};"></div>
       </div>
-      <span class="caption">경고 기준 <b style="color:var(--text);">60점</b> 이하</span>
+      <p class="t-cap c-secondary">경고 기준 <b style="color: {{TOKEN:colors.text}};">60점</b> 이하</p>
     </div>
     <!-- KPI 2 -->
-    <div class="card card-accent" style="padding: var(--space-4); gap: var(--space-2);">
-      <span class="label-caption" style="color: var(--accent);">매출 성장률</span>
-      <span class="stat-number" style="font-size: 2.3rem;">+21<span style="font-size:0.55em;">%</span></span>
-      <div style="height: 6px; background: rgba(70,51,227,0.15); border-radius: 3px; overflow: hidden; margin-top: 4px;">
-        <div style="height: 100%; width: 100%; background: var(--accent);"></div>
+    <div class="card-accent" style="padding: 14pt 16pt;">
+      <p class="t-cap-up c-accent" style="margin-bottom: 8pt;">매출 성장률</p>
+      <p style="font-size: 24pt; font-weight: 800; color: {{TOKEN:colors.accent}}; line-height: 1; letter-spacing: -0.6pt;">+21<span style="font-size: 13pt;">%</span></p>
+      <div style="height: 6pt; background: rgba({{TOKEN:colors.accent|rgb}},0.15); border-radius: 3pt; overflow: hidden; margin: 10pt 0;">
+        <div style="height: 6pt; width: 100%; background: {{TOKEN:colors.accent}};"></div>
       </div>
-      <span class="caption" style="color: var(--accent-ink);">경고 기준 <b>+15%</b> 이하</span>
+      <p class="t-cap c-accent-ink">경고 기준 <b>+15%</b> 이하</p>
     </div>
     <!-- KPI 3 -->
-    <div class="card" style="padding: var(--space-4); gap: var(--space-2);">
-      <span class="label-caption">영업이익률</span>
-      <span class="stat-number" style="font-size: 2.3rem; color: var(--positive);">12<span style="font-size:0.55em;">%</span></span>
-      <div style="height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-top: 4px;">
-        <div style="height: 100%; width: 78%; background: var(--positive);"></div>
+    <div class="card" style="padding: 14pt 16pt;">
+      <p class="t-cap-up" style="margin-bottom: 8pt;">영업이익률</p>
+      <p style="font-size: 24pt; font-weight: 800; color: {{TOKEN:colors.positive}}; line-height: 1; letter-spacing: -0.6pt;">12<span style="font-size: 13pt;">%</span></p>
+      <div style="height: 6pt; background: {{TOKEN:colors.border}}; border-radius: 3pt; overflow: hidden; margin: 10pt 0;">
+        <div style="height: 6pt; width: 78%; background: {{TOKEN:colors.positive}};"></div>
       </div>
-      <span class="caption">경고 기준 <b style="color:var(--text);">9%</b> 이하</span>
+      <p class="t-cap c-secondary">경고 기준 <b style="color: {{TOKEN:colors.text}};">9%</b> 이하</p>
     </div>
     <!-- KPI 4 -->
-    <div class="card" style="padding: var(--space-4); gap: var(--space-2);">
-      <span class="label-caption">재고 회전율</span>
-      <span class="stat-number" style="font-size: 2.3rem; color: var(--warning);">5.5<span style="font-size:0.55em;">회</span></span>
-      <div style="height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-top: 4px;">
-        <div style="height: 100%; width: 62%; background: var(--warning);"></div>
+    <div class="card" style="padding: 14pt 16pt;">
+      <p class="t-cap-up" style="margin-bottom: 8pt;">재고 회전율</p>
+      <p style="font-size: 24pt; font-weight: 800; color: {{TOKEN:colors.warning}}; line-height: 1; letter-spacing: -0.6pt;">5.5<span style="font-size: 13pt;">회</span></p>
+      <div style="height: 6pt; background: {{TOKEN:colors.border}}; border-radius: 3pt; overflow: hidden; margin: 10pt 0;">
+        <div style="height: 6pt; width: 62%; background: {{TOKEN:colors.warning}};"></div>
       </div>
-      <span class="caption">경고 기준 <b style="color:var(--text);">4.8회</b> 이하</span>
+      <p class="t-cap c-secondary">경고 기준 <b style="color: {{TOKEN:colors.text}};">4.8회</b> 이하</p>
     </div>
     <!-- KPI 5 -->
-    <div class="card" style="padding: var(--space-4); gap: var(--space-2);">
-      <span class="label-caption">재구매율</span>
-      <span class="stat-number" style="font-size: 2.3rem; color: var(--negative);">40<span style="font-size:0.55em;">%</span></span>
-      <div style="height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-top: 4px;">
-        <div style="height: 100%; width: 40%; background: var(--negative);"></div>
+    <div class="card" style="padding: 14pt 16pt;">
+      <p class="t-cap-up" style="margin-bottom: 8pt;">재구매율</p>
+      <p style="font-size: 24pt; font-weight: 800; color: {{TOKEN:colors.negative}}; line-height: 1; letter-spacing: -0.6pt;">40<span style="font-size: 13pt;">%</span></p>
+      <div style="height: 6pt; background: {{TOKEN:colors.border}}; border-radius: 3pt; overflow: hidden; margin: 10pt 0;">
+        <div style="height: 6pt; width: 40%; background: {{TOKEN:colors.negative}};"></div>
       </div>
-      <span class="caption trend-negative"><b>경고 구간</b> · 기준 35% 근접</span>
+      <p class="t-cap c-negative"><b>경고 구간</b> · 기준 35% 근접</p>
     </div>
   </div>
 
-  <div class="insight-bar">
-    <p style="margin: 0;"><b>재구매율이 가장 취약한 지표</b> — 목표 미달 시 즉각 원인 분석과 개선 조치를 마련해 실행해야 합니다.</p>
+  <div class="card-alt" style="margin-top: 18pt; padding: 14pt 18pt;">
+    <p class="t-body c-secondary"><b style="color: {{TOKEN:colors.text}};">재구매율이 가장 취약한 지표</b> — 목표 미달 시 즉각 원인 분석과 개선 조치를 마련해 실행해야 합니다.</p>
   </div>
-  </div>
+</div>
 
-  <p class="gm">5개 지표 중 <b>4개 안정 / 1개 주의</b> — 개선 포인트가 명확할 때 행동이 빠릅니다.</p>
-</section>
-</body>
-</html>
+<div class="gm-band">
+  <p class="t-body c-secondary" style="font-weight: 700;">5개 지표 중 4개 안정 / 1개 주의 — 개선 포인트가 명확할 때 행동이 빠릅니다.</p>
+</div>
+
+</body></html>

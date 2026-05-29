@@ -59,8 +59,8 @@ def test_design_md_renders_full_template(tmp_path):
     assert "## 2. Palette & contrast behavior" in body
     assert "## 3. Typography hierarchy" in body
     assert "## 4. Spacing & density" in body
-    assert "## 5. Layout grammar" in body
-    assert "## 6. Header / body / footer structure" in body
+    assert "## 5. Visual vocabulary" in body
+    assert "## 6. Chrome" in body
     assert "## 7. Title / body / end page flow" in body
     assert "## 8. Chart / table treatment" in body
     assert "## 9. Icon system" in body

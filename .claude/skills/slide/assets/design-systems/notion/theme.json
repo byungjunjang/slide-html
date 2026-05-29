@@ -1,0 +1,117 @@
+{
+  "version": "1.0",
+  "colors": {
+    "bg": "#FFFFFF",
+    "surface": "#FFFFFF",
+    "surface-alt": "#F7F6F3",
+    "text": "#37352F",
+    "text-secondary": "#787774",
+    "text-tertiary": "#9B9A97",
+    "border": "#E9E9E7",
+    "border-strong": "#D3D1CB",
+    "accent": "#7C3AED",
+    "accent-soft": "#EDE9FE",
+    "accent-ink": "#5B21B6",
+    "positive": "#0F7B6C",
+    "positive-soft": "#DDEDEA",
+    "negative": "#E03E3E",
+    "negative-soft": "#FBE4E4",
+    "warning": "#D9730D",
+    "warning-soft": "#FAEBDD"
+  },
+  "typography": {
+    "font-chain": "'Inter', -apple-system, 'Segoe UI', 'Pretendard', sans-serif",
+    "display": {
+      "size": 56,
+      "weight": 800,
+      "line-height": 1.08,
+      "letter-spacing": -1.68,
+      "transform": "none"
+    },
+    "display-sm": {
+      "size": 40,
+      "weight": 800,
+      "line-height": 1.1,
+      "letter-spacing": -0.8,
+      "transform": "none"
+    },
+    "headline": {
+      "size": 32,
+      "weight": 700,
+      "line-height": 1.2,
+      "letter-spacing": -0.64,
+      "transform": "none"
+    },
+    "title": {
+      "size": 18.4,
+      "weight": 600,
+      "line-height": 1.3,
+      "letter-spacing": 0.0,
+      "transform": "none"
+    },
+    "body": {
+      "size": 15.2,
+      "weight": 400,
+      "line-height": 1.6,
+      "letter-spacing": 0.0,
+      "transform": "none"
+    },
+    "caption": {
+      "size": 12.8,
+      "weight": 500,
+      "line-height": 1.4,
+      "letter-spacing": 0.0,
+      "transform": "none"
+    },
+    "label": {
+      "size": 12.8,
+      "weight": 600,
+      "line-height": 1.4,
+      "letter-spacing": 0.64,
+      "transform": "uppercase"
+    }
+  },
+  "radius": {
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 12,
+    "xl": 20,
+    "pill": 9999
+  },
+  "stroke": {
+    "icon": 2,
+    "divider": 1,
+    "emphasis": 2
+  },
+  "spacing": {
+    "1": 4,
+    "2": 8,
+    "3": 12,
+    "4": 16,
+    "5": 20,
+    "6": 24,
+    "8": 32,
+    "10": 40,
+    "12": 48,
+    "14": 56,
+    "16": 64
+  },
+  "assets": {
+    "icon-pack-default": "tabler-outline",
+    "icon-pack-fallback": "tabler-filled",
+    "character": null
+  },
+  "voice": {
+    "tone": "친근하고 명료한 제품 설명",
+    "pov": "second-person direct",
+    "register": "Korean product briefing",
+    "forbidden_phrases": [
+      "여러분"
+    ],
+    "gm_style_hint": "한 줄로 제품 가치를 단언"
+  },
+  "name": "notion",
+  "display_name": "Notion",
+  "description": "Notion 브랜드 — 따뜻한 그레이 + 퍼플 액센트, 네이비 히어로 밴드 + 브랜드 스펙트럼."
+}

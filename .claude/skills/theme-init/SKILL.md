@@ -106,6 +106,67 @@ open test-<preset>.pptx
 - 폰트가 가이드의 primary 폰트인지
 - 보일러플레이트 8장 패턴이 새 프리셋 컬러로 reskin 됐는지
 
+## Phase 2 — Layout Authoring (브랜드 레이아웃 재작곡)
+
+> **위 워크플로우(Phase 1)는 token-render = 색·폰트만 바뀐 jangpm 골격이다.** Phase 2는 그 뒤에 붙는 **독립·멱등 단계**로, 에이전트(LLM)가 그 프리셋의 `DESIGN.md §5/§6` + 원본 `design.md`를 읽고 **아이덴티티 슬라이드를 브랜드 구성으로 재작곡**해 `pptx-boilerplate/*.html`을 제자리 덮어쓴다. Phase 1(token-render) 코드는 건드리지 않는다.
+
+### 위상 / 멱등성
+
+Phase 1이 끝나면 `init_theme.py`가 자동으로 token-render 결과를 `pptx-boilerplate/.stock/`에 스냅샷하고 `pptx-boilerplate/_authoring.json`(status: `not_authored`) 매니페스트를 만든다. Phase 2는 **항상 `.stock/` 베이스라인에서 출발**하므로 재실행해도 누적되지 않는다 (멱등). `init_theme.py --force` 재실행 시 `.stock/`이 갱신된다.
+
+### 작곡 대상 분류 (락 — 데이터 슬라이드 톤 보존)
+
+| 부류 | 패밀리 (기본) | Phase 2 동작 |
+|---|---|---|
+| **Identity (재작곡)** | cover(`01·23·25`), section(`09·07`), closing(`21`+허용 시 `22·08`), feature-board(`02·26·12`), hero-impact(`16·18`), summary(`17`), agenda(`10`) | 스톡 골격 버리고 **브랜드 구성으로 새로 그림** |
+| **Data (톤 유지)** | table·kpi·matrix·ref·terminal·exercise·image 등 나머지 22장 | **token-render 그대로 — 건드리지 않음** |
+
+분류는 `_authoring_common.py`의 `IDENTITY_FAMILIES`가 SSOT. 매니페스트 `identity_set`/`data_set`에 박제.
+
+### 입력
+
+- 프리셋 `DESIGN.md` §5 visual vocabulary / §6 chrome (`status: confirmed` 권장)
+- 원본 `design.md` (브랜드 가이드 원문)
+- `pptx-boilerplate/.stock/` (token-render baseline)
+- 프리셋 `_pptx-slide.css` 헬퍼 + `colors_and_type.css` 토큰
+- (선택) 사용자 스타일 지시 (`--direction "..."`)
+- (선택·강력권장) **레퍼런스 블루프린트** — 직전에 손으로 만든 그 브랜드 데크 (`--reference <path>`)
+
+### 보존 락 (작곡물도 통과 의무)
+
+960pt×540pt · per-slide 1:1 · 4 hard constraint · **html2pptx-safe(헬퍼 클래스 + 리터럴 hex만, 그라디언트 금지)** · editable text · 이모지 금지. → **scratch 프로젝트에서 `node build.mjs` 성공 + `unzip -t` 무결성 통과**해야 confirm. 레시피·좌표·헬퍼 카탈로그는 `references/layout-recipes.md`.
+
+### 작곡 + 리뷰 루프 (먼저 보여주고 → 피드백 → 수정)
+
+```bash
+# 1. prep — identity 슬라이드를 .stock 베이스라인으로 리셋 + 매니페스트 + source 기록
+#    DESIGN.md status가 confirmed가 아니면 경고(§5/§6는 Phase 2 입력). --require-confirmed로 강제.
+python3 .claude/skills/theme-init/scripts/author_layouts.py prep \
+  --preset <name> --design-md <preset>/DESIGN.md \
+  --original-design-md <원본> [--reference <손으로_만든_데크>] [--direction "..."] [--require-confirmed]
+
+# 2. (에이전트) DESIGN.md §5/§6 + design.md에서 시그니처 레이아웃 추출 → blueprint 기록
+#    → layout-recipes.md 레시피로 identity 슬라이드 HTML을 브랜드 구성으로 1차 작곡 (Write)
+
+# 3. validate — lint + node build.mjs + unzip -t (깨진 안은 사용자에게 안 보여줌)
+python3 .claude/skills/theme-init/scripts/author_layouts.py validate --preset <name>
+
+# 4. thumbs — scratch 렌더로 before(.stock)/after(authored) PNG 생성
+python3 .claude/skills/theme-init/scripts/author_layouts.py thumbs --preset <name>
+#    ▶ before/after 썸네일을 사용자에게 "우선 구성한 수정본" 레퍼런스로 제시 (검토 체크포인트, 의무 1회)
+
+# 5. 사용자 피드백 수집 → 반영해 재작곡 → 3~4 반복 (사용자 OK까지)
+
+# 6. confirm — validate 통과 + authored ≥ 1 전제로 status: confirmed + DESIGN.md provenance 기록
+#    (아무것도 작곡 안 했으면 거부. token-tone 그대로 confirm하려면 --allow-empty)
+python3 .claude/skills/theme-init/scripts/author_layouts.py confirm --preset <name>
+
+# (필요 시) restore — 작곡 취소, identity 슬라이드를 .stock으로 되돌림
+python3 .claude/skills/theme-init/scripts/author_layouts.py restore --preset <name>
+```
+
+**핵심 원칙**: 4번 썸네일 before/after 제시가 "먼저 보여주는 레퍼런스"고 5번이 피드백 루프다. validate(3)가 실패하면 썸네일로 못 가므로 깨진 안은 사용자에게 보여주지 않는다. data 슬라이드는 `git diff pptx-boilerplate/`에 identity stem만 잡혀야 한다.
+
 ## 산출물 구조
 
 ```
@@ -116,16 +177,14 @@ open test-<preset>.pptx
 ├── brand-spec-generated.md        # 인간 가독 토큰 레퍼런스
 ├── DESIGN.md                      # slide-plan Layer 3 — draft 상태로 생성, 사용자 검토 필요
 ├── _header.css 또는 _fonts.css   # 코멘트 헤더 (+ 옵션 @font-face)
-└── pptx-boilerplate/              # 8장 reskin 슬라이드
-    ├── 01-title.html
-    ├── 02-overview.html
-    ├── 03-color-grid.html
-    ├── 04-type-scale.html
-    ├── 05-card-kpi.html
-    ├── 06-table.html
-    ├── 07-quote-section.html
-    └── 08-closing-dark.html
+└── pptx-boilerplate/              # 37장 boilerplate (Phase 1 token-render)
+    ├── 01-title.html  …  37-image-2up.html
+    ├── .stock/                     # token-render baseline 스냅샷 (Phase 2 복원·diff용)
+    ├── _authoring.json             # Phase 2 매니페스트 (분류·blueprint·status·verification)
+    └── _thumbs/                    # Phase 2 리뷰 썸네일 (NN.stock.png / NN.authored.png)
 ```
+
+Phase 2(Layout Authoring)를 거치면 identity 슬라이드(`01·23·25·09·07·21·02·26·12·16·18·17·10` 등)는 브랜드 구성으로 재작곡되어 덮어써지고, data 슬라이드는 token-render 그대로 유지된다.
 
 추가로 `.claude/skills/slide/assets/design-systems/README.md` 카탈로그가 갱신된다 (모든 프리셋의 인덱스 표).
 
@@ -147,10 +206,14 @@ theme-init은 결과물을 slide 번들의 `assets/design-systems/` 안에 직�
 | `templates/_pptx-slide.tpl.css` | _pptx-slide.css 템플릿 |
 | `templates/brand-spec.tpl.md` | brand-spec-generated.md 템플릿 |
 | `templates/boilerplate/*.tpl.html` | 8장 보일러플레이트 템플릿 |
-| `scripts/init_theme.py` | 오케스트레이터 (이 스킬의 진입점) |
+| `scripts/init_theme.py` | Phase 1 오케스트레이터 (token-render + .stock 스냅샷 + 매니페스트 stub) |
 | `scripts/_token_render.py` | 공통 placeholder 치환 엔진 (TOKEN, IF, rgb/rem/csv/optional 필터) |
 | `scripts/render_presets_readme.py` | slide 번들의 `assets/design-systems/README.md` 카탈로그 자동 생성 |
-| `tests/` | 17개 골든·스모크 테스트 (renderer 회귀 방어) |
+| `scripts/author_layouts.py` | **Phase 2 하네스** — prep/classify/thumbs/validate/confirm/restore/status |
+| `scripts/_authoring_common.py` | Phase 2 분류·`.stock` 스냅샷·`_authoring.json` 매니페스트 SSOT |
+| `scripts/render_thumbs.mjs` | Phase 2 리뷰 썸네일 렌더러 (Playwright, scratch 프로젝트) |
+| `references/layout-recipes.md` | **html2pptx-safe 레이아웃 레시피** — 헬퍼 카탈로그 + 좌표 + 패밀리별 레시피 |
+| `tests/` | 골든·스모크 테스트 (renderer + Phase 2 회귀 방어) |
 
 ## 알려진 제약
 

@@ -1,6 +1,7 @@
-"""Render all 8 jangpm boilerplate slides; output must match golden.
+"""Render all 37 jangpm boilerplate slides; output must match golden.
 
-Same Level A / Level B equivalence pattern as the CSS tests.
+Goldens cover the full canonical set (01-08 baseline + 09-37 migrated from the
+legacy _slide.css system). Same Level A / Level B equivalence pattern as the CSS tests.
 """
 import re
 import subprocess
