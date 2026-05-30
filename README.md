@@ -155,6 +155,18 @@ R2/R5 위반 시 빌드 자동 차단 (exit 1). 자세한 사양은 `.claude/ski
 
 ---
 
+## 다이어그램 (diagram-design)
+
+슬라이드 주역이 **구조적 관계**일 때 — 아키텍처/구성도, 플로우차트·순서도, 시퀀스, 상태도, ER, 타임라인, 스윔레인, 사분면, 트리, 조직도, 계층, 벤, 피라미드·퍼널 — `/slide`가 [`diagram-design`](https://github.com/cathrynlavery/diagram-design) 스킬(14종)로 다이어그램을 그립니다. "이 슬라이드에 아키텍처 다이어그램 넣어줘"처럼 말하면 됩니다.
+
+자동 처리 흐름: ① diagram-design 문법으로 **다이어그램만 든 HTML**(`diagrams/<이름>.html`)을 작곡 — 색·폰트는 활성 프리셋 변수를 참조해 **덱과 한 몸**으로 보입니다 → ② `scripts/render-diagram.mjs`(Playwright)로 **투명 고해상도 PNG**(`images/<이름>.png`)로 렌더(한글·Pretendard 정확) → ③ 슬라이드에서 `<img src="../images/<이름>.png">` 슬롯으로 임베드.
+
+> **다이어그램은 "그림"입니다.** PowerPoint에 inline SVG를 편집 도형으로 넣을 방법이 없어(차트·사진과 동일) 래스터 이미지로 들어갑니다 — 도형 안 텍스트는 더블클릭 편집 불가, 슬라이드의 나머지 텍스트는 평소처럼 편집됩니다. 문구 수정은 `diagrams/<이름>.html`을 고쳐 다시 렌더. 전체 계약은 `.claude/skills/slide/references/diagram-slots.md` 참조.
+>
+> claude.ai에 `.claude/skills/slide/`만 zip 업로드하는 경우, 다이어그램 작곡 문법을 쓰려면 `.claude/skills/diagram-design/` 폴더도 함께 포함하세요(렌더러 `render-diagram.mjs`는 slide 폴더 안에 있습니다).
+
+---
+
 ## claude.ai에 단독 업로드하기
 
 이 프로젝트의 `/slide` 스킬은 **`.claude/skills/slide/` 폴더만 zip으로 묶어 claude.ai에 그대로 업로드**할 수 있게 자기완결화되어 있습니다. 외부 MCP 서버나 다른 스킬 폴더를 참조하지 않으며, 변환 엔진(`export_deck_pptx.mjs` + `html2pptx.js`), 디자인 시스템(jangpm + acme-warm + Pretendard 폰트), 보일러플레이트 37개가 모두 폴더 안에 들어 있습니다 (~21MB).
@@ -293,6 +305,7 @@ A. 안 끼어듭니다. 각 요청 = `output/<주제>-pptx/` 독립 폴더로 �
 ## 라이선스 & 기여
 
 - **라이선스:** 본 저장소는 [alchaincyf/huashu-design](https://github.com/alchaincyf/huashu-design)의 **Personal-Use License를 계승**합니다 — 개인·학습·비상업 용도에 한해 자유롭게 사용 가능, **상업적 이용은 금지**. 자세한 조건은 [`LICENSE`](./LICENSE) 참조.
+- **다이어그램 스킬:** `/slide`의 다이어그램 기능은 [cathrynlavery/diagram-design](https://github.com/cathrynlavery/diagram-design)(Cathryn Lavery, **MIT**)을 vendoring 한 것입니다. 원본 라이선스는 [`.claude/skills/diagram-design/LICENSE`](./.claude/skills/diagram-design/LICENSE), 통합 내역은 `.claude/skills/diagram-design/PROVENANCE.md` 참조.
 - **버그 리포트·패턴 제안:** GitHub 이슈 환영
 - **PR:** 새 프리셋 추가, 보일러플레이트 패턴 추가, 4 constraint 위반 사례 환영
 - **테마 추가 제안:** `/theme-init` 사용법은 `.claude/skills/theme-init/SKILL.md` 참조

@@ -446,6 +446,14 @@ def validate(plan_path: Path) -> Report:
 
 
 def main(argv: list[str]) -> int:
+    # Korean WARN/ERROR/OK messages must not crash on a cp949 stream. When
+    # build.mjs runs this via execFileSync the stdio is a pipe, so Python uses
+    # the locale encoding (cp949 on Korean Windows) → UnicodeEncodeError. Force
+    # UTF-8 where the stream supports it.
+    for _stream in (sys.stdout, sys.stderr):
+        if hasattr(_stream, "reconfigure"):
+            _stream.reconfigure(encoding="utf-8")
+
     if len(argv) != 2:
         print("usage: validate_plan.py <slide_plan.json>", file=sys.stderr)
         return 2

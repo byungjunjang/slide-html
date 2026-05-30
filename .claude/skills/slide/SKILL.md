@@ -203,7 +203,7 @@ npx playwright install chromium
 
 ### 2.5 AI 이미지 생성 (선택, 슬롯이 있을 때만)
 
-🚧 **GATE**: 2단계의 슬라이드 작곡 결과에 `<img src="images/<slot>.png">` 슬롯이 한 개 이상 있어야 한다. 이미지 슬롯이 없는 데크는 이 단계를 건너뛰고 바로 3단계로.
+🚧 **GATE**: 2단계의 슬라이드 작곡 결과에 `<img src="../images/<slot>.png">` 슬롯이 한 개 이상 있어야 한다. 이미지 슬롯이 없는 데크는 이 단계를 건너뛰고 바로 3단계로. (슬라이드는 `slides/`, 이미지는 데크 루트 `images/` → `../images/`. `images/`만 쓰면 `slides/images/`로 잘못 풀려 빌드 실패.)
 
 **필수 전제**: 슬라이드 빌더가 슬롯명을 **먼저** 정하고(예: `images/hero-cover.png`, `images/section-2-illustration.png`) HTML에 그 경로 그대로 쓴 뒤, 같은 슬롯명으로 파일을 생성해야 한다. 타임스탬프 파일명을 만들면 마크업 참조가 깨진다.
 
@@ -264,7 +264,7 @@ codex exec "Perform the following tasks:
 
 > 슬롯의 의도와 negative가 충돌하면(예: photography 슬롯인데 negative에 `photograph` 들어감) 어댑터가 해당 단어를 negative에서 빼고 prefix에서 다시 강조한다.
 
-**✅ Checkpoint — 모든 `<img src="images/<slot>.png">` 슬롯 파일이 존재하면 3단계로.**
+**✅ Checkpoint — 모든 `<img src="../images/<slot>.png">` 슬롯 파일이 `images/`에 존재하면 3단계로.**
 
 ### 2.6 다이어그램 슬롯 (선택, 시각 주역이 "구조적 관계"일 때)
 

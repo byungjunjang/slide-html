@@ -9,6 +9,8 @@
 #   ├── slides/                          (작성할 슬라이드들)
 #   │   └── 01-title.html                (보일러플레이트 1장, 즉시 빌드 검증 가능)
 #   ├── icons/                           (인라인 SVG 대신 외부 .svg 두는 곳)
+#   ├── images/                          (AI 이미지 / 다이어그램 PNG 슬롯 — <img src="../images/..">)
+#   ├── diagrams/                        (diagram-design 다이어그램 HTML 소스 → render-diagram.mjs → images/)
 #   ├── design-system/                   (선택된 프리셋 폴더 복사 — 자기완결, zip/이동 안전)
 #   ├── _pptx-slide.css                  (html2pptx-safe 헬퍼 클래스)
 #   ├── build.mjs                        (export_deck_pptx 호출 래퍼)
@@ -68,7 +70,7 @@ if [ -d "$PROJECT_DIR" ]; then
 fi
 
 # --- 폴더 생성 ---
-mkdir -p "$PROJECT_DIR/slides" "$PROJECT_DIR/icons"
+mkdir -p "$PROJECT_DIR/slides" "$PROJECT_DIR/icons" "$PROJECT_DIR/images" "$PROJECT_DIR/diagrams"
 
 # --- 디자인 시스템 복사 ---
 # 프로젝트 폴더 자기완결을 위해 심볼릭 링크 대신 디자인 시스템을 복사한다.
@@ -153,6 +155,8 @@ cat <<EOF
 
   ├── slides/01-title.html         (보일러플레이트 1장)
   ├── icons/                       (외부 SVG 폴더)
+  ├── images/                      (AI 이미지 / 다이어그램 PNG 슬롯)
+  ├── diagrams/                    (diagram-design HTML 소스 → render-diagram.mjs)
   ├── design-system/                (${DESIGN_SYSTEM} 복사본)
   ├── _pptx-slide.css              (html2pptx-safe 헬퍼)
   ├── build.mjs                    (빌드 스크립트)
