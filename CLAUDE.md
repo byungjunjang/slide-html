@@ -110,7 +110,15 @@ unzip -t output/<slug>-pptx/<slug>.pptx
 
 ## 이미지 생성
 
-`/slide` Step 2.5(이미지 슬롯이 있을 때만)가 사용. 기본 경로는 `codex-image` 스킬 (Codex CLI OAuth → `gpt-image-2`, API key 불필요). 16:9 슬롯은 `1536x1024` 생성 후 `<img object-fit:cover object-position:center>` 로 960×540 크롭 — html2pptx가 박스 크기 그대로 PPTX `pic` frame에 임베드하므로 양옆 크롭이 보존된다.
+`/slide` Step 2.5(이미지 슬롯이 있을 때만)가 사용.
+
+**백엔드는 단일**: Codex CLI 내장 `image_gen` 도구 → `gpt-image-2` (OAuth, API key 불필요). slide-html은 이 외 다른 이미지 백엔드를 동봉하지 않는다 — preflight(`codex --version` / `codex login status`)가 실패하면 대체 생성기로 넘어가지 않고 이미지 단계를 중단한 뒤 `<img>` 슬롯을 placeholder 도형(`<div class="img-placeholder">`)으로 대체한다.
+
+**호출 경로는 두 갈래** (둘 다 같은 codex/gpt-image-2 백엔드로 수렴 — `/codex-image` 스킬은 *필수가 아니라 편의용 래퍼*):
+- 기본(primary): 직접 `codex exec` 호출 (`SKILL.md` Step 2.5)
+- 선택: `/codex-image` 래퍼 스킬 — `--out`/`--filename` 인자만 정확히 박으면 슬롯 파일 저장까지 처리
+
+16:9 슬롯은 `1536x1024` 생성 후 `<img object-fit:cover object-position:center>` 로 960×540 크롭 — html2pptx가 박스 크기 그대로 PPTX `pic` frame에 임베드하므로 양옆 크롭이 보존된다.
 
 ## 참고
 
