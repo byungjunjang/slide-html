@@ -27,7 +27,7 @@ def test_init_theme_creates_full_preset(tmp_path):
          "--from", str(draft),
          "--preset", "test-warm",
          "--presets-root", str(presets_root)],
-        capture_output=True, text=True,
+        capture_output=True, text=True, encoding="utf-8",
     )
     assert r.returncode == 0, f"stderr:\n{r.stderr}\nstdout:\n{r.stdout}"
 
@@ -41,15 +41,15 @@ def test_init_theme_creates_full_preset(tmp_path):
     assert len(boilerplate) == 37
 
     # Accent color must propagate to _pptx-slide.css
-    pptx_css = (out / "_pptx-slide.css").read_text()
+    pptx_css = (out / "_pptx-slide.css").read_text(encoding="utf-8")
     assert "#DC2626" in pptx_css
 
     # And to colors_and_type.css
-    cct = (out / "colors_and_type.css").read_text()
+    cct = (out / "colors_and_type.css").read_text(encoding="utf-8")
     assert "#DC2626" in cct
 
     # And to brand-spec-generated.md
-    brand = (out / "brand-spec-generated.md").read_text()
+    brand = (out / "brand-spec-generated.md").read_text(encoding="utf-8")
     assert "#DC2626" in brand
     assert "Test Warm" in brand
 
@@ -69,7 +69,7 @@ def test_init_theme_refuses_to_overwrite_without_force(tmp_path):
          "--from", str(draft),
          "--preset", "overwrite-test",
          "--presets-root", str(presets_root)],
-        capture_output=True, text=True,
+        capture_output=True, text=True, encoding="utf-8",
     )
     assert r1.returncode == 0, r1.stderr
 
@@ -79,7 +79,7 @@ def test_init_theme_refuses_to_overwrite_without_force(tmp_path):
          "--from", str(draft),
          "--preset", "overwrite-test",
          "--presets-root", str(presets_root)],
-        capture_output=True, text=True,
+        capture_output=True, text=True, encoding="utf-8",
     )
     assert r2.returncode != 0, "second run should refuse without --force"
     assert "already exists" in r2.stderr.lower() or "already exists" in r2.stdout.lower()
@@ -91,6 +91,6 @@ def test_init_theme_refuses_to_overwrite_without_force(tmp_path):
          "--preset", "overwrite-test",
          "--presets-root", str(presets_root),
          "--force"],
-        capture_output=True, text=True,
+        capture_output=True, text=True, encoding="utf-8",
     )
     assert r3.returncode == 0, r3.stderr

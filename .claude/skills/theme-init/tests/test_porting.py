@@ -16,10 +16,10 @@ def test_fill_defaults_handles_minimal_input(tmp_path):
     r = subprocess.run(
         [sys.executable, str(SCRIPTS / "fill_theme_defaults.py"),
          "--input", str(draft), "--out", str(out)],
-        capture_output=True, text=True,
+        capture_output=True, text=True, encoding="utf-8",
     )
     assert r.returncode == 0, r.stderr
-    filled = json.loads(out.read_text())
+    filled = json.loads(out.read_text(encoding="utf-8"))
     assert filled["name"] == "smoke"
     assert filled["colors"]["bg"] == "#FAFAF9"  # safe default
     assert filled["version"] == "1.0"
@@ -39,7 +39,7 @@ def test_validate_accepts_filled_default(tmp_path):
         [sys.executable, str(SCRIPTS / "validate_theme.py"),
          "--theme", str(filled),
          "--contract", str(SKILL / "references" / "token-contract.json")],
-        capture_output=True, text=True,
+        capture_output=True, text=True, encoding="utf-8",
     )
     assert r.returncode == 0, r.stderr
 
@@ -58,7 +58,7 @@ def test_validate_rejects_invalid_hex(tmp_path):
         [sys.executable, str(SCRIPTS / "validate_theme.py"),
          "--theme", str(filled),
          "--contract", str(SKILL / "references" / "token-contract.json")],
-        capture_output=True, text=True,
+        capture_output=True, text=True, encoding="utf-8",
     )
     assert r.returncode == 1, "validator should reject 3-digit hex"
     assert "accent" in r.stderr

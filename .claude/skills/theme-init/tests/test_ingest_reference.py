@@ -41,6 +41,17 @@ def test_border_radius_not_mistaken_for_border(tmp_path):
     assert ir.extract(deck)["devices"]["card_style"]["value"] == "filled"
 
 
+def test_card_style_ignores_card_alt_sibling_rule(tmp_path):
+    # `.card-alt` defined BEFORE `.card` must not be read as the `.card` rule —
+    # the real `.card` here is hairline, not the filled `.card-alt`.
+    deck = _deck(tmp_path,
+                 ".card-alt { background:#F5F5F4; } .card { border:1px solid #ccc; }",
+                 "<div class='card'></div>")
+    cs = ir.extract(deck)["devices"]["card_style"]
+    assert cs["value"] == "hairline"
+    assert cs["confidence"] == "high"
+
+
 # ---- inline fallback when no .card rule ----
 
 def test_card_style_inline_fallback_medium(tmp_path):

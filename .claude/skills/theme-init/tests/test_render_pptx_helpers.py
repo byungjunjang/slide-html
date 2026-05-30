@@ -29,7 +29,7 @@ def test_render_jangpm_pptx_helpers(tmp_path):
         [sys.executable, str(SCRIPTS / "render_pptx_helpers.py"),
          "--theme", str(FIXTURES / "jangpm-theme.json"),
          "--out", str(out)],
-        capture_output=True, text=True,
+        capture_output=True, text=True, encoding="utf-8",
     )
     assert r.returncode == 0, r.stderr
     rendered = out.read_text(encoding="utf-8").strip()

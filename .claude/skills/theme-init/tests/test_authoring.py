@@ -29,7 +29,7 @@ def _init_preset(tmp_path) -> Path:
         [sys.executable, str(SCRIPTS / "init_theme.py"),
          "--from", str(draft), "--preset", "auth-test",
          "--presets-root", str(presets_root)],
-        capture_output=True, text=True)
+        capture_output=True, text=True, encoding="utf-8")
     assert r.returncode == 0, f"{r.stderr}\n{r.stdout}"
     return presets_root / "auth-test"
 
@@ -93,3 +93,36 @@ def test_manifest_lifecycle(tmp_path):
     reloaded = ac.load_manifest(bp)
     assert reloaded["status"] == "draft"
     assert reloaded["authored"] == ["01-title"]
+
+
+def test_reference_block_reseed_survives_windows_paths(tmp_path):
+    """Re-seeding the DESIGN.md reference block must not crash when the source
+    path contains backslashes (Windows). Regression: the idempotent re.sub
+    replacement used to treat `\\d`, `\\U`… in the path as invalid escapes."""
+    import argparse
+    import author_layouts as al
+
+    preset_dir = tmp_path / "auth-test"
+    preset_dir.mkdir()
+    design = preset_dir / "DESIGN.md"
+    design.write_text("---\nstatus: draft\n---\n\n## 5. Visual vocabulary\n\n(LLM 추출 자리)\n",
+                      encoding="utf-8")
+    args = argparse.Namespace(presets_root=tmp_path, preset="auth-test")
+    result = {
+        "source": "output\\deck-pptx",          # Windows str(Path(...)) → backslash
+        "slides_analyzed": 5,
+        "devices": {
+            "card_style": {"value": "hairline", "confidence": "high", "evidence": "x"},
+            "surface_alternation": {"present": True, "slides_using": 2, "ratio": 0.4},
+            "hairline_dividers": {"present": True, "count": 9},
+            "cta": {"present": True, "count": 2},
+            "kicker": {"present": True, "count": 14},
+        },
+    }
+    al._seed_design_from_reference(args, result)   # first run → string-insert branch
+    al._seed_design_from_reference(args, result)   # second run → re.sub branch (must not raise)
+
+    body = design.read_text(encoding="utf-8")
+    assert body.count(al._REF_BLOCK_START) == 1    # idempotent: exactly one block
+    assert body.count(al._REF_BLOCK_END) == 1
+    assert "output\\deck-pptx" in body             # backslash path preserved verbatim
