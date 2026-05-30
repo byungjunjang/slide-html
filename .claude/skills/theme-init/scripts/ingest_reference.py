@@ -96,7 +96,10 @@ def _card_style_from_css(css: str) -> tuple[str | None, str]:
     border shorthand present → hairline; else background present → filled;
     else → borderless. Returns (None, reason) if no .card rule found.
     """
-    m = re.search(r"\.card\b[^{]*\{([^}]*)\}", css)
+    # (?![-\w]) so `.card` does NOT match sibling rules like `.card-alt` /
+    # `.card-accent` — re.search would otherwise read whichever .card-* rule
+    # comes first and mislabel card_style at "high" confidence.
+    m = re.search(r"\.card(?![-\w])[^{]*\{([^}]*)\}", css)
     if not m:
         return None, "no .card rule in deck _pptx-slide.css"
     body = m.group(1)

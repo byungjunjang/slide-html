@@ -45,7 +45,7 @@ def test_design_md_renders_full_template(tmp_path):
         [sys.executable, str(SKILL / "scripts" / "render_design_md.py"),
          "--theme", str(theme_path),
          "--out", str(out)],
-        capture_output=True, text=True,
+        capture_output=True, text=True, encoding="utf-8",
     )
     assert r.returncode == 0, r.stderr
     assert out.exists()

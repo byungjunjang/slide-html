@@ -40,7 +40,7 @@ def test_render_jangpm_colors_and_type(tmp_path):
          "--theme", str(FIXTURES / "jangpm-theme.json"),
          "--fonts-prelude", str(JANGPM_FONTS),
          "--out", str(out)],
-        capture_output=True, text=True,
+        capture_output=True, text=True, encoding="utf-8",
     )
     assert r.returncode == 0, r.stderr
     rendered = out.read_text(encoding="utf-8").strip()

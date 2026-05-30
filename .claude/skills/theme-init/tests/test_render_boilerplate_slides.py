@@ -28,7 +28,7 @@ def test_render_all_jangpm_boilerplate(tmp_path):
         [sys.executable, str(SCRIPTS / "render_boilerplate_slides.py"),
          "--theme", str(FIXTURES / "jangpm-theme.json"),
          "--out-dir", str(tmp_path)],
-        capture_output=True, text=True,
+        capture_output=True, text=True, encoding="utf-8",
     )
     assert r.returncode == 0, r.stderr
 

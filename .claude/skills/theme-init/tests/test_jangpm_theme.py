@@ -17,14 +17,14 @@ def test_jangpm_theme_validates():
         [sys.executable, str(SKILL / "scripts" / "validate_theme.py"),
          "--theme", str(JANGPM_THEME),
          "--contract", str(SKILL / "references" / "token-contract.json")],
-        capture_output=True, text=True,
+        capture_output=True, text=True, encoding="utf-8",
     )
     assert r.returncode == 0, r.stderr
 
 
 def test_jangpm_accent_is_indigo():
     """The defining jangpm accent — locked, must not drift."""
-    theme = json.loads(JANGPM_THEME.read_text())
+    theme = json.loads(JANGPM_THEME.read_text(encoding="utf-8"))
     assert theme["colors"]["accent"] == "#4633E3"
     assert theme["colors"]["accent-soft"] == "#E8E5FC"
     assert theme["colors"]["accent-ink"] == "#2E1FB3"
@@ -32,7 +32,7 @@ def test_jangpm_accent_is_indigo():
 
 def test_jangpm_identity_fields():
     """Identity fields must be exact (used by downstream renderers)."""
-    theme = json.loads(JANGPM_THEME.read_text())
+    theme = json.loads(JANGPM_THEME.read_text(encoding="utf-8"))
     assert theme["name"] == "jangpm"
     assert theme["display_name"] == "Jangpm"
     assert theme["version"] == "1.0"

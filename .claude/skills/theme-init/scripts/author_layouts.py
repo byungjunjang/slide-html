@@ -199,8 +199,11 @@ def _seed_design_from_reference(args, result: dict) -> None:
     )
     text = design.read_text(encoding="utf-8")
     if _REF_BLOCK_START in text and _REF_BLOCK_END in text:
+        # lambda replacement: `block` carries the reference path, which on Windows
+        # contains backslashes — a plain string repl would treat \d, \U… as
+        # invalid escapes (re.error). A function repl bypasses escape processing.
         text = re.sub(re.escape(_REF_BLOCK_START) + r".*?" + re.escape(_REF_BLOCK_END),
-                      block, text, flags=re.DOTALL)
+                      lambda _m: block, text, flags=re.DOTALL)
     else:
         m5 = re.search(r"^## 5\..*$", text, re.MULTILINE)
         if m5:

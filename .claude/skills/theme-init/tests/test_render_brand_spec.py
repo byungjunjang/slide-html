@@ -13,7 +13,7 @@ def test_brand_spec_contains_key_tokens(tmp_path):
         [sys.executable, str(SKILL / "scripts" / "render_brand_spec.py"),
          "--theme", str(FIXTURES / "jangpm-theme.json"),
          "--out", str(out)],
-        capture_output=True, text=True,
+        capture_output=True, text=True, encoding="utf-8",
     )
     assert r.returncode == 0, r.stderr
     body = out.read_text(encoding="utf-8")
