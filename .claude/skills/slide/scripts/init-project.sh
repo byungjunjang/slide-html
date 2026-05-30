@@ -43,7 +43,7 @@ if [ -n "$2" ]; then
   DESIGN_SYSTEM="$2"
   DS_REASON="명시 지정"
 elif [ -f "$ACTIVE_JSON" ]; then
-  DESIGN_SYSTEM="$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['active'])" "$ACTIVE_JSON")"
+  DESIGN_SYSTEM="$(python3 -c "import json,sys;print(json.load(open(sys.argv[1],encoding='utf-8'))['active'])" "$ACTIVE_JSON")"
   DS_REASON="active.json"
 else
   DESIGN_SYSTEM="jangpm"

@@ -28,6 +28,20 @@
 const { chromium } = require('playwright');
 const path = require('path');
 const sharp = require('sharp');
+const { fileURLToPath } = require('url');
+
+// Convert an element's resolved src (a file:// URL from the browser) into a
+// real filesystem path pptxgenjs can read. The browser hands back
+// `file:///C:/a%20b/x.png` (Windows) or `file:///Users/a b/x.png` (POSIX);
+// a naive `.replace('file://','')` leaves a drive-relative `/C:/…` (→ `C:\C:\…`
+// on Windows) and an undecoded `%20`. fileURLToPath handles drive letters and
+// percent-decoding correctly on both platforms. Non-file srcs pass through.
+function srcToFsPath(src) {
+  if (typeof src === 'string' && src.startsWith('file://')) {
+    try { return fileURLToPath(src); } catch { return src.replace('file://', ''); }
+  }
+  return src;
+}
 
 const PT_PER_PX = 0.75;
 const PX_PER_IN = 96;
@@ -365,9 +379,7 @@ function autoFixOverlaps(slideData, slideHeightInches) {
 // Helper: Add background to slide
 async function addBackground(slideData, targetSlide, tmpDir) {
   if (slideData.background.type === 'image' && slideData.background.path) {
-    let imagePath = slideData.background.path.startsWith('file://')
-      ? slideData.background.path.replace('file://', '')
-      : slideData.background.path;
+    let imagePath = srcToFsPath(slideData.background.path);
     targetSlide.background = { path: imagePath };
   } else if (slideData.background.type === 'color' && slideData.background.value) {
     targetSlide.background = { color: slideData.background.value };
@@ -378,7 +390,7 @@ async function addBackground(slideData, targetSlide, tmpDir) {
 function addElements(slideData, targetSlide, pres) {
   for (const el of slideData.elements) {
     if (el.type === 'image') {
-      let imagePath = el.src.startsWith('file://') ? el.src.replace('file://', '') : el.src;
+      let imagePath = srcToFsPath(el.src);
       targetSlide.addImage({
         path: imagePath,
         x: el.position.x,

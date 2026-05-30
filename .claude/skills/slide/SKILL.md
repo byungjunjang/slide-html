@@ -25,9 +25,9 @@ trigger: 슬라이드, PPT, 프레젠테이션, pptx, 발표 자료, 강의 슬�
 슬라이드를 한 장이라도 만들기 전에 **반드시** 활성 프리셋을 읽고 한 줄로 선언한다. 이 announce-게이트가 "잘못된 테마로 데크 전체를 만든 뒤에야 깨닫는" 사고를 시작 시점에 차단한다.
 
 ```bash
-python3 -c "import json; r='.claude/skills/slide/assets/design-systems'; \
-a=json.load(open(f'{r}/active.json'))['active']; \
-t=json.load(open(f'{r}/{a}/theme.json')); \
+python3 -c "import json,sys; sys.stdout.reconfigure(encoding='utf-8'); r='.claude/skills/slide/assets/design-systems'; \
+a=json.load(open(f'{r}/active.json',encoding='utf-8'))['active']; \
+t=json.load(open(f'{r}/{a}/theme.json',encoding='utf-8')); \
 print(f\"[active design-system] {a} — accent {t['colors']['accent']}\")"
 ```
 출력 예: `[active design-system] notion — accent #7C3AED` (active.json이 없으면 `jangpm` 폴백).
@@ -266,6 +266,26 @@ codex exec "Perform the following tasks:
 
 **✅ Checkpoint — 모든 `<img src="images/<slot>.png">` 슬롯 파일이 존재하면 3단계로.**
 
+### 2.6 다이어그램 슬롯 (선택, 시각 주역이 "구조적 관계"일 때)
+
+슬라이드의 시각 주역이 **구조적 관계**(아키텍처/플로우/순서도/시퀀스/상태도/ER/타임라인/스윔레인/사분면/트리/조직도/계층/벤/피라미드)면 — 즉 `/slide`의 **Visual-Primary 카테고리, 특히 `diagram-as-hero` 어휘** — 손으로 SVG를 짜지 말고 **`diagram-design` 스킬**로 작곡한다. (표/불릿/단일 숫자가 같은 일을 하면 다이어그램 금지 — 평소대로 슬라이드 텍스트로.)
+
+핵심: **inline `<svg>`는 html2pptx가 버린다**(편집 도형으로 안 들어감). 그래서 다이어그램은 차트·AI이미지와 동일하게 **PNG로 렌더해 `images/<slot>.png` 슬롯**으로 임베드한다 — 단, 래스터화는 `prebuild-svg`(sharp, CJK 깨짐)가 아니라 **Playwright 렌더러**로 한다(한글·Pretendard 정확):
+
+```bash
+mkdir -p diagrams images
+# 1) diagram-design 그라마로 diagrams/<slot>.html 작곡 (다이어그램만, chrome 없음, 투명 bg,
+#    design-system/colors_and_type.css 링크 + SVG에서 var(--accent)/var(--text) 참조)
+# 2) Playwright로 투명 고해상도 PNG 렌더 (deck 폴더 기준)
+node ../../.claude/skills/slide/scripts/render-diagram.mjs diagrams/<slot>.html images/<slot>.png --scale 3
+# 3) 슬라이드 HTML(slides/ 안)에서 <img src="../images/<slot>.png" style="...width/height..."> 로 배치
+#    (슬라이드는 slides/, PNG는 데크루트 images/ → 반드시 ../images/. 'images/'만 쓰면 빌드 실패)
+```
+
+다이어그램은 활성 프리셋 색·폰트를 **변수로 상속**하므로 데크와 한 몸으로 보인다. 다이어그램 텍스트는 PPTX에서 편집 불가(그림)이므로 핵심 takeaway는 슬라이드 `<p>`로도 둔다.
+
+> **전체 계약·의미역→CSS변수 매핑표·단계·주의사항은 단일 문서에:** [`references/diagram-slots.md`](references/diagram-slots.md). diagram-design 호출 시 그 문서와 해당 `type-<name>.md`를 먼저 Read.
+
 ### 3. 빌드
 
 ```bash
@@ -304,7 +324,7 @@ Converting N slides via html2pptx...
 - **B-r2-simple + B-gm-simple + B-family-diversity-simple (simple 모드 보강 — plan 부재 시에도 활성):**
   ```bash
   python3 -c "
-  import re,glob
+  import re,glob,sys; sys.stdout.reconfigure(encoding='utf-8')
   plans=glob.glob('slide_plan.json') + glob.glob('output/*/slide_plan.json')
   if plans:
       print('B-r2-simple: SKIP (plan-mode 활성)'); print('B-gm-simple: SKIP (plan-mode 활성)'); print('B-family-diversity-simple: SKIP (plan-mode 활성)')
@@ -313,7 +333,7 @@ Converting N slides via html2pptx...
       # B-r2-simple: chart/table 의심 슬라이드에 인사이트 텍스트(.gm-band 또는 ≥40자 본문)가 함께 있는지
       r2_fails=[]
       for f in html_files:
-          c=open(f).read(); name=f.split('/')[-1]
+          c=open(f,encoding='utf-8').read(); name=f.split('/')[-1]
           has_visual=bool(re.search(r'<svg|class=\"chart|tbl-row|chart-|<canvas', c, re.I))
           has_takeaway=bool(re.search(r'gm-band|t-h3[^>]*c-accent|t-body[^>]*c-secondary[^>]*>[^<]{30,}', c, re.I))
           if has_visual and not has_takeaway:
@@ -322,7 +342,7 @@ Converting N slides via html2pptx...
       # B-gm-simple: 콘텐츠 슬라이드(cover/section/closing 제외)에 .gm-band 존재
       gm_fails=[]
       for f in html_files:
-          c=open(f).read(); name=f.split('/')[-1]
+          c=open(f,encoding='utf-8').read(); name=f.split('/')[-1]
           if re.search(r'-cover\b|01-(title|cover)|closing|section', name):
               continue
           if not re.search(r'gm-band', c):
@@ -345,13 +365,13 @@ Converting N slides via html2pptx...
 - **B-plan-count + B-plan-fidelity (plan 모드 전용 — plan_json 있을 때만 활성, 없으면 자동 SKIP):**
   ```bash
   python3 -c "
-  import json,glob,re,os
+  import json,glob,re,os,sys; sys.stdout.reconfigure(encoding='utf-8')
   plans=glob.glob('slide_plan.json') + glob.glob('output/*/slide_plan.json')
   if not plans:
       print('B-plan-count: SKIP (simple mode)')
       print('B-plan-fidelity: SKIP (simple mode)')
   else:
-      d=json.load(open(plans[0]))
+      d=json.load(open(plans[0],encoding='utf-8'))
       plan_slides=d.get('slides',[])
       html_files=sorted(glob.glob('slides/*.html'))
       # B-plan-count: 슬라이드 수 일치
@@ -367,7 +387,7 @@ Converting N slides via html2pptx...
           matching=[f for f in html_files if re.match(rf'.*/0*{n}-', f)]
           if not matching:
               fails.append(f'slide #{n}: no matching NN-*.html'); continue
-          html=open(matching[0]).read()
+          html=open(matching[0],encoding='utf-8').read()
           core=s.get('core_message','')
           # 한국어/영어 nouns 추출 — 2글자 이상 한글 단어 또는 4글자 이상 영문 단어
           keywords=set(re.findall(r'[가-힣]{2,}|[A-Za-z]{4,}', core))
@@ -386,12 +406,12 @@ Converting N slides via html2pptx...
   # plan 모드: plan.json의 min_lines_estimate (있으면) vs slide HTML 줄 수
   # simple 모드: 카테고리별 default 임계치 — chart/dense slide ≥ 80줄, 일반 ≥ 60줄, cover/section/closing ≥ 40줄
   python3 -c "
-  import re,glob,json,os
+  import re,glob,json,os,sys; sys.stdout.reconfigure(encoding='utf-8')
   plan_files=glob.glob('slide_plan.json') + glob.glob('output/*/slide_plan.json')
-  plan={s['slide_number']:s for s in json.load(open(plan_files[0])).get('slides',[])} if plan_files else {}
+  plan={s['slide_number']:s for s in json.load(open(plan_files[0],encoding='utf-8')).get('slides',[])} if plan_files else {}
   fails=[]
   for f in sorted(glob.glob('slides/*.html')):
-      c=open(f).read(); lines=c.count(chr(10))+1; name=f.split('/')[-1]
+      c=open(f,encoding='utf-8').read(); lines=c.count(chr(10))+1; name=f.split('/')[-1]
       m=re.match(r'^(\d+)-', name); n=int(m.group(1)) if m else None
       if n and n in plan and isinstance(plan[n].get('min_lines_estimate'),(int,float)):
           thr=int(plan[n]['min_lines_estimate']); src='plan'
@@ -445,6 +465,7 @@ Converting N slides via html2pptx...
 | `references/text-formatting-rules.md` | **미세 서식 polish 규칙 (원형 텍스트 valign, 카드 padding, BR 처리, accent 빈도 등)** |
 | `references/error-patterns.md` | 알려진 빌드 에러 + 픽스 (E1~E12) |
 | `references/css-helpers.md` | `_pptx-slide.css` 헬퍼 클래스 카탈로그 |
+| `references/diagram-slots.md` | **다이어그램 슬롯 계약** — `diagram-design` 스킬 → PNG `<img>` 슬롯 임베드 (2.6단계 전체 가이드 + 의미역→CSS변수 매핑) |
 | `references/canvas-spec.md` | 960pt × 540pt 캔버스 / 좌표 / 폰트 가이드 |
 | `assets/design-systems/<preset>/pptx-boilerplate/*.html` | 베이스라인 8 패턴 (01~08, 모든 preset 공통) + preset별 추가 콘텐츠 패턴. `jangpm`은 29 패턴(09~37) 추가 제공. 실제 보유 목록은 `ls assets/design-systems/<preset>/pptx-boilerplate/`로 확인 |
 | `assets/design-systems/<preset>/_pptx-slide.css` | preset 별 공통 CSS (프로젝트마다 복사됨) |
@@ -454,6 +475,8 @@ Converting N slides via html2pptx...
 | `scripts/init-project.sh` | 프로젝트 셋업 자동화 (preset → output 복사) |
 | `scripts/export_deck_pptx.mjs` + `html2pptx.js` | HTML → editable PPTX 변환 엔진 (Playwright + pptxgenjs) |
 | `scripts/prebuild-svg.mjs` | 빌드 직전 icons/*.svg를 PNG로 래스터화 (PptxGenJS의 SVG embed 버그 우회) |
+| `scripts/render-diagram.mjs` | **diagram-design HTML → 투명 고해상도 PNG** (Playwright; 웹폰트·CJK 정확). 2.6 다이어그램 슬롯용 |
+| `../diagram-design/SKILL.md` | **다이어그램 작곡 스킬** (14종). slide-html 안에서는 §0.5 라우팅 → `diagram-slots.md` 계약 |
 | `../codex-image/SKILL.md` | **AI 이미지 생성 (단일 백엔드, OAuth)** — Codex CLI `image_gen` 도구로 `gpt-image-2` 호출. 2.5단계 참조 |
 
 ---

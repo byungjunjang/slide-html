@@ -30,6 +30,7 @@
 | `/slide-plan` | `"체계적으로 기획"`, `"데크 구조부터"`, `"/slide-plan"` | 선택적 강화 단계 — `/slide` 이전에 실행 |
 | `/theme-init` | `"테마 추가"`, `"새 디자인 시스템"`, `"새 프리셋"` | 새 프리셋 추가 (1회성) |
 | `/upload-drive` | `"드라이브 올려"`, `"슬라이드로 변환"` | Google Drive 업로드 + Slides 변환 |
+| `diagram-design` | `"다이어그램"`, `"구성도/아키텍처"`, `"플로우/순서도"`, `"시퀀스/상태도"`, `"조직도/계층도"`, `"ER/벤/피라미드"` (슬라이드 시각 주역이 "구조적 관계") | 다이어그램 작곡 → `/slide` Step 2.6에서 PNG `<img>` 슬롯으로 임베드 |
 
 `/slide`는 `output/<slug>-pptx/slide_plan.json` 존재 여부로 Systematic/Simple 자동 분기. 자세한 워크플로우는 `.claude/skills/slide/SKILL.md`.
 
@@ -64,15 +65,18 @@ slide-html/
 │       │   │   ├── anti-slop.md           ← 금지 패턴
 │       │   │   ├── canvas-spec.md         ← 960pt × 540pt 좌표/폰트
 │       │   │   ├── css-helpers.md         ← _pptx-slide.css 헬퍼 클래스
+│       │   │   ├── diagram-slots.md       ← 다이어그램 슬롯 계약 (diagram-design → PNG <img>)
 │       │   │   ├── error-patterns.md      ← 빌드 에러 → 픽스 패턴
 │       │   │   └── text-formatting-rules.md
 │       │   ├── scripts/
 │       │   │   ├── init-project.sh        ← 프로젝트 셋업
 │       │   │   ├── export_deck_pptx.mjs   ← HTML → PPTX 빌드 엔트리
 │       │   │   ├── html2pptx.js           ← computedStyle → pptxgenjs 변환
-│       │   │   └── prebuild-svg.mjs       ← inline SVG 전처리
+│       │   │   ├── prebuild-svg.mjs       ← icons/*.svg → PNG 래스터 (sharp)
+│       │   │   └── render-diagram.mjs     ← diagram-design HTML → 투명 PNG (Playwright, 2.6단계)
 │       │   ├── templates/                 ← build.mjs / _pptx-slide.css 템플릿
 │       │   └── assets/design-systems/     ← 프리셋 (jangpm 기본 + theme-init 산출물)
+│       ├── diagram-design/            ← 다이어그램 작곡 스킬 (14종, /slide Step 2.6 경유 임베드)
 │       ├── slide-plan/                ← 기획 단계 (Systematic 모드용 slide_plan.json 생성)
 │       ├── theme-init/                ← 새 프리셋 추가 (Claude Code 로컬 전용)
 │       ├── upload-drive/              ← Google Drive 업로드 + Slides 변환 (로컬 전용)
@@ -119,6 +123,18 @@ unzip -t output/<slug>-pptx/<slug>.pptx
 - 선택: `/codex-image` 래퍼 스킬 — `--out`/`--filename` 인자만 정확히 박으면 슬롯 파일 저장까지 처리
 
 16:9 슬롯은 `1536x1024` 생성 후 `<img object-fit:cover object-position:center>` 로 960×540 크롭 — html2pptx가 박스 크기 그대로 PPTX `pic` frame에 임베드하므로 양옆 크롭이 보존된다.
+
+## 다이어그램
+
+`/slide` Step 2.6(시각 주역이 "구조적 관계"인 슬라이드에만)가 사용. 손으로 SVG를 짜지 않고 **`diagram-design` 스킬**(14종: 아키텍처/플로우/시퀀스/상태도/ER/타임라인/스윔레인/사분면/nested/트리/조직도/계층/벤/피라미드)로 작곡한다.
+
+**왜 별도 경로인가**: `html2pptx.js`에는 inline `<svg>` 핸들러가 없다 — 슬라이드 HTML에 SVG를 직접 넣으면 PPTX에서 **조용히 사라진다**. 이 프로젝트의 유일한 SVG 경로는 **SVG → PNG 래스터 → `<img>` 슬롯**(차트·아이콘도 동일). 따라서 다이어그램은 차트·AI이미지와 같은 **그림(raster figure)** 으로 임베드되며, 도형 텍스트는 PPTX에서 더블클릭 편집 불가다(슬라이드의 나머지 텍스트는 편집 가능). 텍스트 수정은 `diagrams/<slot>.html`을 고쳐 재렌더.
+
+**래스터 백엔드**: `prebuild-svg`(sharp)가 아니라 **`scripts/render-diagram.mjs`(Playwright/Chromium)** — sharp는 웹폰트·CJK를 못 불러와 한글이 깨지지만 Chromium은 Pretendard·한글을 정확히 렌더한다.
+
+**스킨**: 다이어그램은 색·폰트를 하드코딩하지 않고 데크의 `design-system/colors_and_type.css`를 `<link>` 해 **프리셋 CSS 변수**(`var(--accent)` 등)를 참조 → 활성 프리셋과 자동으로 한 몸. diagram-design 자체의 first-run 온보딩/style-guide 게이트는 slide-html 안에서 **건너뛴다**(활성 프리셋이 SSOT).
+
+**영구 락 준수**: 단일 액센트(focal ≤2) · 이모지 금지 · 그라디언트/글로우 금지는 다이어그램에도 그대로. 전체 계약·단계·의미역→CSS변수 매핑은 `.claude/skills/slide/references/diagram-slots.md` 단일 문서, diagram-design 라우팅은 `.claude/skills/diagram-design/SKILL.md` §0.5.
 
 ## 참고
 
