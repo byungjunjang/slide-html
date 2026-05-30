@@ -15,6 +15,7 @@ an already-authored file. Re-running init_theme.py --force refreshes `.stock/`.
 from __future__ import annotations
 
 import datetime
+import hashlib
 import json
 import shutil
 from pathlib import Path
@@ -35,7 +36,7 @@ IDENTITY_FAMILIES: dict[str, list[str]] = {
 
 STOCK_DIRNAME = ".stock"
 MANIFEST_NAME = "_authoring.json"
-THUMBS_DIRNAME = "_thumbs"
+PREVIEW_DIRNAME = "_preview"
 MANIFEST_VERSION = "1.0"
 
 # flat list of all identity stems (order-preserving)
@@ -49,6 +50,22 @@ def _now() -> str:
 def existing_html(boilerplate_dir: Path) -> list[str]:
     """All NN-name.html stems present in the boilerplate dir (non-recursive)."""
     return sorted(p.stem for p in boilerplate_dir.glob("*.html"))
+
+
+def boilerplate_digest(boilerplate_dir: Path) -> str:
+    """sha256 over the live boilerplate *.html (the final deck).
+
+    Drift guard for the Phase 2 review gate: the digest is stamped at approval
+    time and re-checked at confirm, so any edit to a slide after approval
+    invalidates it. Non-recursive glob → `.stock/` and `_preview/` are ignored.
+    """
+    h = hashlib.sha256()
+    for stem in existing_html(boilerplate_dir):
+        h.update(stem.encode("utf-8"))
+        h.update(b"\0")
+        h.update((boilerplate_dir / f"{stem}.html").read_bytes())
+        h.update(b"\0")
+    return h.hexdigest()
 
 
 def classify(boilerplate_dir: Path) -> dict[str, Any]:
@@ -135,7 +152,14 @@ def new_manifest(preset: str, boilerplate_dir: Path) -> dict[str, Any]:
             "reference_blueprint": None,
             "user_direction": None,
         },
-        "verification": {"lint": None, "build": None, "unzip": None, "thumbs": None},
+        "verification": {"lint": None, "build": None, "unzip": None, "review": None},
+        "review": {                          # Phase 2 final-boilerplate approval gate
+            "approved": False,               # set true only by `review --approve`
+            "approved_at": None,
+            "approved_digest": None,         # boilerplate digest at approval time
+            "digest": None,                  # boilerplate digest at last `review`
+            "preview_path": None,            # _preview/index.html (contact sheet)
+        },
     }
 
 

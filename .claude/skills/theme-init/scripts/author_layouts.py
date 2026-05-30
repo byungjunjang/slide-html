@@ -8,12 +8,13 @@ deterministic scaffolding around that work:
     prep      reset identity slides to the .stock baseline, init/refresh the
               manifest, record source artifacts, print the agent's brief.
     classify  print identity (authored) vs data (token-tone) split.
-    thumbs    render before(.stock) / after(authored) PNGs via Playwright for
-              the user-review checkpoint.
+    review    render the FINAL boilerplate into one live-iframe contact-sheet
+              HTML (_preview/index.html), open it in a browser, mark the deck
+              unapproved. `review --approve` records the user's approval.
     validate  build a scratch deck of authored slides → node build.mjs →
               unzip -t, plus a light html2pptx-safety lint. The completion gate.
-    confirm   require validate passed, flip manifest status → confirmed, stamp
-              DESIGN.md provenance.
+    confirm   require validate passed AND the user approved the contact sheet
+              (digest drift-guarded), flip status → confirmed, stamp DESIGN.md.
     restore   undo authoring (copy identity slides back from .stock).
     status    print manifest summary.
 
@@ -24,9 +25,9 @@ Usage:
     python3 author_layouts.py prep     --preset <name> [--design-md P] \\
             [--original-design-md P] [--reference P] [--direction "text"]
     python3 author_layouts.py classify --preset <name>
-    python3 author_layouts.py thumbs   --preset <name>
+    python3 author_layouts.py review   --preset <name> [--approve] [--no-open]
     python3 author_layouts.py validate --preset <name>
-    python3 author_layouts.py confirm  --preset <name>
+    python3 author_layouts.py confirm  --preset <name> [--skip-review]
     python3 author_layouts.py restore  --preset <name> [--stems 01-title,...]
     python3 author_layouts.py status   --preset <name>
 
@@ -50,7 +51,6 @@ SKILL = SCRIPTS.parent
 REPO_ROOT = SCRIPTS.parents[3]                     # slide-html/
 DEFAULT_PRESETS_ROOT = SCRIPTS.parents[1] / "slide" / "assets" / "design-systems"
 INIT_PROJECT = SCRIPTS.parents[1] / "slide" / "scripts" / "init-project.sh"
-RENDER_THUMBS = SCRIPTS / "render_thumbs.mjs"
 
 # Pictographic emoji only. Deliberately EXCLUDES plain typographic dingbats the
 # design system uses as text (→ ↑↓ ✓ ✗ ★ in process/KPI/summary slides). Flags
@@ -281,7 +281,7 @@ def cmd_prep(args) -> int:
         sa["reference_blueprint"] = str(args.reference)
         _ingest_reference(args, m)
     if args.direction:          sa["user_direction"] = args.direction
-    m["verification"] = {"lint": None, "build": None, "unzip": None, "thumbs": None}
+    m["verification"] = {"lint": None, "build": None, "unzip": None, "review": None}
     ac.save_manifest(bp, m)
 
     print(f"=== Phase 2 prep · {args.preset} ===")
@@ -294,7 +294,8 @@ def cmd_prep(args) -> int:
     print("  2. Extract the brand's signature layout devices → record in manifest.blueprint.")
     print("  3. Rewrite each identity slide HTML using references/layout-recipes.md")
     print("     (helper classes + literal hex only, no gradients; 4-constraints; 960x540).")
-    print("  4. Run: author_layouts.py validate  → then  thumbs  → review → revise → confirm.")
+    print("  4. Run: author_layouts.py validate → review (single-HTML contact sheet) →")
+    print("     show it to the user → revise on feedback → review --approve → confirm.")
     print(f"\nmanifest: {ac.manifest_path(bp)} (status: draft)")
     return 0
 
@@ -306,36 +307,60 @@ def cmd_classify(args) -> int:
     return 0
 
 
-def cmd_thumbs(args) -> int:
+def cmd_review(args) -> int:
+    """Final-boilerplate single-HTML review gate.
+
+    Without --approve: render the live-iframe contact sheet, mark the deck
+    unapproved (any regeneration invalidates a stale approval), open it in a
+    browser. With --approve: record the user's approval + stamp the current
+    boilerplate digest (drift guard checked at confirm).
+    """
     bp = _boilerplate_dir(args)
-    _require_stock(bp)
-    if not RENDER_THUMBS.exists():
-        print(f"[author_layouts] missing {RENDER_THUMBS}", file=sys.stderr)
+    m = ac.load_manifest(bp)
+    if m is None:
+        print("[review] no manifest — run prep first", file=sys.stderr)
         return 2
-    cls = ac.classify(bp)
-    stems = cls["identity_flat"]
-    thumbs_out = bp / ac.THUMBS_DIRNAME
-    thumbs_out.mkdir(exist_ok=True)
 
-    def _render(src_dir: Path, tag: str) -> int:
-        project = _scratch_project(args, stems, src_dir)
-        r = subprocess.run(
-            ["node", str(RENDER_THUMBS),
-             "--project", str(project), "--out", str(thumbs_out), "--tag", tag],
-            cwd=str(REPO_ROOT), capture_output=True, text=True)
-        sys.stderr.write(r.stderr)
-        return r.returncode
+    if args.approve:
+        digest = ac.boilerplate_digest(bp)
+        rv = m.setdefault("review", {})
+        rv["approved"] = True
+        rv["approved_digest"] = digest
+        rv["approved_at"] = ac._now()
+        ac.save_manifest(bp, m)
+        print(f"[review] approved · digest {digest[:8]} — confirm is now unblocked.")
+        return 0
 
-    rc_before = _render(bp / ac.STOCK_DIRNAME, "stock")
-    rc_after = _render(bp, "authored")
-    _cleanup_scratch(args)
-    ok = rc_before == 0 and rc_after == 0
-    m = ac.load_manifest(bp) or ac.new_manifest(args.preset, bp)
-    m["verification"]["thumbs"] = "ok" if ok else "failed"
+    import build_contactsheet as cs
+    try:
+        out = cs.write(_preset_dir(args), m)
+    except Exception as e:  # noqa: BLE001 — surface render failures cleanly
+        m.setdefault("verification", {})["review"] = "failed"
+        ac.save_manifest(bp, m)
+        print(f"[review] failed to render contact sheet: {e}", file=sys.stderr)
+        return 1
+
+    digest = ac.boilerplate_digest(bp)
+    rv = m.setdefault("review", {})
+    rv["approved"] = False          # regenerating invalidates any prior approval
+    rv["approved_digest"] = None
+    rv["approved_at"] = None
+    rv["digest"] = digest
+    rv["preview_path"] = str(out)
+    m.setdefault("verification", {})["review"] = "ok"
     ac.save_manifest(bp, m)
-    print(f"\nthumbnails → {thumbs_out}  (NN.stock.png = before, NN.authored.png = after)")
-    print("Present before/after pairs to the user for the review checkpoint.")
-    return 0 if ok else 1
+
+    if not args.no_open:
+        try:
+            import webbrowser
+            webbrowser.open(out.as_uri())
+        except Exception:  # noqa: BLE001 — best-effort; the path is always printed
+            pass
+
+    print(f"\n[review] contact sheet → {out}  (digest {digest[:8]})")
+    print("Open it in a browser, present the FINAL boilerplate to the user, collect feedback.")
+    print(f"On explicit approval:  author_layouts.py review --preset {args.preset} --approve")
+    return 0
 
 
 def _lint(html: str) -> list[str]:
@@ -439,6 +464,26 @@ def cmd_confirm(args) -> int:
                   "confirm with placeholders still present).", file=sys.stderr)
             return 1
         print("⚠ " + msg + "\n  (continuing — --no-strict given)\n", file=sys.stderr)
+
+    # final-boilerplate approval gate — the user must have reviewed the single-HTML
+    # contact sheet and approved it, and the deck must not have drifted since.
+    if not args.skip_review:
+        rv = m.get("review", {})
+        if rv.get("approved") is not True:
+            print("[confirm] refused — the final boilerplate has not been approved.\n"
+                  f"  1. author_layouts.py review --preset {args.preset}"
+                  "            (render + open the single-HTML contact sheet)\n"
+                  f"  2. show it to the user, apply feedback, then once they approve:\n"
+                  f"     author_layouts.py review --preset {args.preset} --approve\n"
+                  "  (non-interactive runs may pass --skip-review.)", file=sys.stderr)
+            return 1
+        current = ac.boilerplate_digest(bp)
+        if rv.get("approved_digest") != current:
+            print("[confirm] refused — slides changed after approval (digest drift).\n"
+                  f"  approved={str(rv.get('approved_digest'))[:8]} current={current[:8]}\n"
+                  "  Re-run review → have the user re-approve.", file=sys.stderr)
+            return 1
+
     m["status"] = "confirmed"
     ac.save_manifest(bp, m)
 
@@ -490,7 +535,7 @@ def cmd_status(args) -> int:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name in ("prep", "classify", "thumbs", "validate", "confirm", "restore", "status"):
+    for name in ("prep", "classify", "review", "validate", "confirm", "restore", "status"):
         sp = sub.add_parser(name)
         sp.add_argument("--preset", required=True)
         sp.add_argument("--presets-root", type=Path, default=DEFAULT_PRESETS_ROOT)
@@ -502,18 +547,26 @@ def main() -> int:
             sp.add_argument("--direction", type=str, default=None)
             sp.add_argument("--require-confirmed", action="store_true",
                             help="Block unless DESIGN.md frontmatter status is confirmed")
+        if name == "review":
+            sp.add_argument("--approve", action="store_true",
+                            help="Record the user's approval of the current contact sheet "
+                                 "(run only AFTER the user approves)")
+            sp.add_argument("--no-open", action="store_true",
+                            help="Do not auto-open the contact sheet in a browser")
         if name == "confirm":
             sp.add_argument("--allow-empty", action="store_true",
                             help="Confirm even if no identity slides were authored (token-tone as-is)")
             sp.add_argument("--strict", action=argparse.BooleanOptionalAction, default=True,
                             help="Block confirm if DESIGN.md §5/§6 still contain template "
                                  "placeholders (default: on). Use --no-strict to only warn.")
+            sp.add_argument("--skip-review", action="store_true",
+                            help="Skip the final-boilerplate approval gate (non-interactive runs)")
         if name == "restore":
             sp.add_argument("--stems", type=str, default=None,
                             help="Comma-separated stems; default = all identity slides")
     args = ap.parse_args()
     return {
-        "prep": cmd_prep, "classify": cmd_classify, "thumbs": cmd_thumbs,
+        "prep": cmd_prep, "classify": cmd_classify, "review": cmd_review,
         "validate": cmd_validate, "confirm": cmd_confirm,
         "restore": cmd_restore, "status": cmd_status,
     }[args.cmd](args)

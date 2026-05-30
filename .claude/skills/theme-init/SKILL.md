@@ -152,23 +152,26 @@ python3 .claude/skills/theme-init/scripts/author_layouts.py prep \
 # 3. validate — lint + node build.mjs + unzip -t (깨진 안은 사용자에게 안 보여줌)
 python3 .claude/skills/theme-init/scripts/author_layouts.py validate --preset <name>
 
-# 4. thumbs — scratch 렌더로 before(.stock)/after(authored) PNG 생성
-python3 .claude/skills/theme-init/scripts/author_layouts.py thumbs --preset <name>
-#    ▶ before/after 썸네일을 사용자에게 "우선 구성한 수정본" 레퍼런스로 제시 (검토 체크포인트, 의무 1회)
+# 4. review — 재작곡 끝난 "최종 보일러플레이트" 전체를 단일 HTML(_preview/index.html)로 구워
+#    브라우저로 띄움. 라이브 iframe 컨택트시트 (Playwright 불필요). 매번 미승인 상태로 리셋.
+python3 .claude/skills/theme-init/scripts/author_layouts.py review --preset <name>
+#    ▶ 이 한 장 HTML을 사용자에게 띄워 최종 검토받음 (필수 승인 체크포인트)
 
-# 5. 사용자 피드백 수집 → 반영해 재작곡 → 3~4 반복 (사용자 OK까지)
+# 5. 사용자 피드백 수집 → 반영해 재작곡 → validate → review 재생성 반복 (사용자 OK까지)
 
-# 6. confirm — validate 통과 + authored ≥ 1 전제로 status: confirmed + DESIGN.md provenance 기록
-#    (아무것도 작곡 안 했으면 거부. token-tone 그대로 confirm하려면 --allow-empty)
-#    DESIGN.md §5/§6에 템플릿 placeholder가 남아 있으면 기본 차단(strict 기본값) — 검토 없이
-#    넘기려면 --no-strict.
+# 5b. review --approve — 사용자가 명시 승인했을 때만 실행. 현재 boilerplate digest를 박제.
+python3 .claude/skills/theme-init/scripts/author_layouts.py review --preset <name> --approve
+
+# 6. confirm — validate 통과 + authored ≥ 1 + 사용자 승인(digest 일치) 전제로 status: confirmed
+#    (아무것도 작곡 안 했으면 거부 → --allow-empty. §5/§6 placeholder 남으면 strict 차단 → --no-strict.
+#     승인 안 했거나 승인 후 슬라이드를 또 고치면 거부(drift) → review 재승인. 비대화 실행은 --skip-review.)
 python3 .claude/skills/theme-init/scripts/author_layouts.py confirm --preset <name>
 
 # (필요 시) restore — 작곡 취소, identity 슬라이드를 .stock으로 되돌림
 python3 .claude/skills/theme-init/scripts/author_layouts.py restore --preset <name>
 ```
 
-**핵심 원칙**: 4번 썸네일 before/after 제시가 "먼저 보여주는 레퍼런스"고 5번이 피드백 루프다. validate(3)가 실패하면 썸네일로 못 가므로 깨진 안은 사용자에게 보여주지 않는다. data 슬라이드는 `git diff pptx-boilerplate/`에 identity stem만 잡혀야 한다.
+**핵심 원칙**: 4번 `review`가 최종 보일러플레이트 전체를 **단일 HTML 한 장**으로 띄우는 필수 승인 체크포인트고 5번이 피드백 루프다. validate(3)가 실패하면 review로 못 가므로 깨진 안은 사용자에게 보여주지 않는다. `confirm`은 사용자가 `review --approve`로 승인하기 전까지 차단되며, 승인 후 슬라이드를 또 고치면 digest drift로 다시 차단된다(재승인 필요). data 슬라이드는 `git diff pptx-boilerplate/`에 identity stem만 잡혀야 한다(review는 읽기 전용).
 
 ## 산출물 구조
 
@@ -183,8 +186,8 @@ python3 .claude/skills/theme-init/scripts/author_layouts.py restore --preset <na
 └── pptx-boilerplate/              # 37장 boilerplate (Phase 1 token-render)
     ├── 01-title.html  …  37-image-2up.html
     ├── .stock/                     # token-render baseline 스냅샷 (Phase 2 복원·diff용)
-    ├── _authoring.json             # Phase 2 매니페스트 (분류·blueprint·status·verification)
-    └── _thumbs/                    # Phase 2 리뷰 썸네일 (NN.stock.png / NN.authored.png)
+    ├── _authoring.json             # Phase 2 매니페스트 (분류·blueprint·status·verification·review)
+    └── _preview/                   # Phase 2 리뷰 — index.html (최종 보일러플레이트 단일 HTML 컨택트시트)
 ```
 
 Phase 2(Layout Authoring)를 거치면 identity 슬라이드(`01·23·25·09·07·21·02·26·12·16·18·17·10` 등)는 브랜드 구성으로 재작곡되어 덮어써지고, data 슬라이드는 token-render 그대로 유지된다.
@@ -212,9 +215,9 @@ theme-init은 결과물을 slide 번들의 `assets/design-systems/` 안에 직�
 | `scripts/init_theme.py` | Phase 1 오케스트레이터 (token-render + .stock 스냅샷 + 매니페스트 stub) |
 | `scripts/_token_render.py` | 공통 placeholder 치환 엔진 (TOKEN, IF, rgb/rem/csv/optional 필터) |
 | `scripts/render_presets_readme.py` | slide 번들의 `assets/design-systems/README.md` 카탈로그 자동 생성 |
-| `scripts/author_layouts.py` | **Phase 2 하네스** — prep/classify/thumbs/validate/confirm/restore/status |
-| `scripts/_authoring_common.py` | Phase 2 분류·`.stock` 스냅샷·`_authoring.json` 매니페스트 SSOT |
-| `scripts/render_thumbs.mjs` | Phase 2 리뷰 썸네일 렌더러 (Playwright, scratch 프로젝트) |
+| `scripts/author_layouts.py` | **Phase 2 하네스** — prep/classify/review/validate/confirm/restore/status |
+| `scripts/_authoring_common.py` | Phase 2 분류·`.stock` 스냅샷·`_authoring.json` 매니페스트 SSOT·boilerplate digest |
+| `scripts/build_contactsheet.py` | Phase 2 리뷰 — 최종 보일러플레이트 단일-HTML 라이브 iframe 컨택트시트 생성기 |
 | `references/layout-recipes.md` | **html2pptx-safe 레이아웃 레시피** — 헬퍼 카탈로그 + 좌표 + 패밀리별 레시피 |
 | `tests/` | 골든·스모크 테스트 (renderer + Phase 2 회귀 방어) |
 

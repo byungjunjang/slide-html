@@ -43,8 +43,8 @@ output/
 .env.local
 .env.*.local
 
-# theme-init Phase 2 review thumbnails (transient)
-_thumbs/
+# theme-init Phase 2 review contact sheet (transient self-contained mirror — regenerable via author_layouts.py review)
+_preview/
 
 # theme-init Phase 2 token-render baseline (regenerable via init_theme --force)
 .stock/

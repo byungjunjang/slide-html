@@ -173,5 +173,5 @@ All fills above are solid (literal hex or token helper) — no gradient — so t
 1. `author_layouts.py validate` → lint + `node build.mjs` + `unzip -t` all PASS.
 2. Each identity slide: chrome skeleton copied from `.stock`, body recomposed, one accent event.
 3. No gradient / inline svg / background-image / emoji (lint catches these).
-4. `author_layouts.py thumbs` → before/after shown to the user → feedback applied.
-5. Data slides untouched (`git diff` on `pptx-boilerplate/` touches only identity stems).
+4. `author_layouts.py review` → final boilerplate shown to the user as one live-iframe HTML (`_preview/index.html`) → feedback applied → `review --approve` once the user signs off (confirm is blocked until then).
+5. Data slides untouched (`git diff` on `pptx-boilerplate/` touches only identity stems; review is read-only).
