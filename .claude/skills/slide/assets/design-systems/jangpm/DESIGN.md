@@ -333,19 +333,19 @@ cover → agenda → section-divider → 3~4 body → section-divider → 2~3 bo
 
 ## 8. Chart / table treatment
 
-slide-plan introduction guide §"차트의 수사적 역할 어휘" 9종을 jangpm의 시각 구현에 매핑.
+slide-plan introduction guide §"차트의 수사적 역할 어휘" 9종을 jangpm의 시각 구현에 매핑. **하이브리드 원칙 (Fix3)**: 단순 bar/column/KPI는 `_pptx-slide.css`의 **div evidence-chart 프리미티브**(`ev-bar`/`ev-track`/`ev-fill*`/`ev-col-*`/`ev-spark`)로 — `var(--accent)`/토큰 + rgba alpha만 쓰므로 html2pptx가 **편집형 shape**로 번역하고 프리셋 교체 시 자동 반영된다(hex 하드코딩 금지). 복잡 차트(산점·stacked·퍼널 등)는 **diagram-design → PNG**(`references/diagram-slots.md` Part B). 단일 액센트 원칙: 다계열은 `ev-fill`(주)·`ev-fill-mid`/`ev-fill-soft`(같은 휴 graded)·`ev-fill-muted`(중립 grey)로 — 2번째 휴 금지.
 
-| chart_strategy | 의미 | jangpm 구현 | 상태 |
+| chart_strategy | 의미 | jangpm 구현 (하이브리드) | 경로 |
 |---|---|---|---|
-| `growth-trend` | 단일 시계열 | `forecast-table` (20) 또는 PptxGenJS bar chart로 합성 | available (table-as-chart) |
-| `forecast` | 실측+예측 구분 | `forecast-table` (20) — 좌측 실측, 우측 예측 컬럼 강조 | available |
-| `structural-break` | 변곡점 강조 | `matrix-trends` (27)의 좌우 대비 활용 | available (변형) |
-| `focus-comparison` | 카테고리 비교 + 하이라이트 | `comparison` (14) + `table-detailed` (19)의 hi-column | available |
-| `distribution` | 산점/버블 | 현재 boilerplate에 없음 | **requires custom** |
-| `quadrant` | 2×2 분면 | `paired-concept` (30) 그리드 응용 또는 custom div grid | available (custom 권장) |
-| `priority-matrix` | 3×3 매트릭스 | `matrix-trends` (27)의 mx-grid 응용 | available |
-| `split-segment` | stacked/grouped | 현재 boilerplate에 없음. PptxGenJS stacked column | **requires custom** |
-| `funnel` | 깔때기 단계 | 현재 boilerplate에 없음 | **requires custom** |
+| `growth-trend` | 단일 시계열 | `ev-col-*` 컬럼 또는 `forecast-table` (20) | div 또는 표 |
+| `forecast` | 실측+예측 구분 | `forecast-table` (20) — 좌측 실측, 우측 예측 컬럼 강조 | 표 |
+| `structural-break` | 변곡점 강조 | `matrix-trends` (27) 좌우 대비, 또는 `ev-col-*`에 변곡 컬럼만 `ev-fill`/나머지 `ev-fill-soft` | div 또는 표 |
+| `focus-comparison` | 카테고리 비교 + 하이라이트 | `ev-bar` 가로 막대 — 강조 1개 `ev-fill`, 나머지 `ev-fill-muted` | **div (권장)** |
+| `distribution` | 산점/버블 | div로 불가 | **diagram-design PNG** |
+| `quadrant` | 2×2 분면 | `paired-concept` (30) 그리드 응용 또는 diagram-design `quadrant` | div 또는 PNG |
+| `priority-matrix` | 3×3 매트릭스 | `matrix-trends` (27) mx-grid 응용 | div(표) |
+| `split-segment` | stacked/grouped | div로 정밀 불가 | **diagram-design PNG** |
+| `funnel` | 깔때기 단계 | diagram-design `pyramid`(퍼널) | **diagram-design PNG** |
 
 ### 표 (table) 규칙
 

@@ -89,6 +89,45 @@ zebra row 는 grid div 의 background 로 OK: `background: var(--bg);` (또는 `
 
 ---
 
+## 차트 (Evidence chart) — div 막대 / 컬럼 / KPI
+
+단순 bar/column/KPI는 **div evidence-chart 프리미티브**로 작곡한다 (Phase 3·D 하이브리드). track div + fill div 구조 — 둘 다 bg shape라 html2pptx가 **편집형 PPTX shape**로 번역한다. **데이터 값은 fill 의 inline `width`(가로) 또는 `height`(컬럼) 퍼센트/pt 로** 둔다. 복잡 차트(산점·stacked·퍼널)는 div로 안 됨 → diagram-design PNG (`diagram-slots.md` Part B).
+
+> ⚠️ CSS `opacity` 속성은 html2pptx 가 **무시**한다(PPTX에서 틴트 사라짐). 단일 액센트를 graded 하려면 `opacity` 대신 **rgba alpha 클래스**(`ev-fill-mid`/`ev-fill-soft`)를 쓴다 — 이건 shape transparency 로 번역된다.
+
+| 클래스 | 용도 |
+|---|---|
+| `.ev-bar` | 가로 막대 한 행 (flex: 라벨 + track [+ 값]) |
+| `.ev-track` / `.ev-track-lg` | 막대 레일 (surface-alt, 14pt / 20pt). `position: relative` |
+| `.ev-fill` | 주 계열 채움 (solid accent) — `style="width:64%"` |
+| `.ev-fill-mid` / `.ev-fill-soft` | 보조/약화 계열 (같은 accent, rgba 0.55 / 0.30) |
+| `.ev-fill-muted` | 중립 비교 막대 (grey `border-strong` — 2번째 휴 금지) |
+| `.ev-col-track` / `.ev-col-fill` | 세로 컬럼 (track 에 inline `height`, fill 에 inline `height` %) |
+| `.ev-spark` | KPI 밑줄 / 스파크바 (accent 4pt) — `style="width:120pt"` |
+
+```html
+<!-- 가로 막대: 강조 1개 solid + 비교 grey -->
+<div class="ev-bar" style="margin-bottom: 12pt;">
+  <p class="t-cap" style="width: 80pt;">우리 제품</p>
+  <div class="ev-track"><div class="ev-fill" style="width: 82%;"></div></div>
+  <p class="t-cap c-accent" style="width: 36pt; text-align: right;">82%</p>
+</div>
+<div class="ev-bar">
+  <p class="t-cap" style="width: 80pt;">경쟁사</p>
+  <div class="ev-track"><div class="ev-fill-muted" style="width: 31%;"></div></div>
+  <p class="t-cap c-secondary" style="width: 36pt; text-align: right;">31%</p>
+</div>
+
+<!-- KPI + 스파크 밑줄 -->
+<p class="t-display2 c-accent">38%</p>
+<div class="ev-spark" style="width: 120pt; margin: 6pt 0;"></div>
+<p class="t-cap c-secondary">전년 대비 성장</p>
+```
+
+차트/KPI 슬라이드는 항상 시각 위/아래에 **한 줄 takeaway**(헤드라인 또는 `gm-band`)를 둔다 — evidence 는 주장에 바인딩(P1, R2).
+
+---
+
 ## Placeholder / 프레임
 
 | 클래스 | 용도 |

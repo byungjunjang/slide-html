@@ -60,6 +60,10 @@ VISUAL_BLOCK_TYPES = {
     "infographic", "diagram_flow", "image",
 }
 
+# Phase 3·C evidence-slots (optional): a slide may declare a dominant visual that
+# proves its `lead` claim. See references/diagram-slots.md Part B.
+EVIDENCE_TYPES = {"chart", "image", "diagram"}
+
 
 @dataclass
 class Report:
@@ -246,6 +250,40 @@ def check_block_types(slide: dict[str, Any], r: Report) -> None:
                 f"{label}: content_blocks[{i}].block_type {bt!r} "
                 f"not in canonical enum {sorted(BLOCK_TYPES)}"
             )
+
+
+def check_evidence_slots(slide: dict[str, Any], r: Report) -> None:
+    """Phase 3·C — optional `lead` / `evidence` fields (references/diagram-slots.md
+    Part B). Soft-checks ONLY when a field is present; absent = no-op, so existing
+    plans are unaffected. Never raises a hard error (warnings only)."""
+    label = slide_label(slide)
+    lead = slide.get("lead")
+    lead_ok = isinstance(lead, str) and bool(lead.strip())
+    if lead is not None and not lead_ok:
+        r.warn(f"evidence — {label}: 'lead' present but not a non-empty string")
+
+    ev = slide.get("evidence")
+    if ev is None:
+        return
+    if not isinstance(ev, dict):
+        r.warn(f"evidence — {label}: 'evidence' must be an object")
+        return
+
+    et = ev.get("type")
+    if et not in EVIDENCE_TYPES:
+        r.warn(f"evidence — {label}: evidence.type {et!r} not in {sorted(EVIDENCE_TYPES)}")
+    for key in ("slot", "proves"):
+        v = ev.get(key)
+        if not isinstance(v, str) or not v.strip():
+            r.warn(
+                f"evidence — {label}: evidence.{key!r} missing or empty "
+                f"(an evidence visual must bind to a claim — P1)"
+            )
+    if not lead_ok:
+        r.warn(
+            f"evidence — {label}: evidence present but no 'lead' claim to bind to "
+            f"(P1 visual=evidence: the visual proves the lead)"
+        )
 
 
 def check_r4_lazy_repetition(slides: list[dict[str, Any]], r: Report) -> None:
@@ -435,6 +473,7 @@ def validate(plan_path: Path) -> Report:
         check_slide_r5(s, inventory_ids, r)
         check_slide_role(s, deck_type, r)
         check_block_types(s, r)
+        check_evidence_slots(s, r)
 
     check_r4_lazy_repetition(slides, r)
     check_r4_min_diversity(slides, r)

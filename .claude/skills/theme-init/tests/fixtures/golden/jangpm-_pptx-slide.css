@@ -146,3 +146,25 @@ html, body {
 
 /* chip — eyebrow pill on a band (color inline when on dark band) */
 .chip { display: inline-block; border-radius: 9999pt; padding: 5pt 14pt; }
+
+/* ============================================================
+   Evidence-chart primitives (Phase 3·D — hybrid charts)
+   Simple bar / column / KPI charts as html2pptx-safe div shapes:
+   a track div + a fill div, both SOLID or rgba fills. Do NOT use
+   the CSS `opacity` property — html2pptx ignores it; grade a single
+   accent with rgba ALPHA instead (mapped to shape transparency).
+   Set the data value as an inline width (horizontal) or height
+   (column) percent/pt on the fill. Complex charts (scatter /
+   stacked / funnel) route to diagram-design PNG — see DESIGN.md §8
+   and references/diagram-slots.md Part B.
+   ============================================================ */
+.ev-bar       { display: flex; align-items: center; gap: 10pt; }            /* one row: label + track [+ value] */
+.ev-track     { flex: 1; height: 14pt; background: #F5F5F4; border-radius: 7pt; position: relative; }
+.ev-track-lg  { flex: 1; height: 20pt; background: #F5F5F4; border-radius: 10pt; position: relative; }
+.ev-fill      { height: 100%; background: #4633E3; border-radius: inherit; }                 /* primary — set width inline */
+.ev-fill-mid  { height: 100%; background: rgba(70, 51, 227, 0.55); border-radius: inherit; } /* secondary series (same hue, graded) */
+.ev-fill-soft { height: 100%; background: rgba(70, 51, 227, 0.30); border-radius: inherit; } /* tertiary / de-emphasis */
+.ev-fill-muted{ height: 100%; background: #D4D4D4; border-radius: inherit; }          /* neutral comparison bar (grey, not a 2nd hue) */
+.ev-col-track { width: 100%; background: #F5F5F4; border-radius: 6pt 6pt 0 0; position: relative; } /* vertical column — set height inline */
+.ev-col-fill  { position: absolute; bottom: 0; left: 0; width: 100%; background: #4633E3; border-radius: 6pt 6pt 0 0; } /* set height inline (% of track) */
+.ev-spark     { height: 4pt; background: #4633E3; border-radius: 2pt; }                      /* KPI underline / sparkbar — set width inline */

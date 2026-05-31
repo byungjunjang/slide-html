@@ -4,6 +4,8 @@
 
 `/slide` Step 2.6과 `diagram-design/SKILL.md`(§0.5)가 둘 다 이 파일을 가리킨다.
 
+> **이 문서 대부분 = Part A (다이어그램 슬롯)**. 차트·이미지까지 아우르는 일반 **evidence-slot 계약**(메시지 바인딩 + 지배 ≥~55%)은 맨 아래 **Part B — Evidence slots**. 다이어그램은 evidence 슬롯의 한 인스턴스다 (P1 비주얼=근거).
+
 ---
 
 ## 왜 이 경로인가 (비협상)
@@ -123,3 +125,42 @@ node build.mjs
 - ❌ viewBox 비율 ≠ `<img>` 박스 비율 → 왜곡. 둘을 일치시키거나 `object-fit:contain`.
 - ❌ link-blue 등 2번째 색 사용 → 단일 액센트 위반. `--text-secondary`로.
 - ❌ 다이어그램 텍스트를 슬라이드의 유일한 텍스트로 → 편집 불가 + takeaway 누락. 핵심 문구는 슬라이드 `<p>`로 중복.
+
+---
+
+## Part B — Evidence slots (차트·이미지·다이어그램 공통 계약)
+
+> **P1 비주얼=근거**: Visual-Primary 슬라이드에서 비주얼은 **메시지의 증거/설명이자 지배 요소**다 — 장식이 아니다. 텍스트는 주장(claim)을 말하고, 비주얼은 그것을 증명한다. **다이어그램·차트·이미지 세 매체가 모두 이 계약을 공유**한다. 위(Part A)는 그 다이어그램 인스턴스.
+
+### 공통 규칙 (세 매체 모두)
+
+1. **메시지 바인딩** — 모든 evidence 슬롯은 한 주장(claim)에 묶인다. 그 주장은 **편집 가능한 슬라이드 텍스트**(`<p>`/`<h*>`, 보통 GM-band 또는 헤드라인)로 둔다 — 이미지/도형 안 라벨에만 두지 않는다. (anti-slop §13 장식-비주얼 금지 + R2 takeaway와 동일.)
+2. **지배 (dominance ≥ ~55%)** — evidence 비주얼은 슬라이드 콘텐츠 영역의 ≥~55%를 차지하는 **시각 주역**이다. 텍스트는 캡션. 텍스트 옆 작은 썸네일 비주얼은 evidence가 아니라 장식.
+3. **슬롯 마커** — 슬롯 컨테이너에 `data-image-slot="<name>"` (Phase 2·B 다양성 게이트가 visual 신호로 인식 + 슬롯 추적). 슬라이드 루트는 visual family `data-layout`(`image-hero`/`annotated-visual`/`diagram-hero`/`compare-split`).
+
+### 매체별 생산 경로 (하이브리드)
+
+| 매체 | 경로 | PPTX 편집? |
+|---|---|---|
+| **다이어그램** | diagram-design → PNG (위 Part A) | 도형 텍스트 불가 · 슬라이드 텍스트 가능 |
+| **차트 — 단순 bar/KPI** | `_pptx-slide.css` div 프리미티브(`ev-bar*` / `ev-kpi*`, `var(--accent)` + opacity) — html2pptx가 번역 | **텍스트 편집 가능** |
+| **차트 — 복잡(산점·stacked·퍼널)** | diagram-design → PNG (Part A 경로) | 불가 |
+| **이미지** | AI 이미지 슬롯(§2.5) 또는 사진, full-bleed / ≥55% | n/a |
+
+하이브리드 원칙: **단순 bar/KPI = div(편집 가능), 복잡 = PNG.** 차트 라우팅 상세는 `assets/design-systems/<preset>/DESIGN.md` §8 + `css-helpers.md`(evidence-chart 프리미티브).
+
+### slide_plan.json (Systematic 모드 · optional)
+
+```jsonc
+{
+  "lead": "<이 슬라이드가 던지는 한 줄 주장>",      // 슬라이드 가장 큰 텍스트 슬롯 / GM-band
+  "evidence": {
+    "type": "chart",                              // chart | image | diagram
+    "slot": "<slot-name>",                        // images/<slot>.png 또는 data-image-slot 값
+    "proves": "<이 비주얼이 lead를 어떻게 증명하는가>",
+    "dominance": "60%"                            // optional, 기본 ≥~55%
+  }
+}
+```
+
+optional 필드 — 없으면 기존 동작 그대로. 있으면 `/slide`는 `lead`를 편집 텍스트로 두고 `evidence` 슬롯을 지배 비주얼로 작곡한다. `validate_plan.py`는 **present일 때만** shape를 soft-check(없으면 무시).

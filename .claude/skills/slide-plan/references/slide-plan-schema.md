@@ -45,6 +45,8 @@
 | `slides[].evidence_sources[]` | string[] | ✓ | **R5** — content_inventory[].source_id 참조 또는 `inference` |
 | `slides[].content_constraints` | object | | must/must_not/evidence |
 | `slides[].priority` | enum | | `must` / `should` / `could` |
+| `slides[].lead` | string | | **Phase 3·C** — 이 슬라이드가 던지는 한 줄 주장(claim). 슬라이드 가장 큰 텍스트/GM-band 슬롯. evidence가 증명할 대상 |
+| `slides[].evidence` | object | | **Phase 3·C** — 지배 비주얼 슬롯 (P1 비주얼=근거). `{type: chart\|image\|diagram, slot, proves, dominance?}`. present일 때만 soft-check. 상세: `slide/references/diagram-slots.md` Part B |
 | `ordering_notes.split_topics` | string[] | | 한 슬라이드를 둘로 쪼갠 흔적 |
 | `ordering_notes.merged_topics` | string[] | | 두 토픽을 합친 흔적 |
 | `ordering_notes.deferred_topics` | string[] | | 다음 데크로 미룬 항목 |
