@@ -150,6 +150,7 @@ npx playwright install chromium
   2. CSS gradient (linear/radial) 금지 — 순색만
   3. `<p>/<h*>`에 background/border/shadow 금지 — 외부 div가 담당
   4. div에 `background-image` 금지 — `<img>` 태그 사용
+- **`data-layout` 태그** — 슬라이드 루트 `<body data-layout="<family>">`. family는 `references/layouts.md`의 14개 중 1개(선택한 §5 어휘가 귀속되는 family). 빌드 prebuild 다양성 게이트(WARN)가 커버리지·distinct·card-type 비율·visual 존재를 점검 — "카드 반복 탈피"를 머신 체크로 강제. 증거 이미지/차트/다이어그램 슬롯에는 추가로 `data-image-slot="<name>"`.
 
 #### 2.1 슬라이드별 5 questions (작성 전)
 
@@ -164,7 +165,7 @@ npx playwright install chromium
 #### 2.2 작곡 흐름 (7 step)
 
 1. **카테고리 결정** — 5 questions의 답이 카테고리를 알려줌 (Q4 답이 카테고리, Q5 답이 변형 의도)
-2. **어휘 선택** — DESIGN.md §5 의 그 카테고리 어휘 표에서 1개 선택
+2. **어휘 선택** — DESIGN.md §5 의 그 카테고리 어휘 표에서 1개 선택. 그 어휘가 귀속되는 `data-layout` family를 `<body>`에 부여 (`references/layouts.md` 매핑 표 — coarse 다양성 태그).
 3. **anchor 보일러플레이트 식별 + Read (의무)** — 어휘 옆 "anchor 보일러플레이트" 컬럼의 파일을 `Read` 해서 chrome 골격(top eyebrow + page counter + .rule + 옵션 gm-band) + 미세 서식(카드 padding, number-circle line-height, accent 사용 빈도)을 정확히 파악. **chrome은 그대로 복사**.
 4. **body 영역 작곡** — chrome은 anchor에서 가져온 그대로, body 영역만 어휘 가이드대로 변형. **Narrative 카테고리(cover/closing-light/section-divider/summary)만 anchor 거의 그대로 사용** — 톤 keepers. 다른 5 카테고리(Hero/Visual-Primary/Editorial/Density/Sequence)는 anchor에서 chrome + 미세 서식 복사한 뒤 **body는 변형 영감 컬럼에서 1개 이상 선택 적용 권장**. 표준 패턴 그대로 쓰지 말고 한 가지 의도적 변형을 더해라 — v2의 창의성은 여기서 나왔다.
 5. **미세 서식 self-check** — `references/text-formatting-rules.md` §10 체크리스트 통과 (원형 텍스트 line-height = 컨테이너 height, 카드 padding 18pt 20pt, accent 1-2 events, inline span margin 없음 등).
@@ -465,6 +466,7 @@ Converting N slides via html2pptx...
 | `references/text-formatting-rules.md` | **미세 서식 polish 규칙 (원형 텍스트 valign, 카드 padding, BR 처리, accent 빈도 등)** |
 | `references/error-patterns.md` | 알려진 빌드 에러 + 픽스 (E1~E12) |
 | `references/css-helpers.md` | `_pptx-slide.css` 헬퍼 클래스 카탈로그 |
+| `references/layouts.md` | **`data-layout` 레지스트리** — 14 family(card-type ≤1/3) + `<body data-layout>` 규칙 + 다양성 게이트(B)가 보는 것 |
 | `references/diagram-slots.md` | **다이어그램 슬롯 계약** — `diagram-design` 스킬 → PNG `<img>` 슬롯 임베드 (2.6단계 전체 가이드 + 의미역→CSS변수 매핑) |
 | `references/canvas-spec.md` | 960pt × 540pt 캔버스 / 좌표 / 폰트 가이드 |
 | `assets/design-systems/<preset>/pptx-boilerplate/*.html` | 베이스라인 8 패턴 (01~08, 모든 preset 공통) + preset별 추가 콘텐츠 패턴. `jangpm`은 29 패턴(09~37) 추가 제공. 실제 보유 목록은 `ls assets/design-systems/<preset>/pptx-boilerplate/`로 확인 |

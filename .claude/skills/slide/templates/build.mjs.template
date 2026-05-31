@@ -37,6 +37,20 @@ if (existsSync(planPath)) {
   console.log('[build] slide_plan.json not present → simple path (no R2/R5 enforcement)');
 }
 
+// Diversity gate (WARN) — data-layout coverage / distinct count / card-type ratio /
+// visual presence (PIPELINE_UPDATE_PLAN.md item B; registry: references/layouts.md).
+// Non-blocking during rollout (the script exits 0 in warn mode); promote to hard
+// by appending '--strict' here once the registry settles (Phase 4). This is
+// independent of the 4-constraints enforced inside html2pptx.js.
+try {
+  execFileSync('node', [
+    path.join(SKILL_DIR, 'scripts/validate-diversity.mjs'),
+    '--slides', slidesDir,
+  ], { stdio: 'inherit' });
+} catch (e) {
+  console.error('[build] diversity gate skipped (non-fatal):', e.message);
+}
+
 // Prebuild: PptxGenJS embeds <img src="…svg"> as a fake .png that PowerPoint
 // can't decode (chart shows as broken-image icon). Rasterize icons/*.svg to
 // real PNG and rewrite slide HTML to point at the PNG. See E11 in
