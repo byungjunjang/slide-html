@@ -228,6 +228,18 @@ def main() -> int:
         )
         print(f"active preset → {args.preset}  ({active_path})", file=sys.stderr)
 
+        # Switching the active preset can strand decks built on the PRIOR theme
+        # with hardcoded hex that no longer matches the new palette. Surface them
+        # (warn-only, never fatal — this is a guard, not a gate; Fix1).
+        print("\n=== stale_hex_guard ===")
+        try:
+            subprocess.run(
+                [sys.executable, str(SCRIPTS / "scan_stale_hex.py"), "--preset", args.preset],
+                check=False,
+            )
+        except Exception as e:  # best-effort: a guard must never break theme-init
+            print(f"[init_theme] stale-hex guard skipped: {e}", file=sys.stderr)
+
     print(f"\n=== /theme-init complete ===")
     print(f"preset: {theme.get('display_name')} ({args.preset})")
     print(f"location: {out_dir}")

@@ -238,6 +238,7 @@ theme-init은 결과물을 slide 번들의 `assets/design-systems/` 안에 직�
 | `missing theme token: X.Y` | 템플릿이 참조하는 토큰을 드래프트가 안 채움 | 드래프트에 토큰 추가, 또는 템플릿이 잘못 참조 중 |
 | `init-project.sh` 가 "preset is missing _pptx-slide.css" 라고 함 | 프리셋이 아직 생성 안 됐거나 `--force` 안 한 갱신 후 일부 파일 누락 | `init_theme.py --preset <name> --from <theme.json> --force` 재실행 |
 | 새 프리셋의 PPTX 가 jangpm 색으로 나옴 | init-project 가 옛 `slide/templates/` 에서 복사했음 (구버전 init-project.sh) | init-project.sh 가 최신본인지 확인 (Task 8 이후) |
+| active 전환 후 옛 데크 색이 새 테마와 안 맞음 | 데크 슬라이드에 옛 테마 accent 가 hex 로 하드코딩돼 stale | active 전환 시 `scan_stale_hex.py` 가 자동 warn (Fix1). 수동: `python scripts/scan_stale_hex.py` → `FOREIGN` hex 를 `var(--*)`/헬퍼 클래스로 재토큰화. `--strict` 로 게이트화 가능 |
 
 ## 다른 슬라이드 스킬과의 관계
 
