@@ -255,15 +255,27 @@ codex exec "Perform the following tasks:
 
 > 빌드 시점 메모: html2pptx는 `<img>`를 PPTX `pic` 객체로 임베드한다. `object-fit: cover`는 html2pptx가 슬라이드 단위로 캡처할 때 적용된 박스 크기 그대로 PPTX 도형 frame에 들어가므로, 16:9 슬롯의 양옆 크롭이 PPTX에서 그대로 보존된다.
 
-**슬롯 타입별 스타일 앵커 어댑터 (프롬프트 prefix):**
+**스타일 락 = 활성 accent 주입 (Fix2):** 이미지는 활성 프리셋의 **실제 accent hex**에 락한다 — 제네릭 "single accent color"는 새 테마 무드에 정밀 매칭이 안 된다. 데크에서 한 번 해석:
 
-| 슬롯 의도 | 스타일 앵커 (예시) | Negative |
+```bash
+node ../../.claude/skills/slide/scripts/active-accent.mjs   # 또는 --deck output/<project>-pptx
+```
+
+출력된 `accent`/`bg`/`text` hex를 아래 아키타입 앵커의 `<accent>`·`<bg>`·`<text>`에 박는다. **무드 형용사는 DESIGN.md §1**(Step 0에서 이미 로드)에서 가져온다 (jangpm = editorial·analytical·monochrome·warm off-white).
+
+**슬롯 스타일 아키타입 (bytonylee-inspired, 5종 — 프롬프트 prefix; 활성 preset에 맞춰 조정):**
+
+| 아키타입 | 스타일 앵커 (활성 hex 주입) | Negative |
 |---|---|---|
-| `photography` (실제 사진 톤) | "editorial photograph, natural light, shallow depth of field, muted palette, no text overlay" | `illustration, cartoon, 3d render, vector` — `photograph, photorealistic`은 **제외** |
-| `illustration` (line-art / flat) | "minimal flat line-art illustration, single accent color, neutral background, editorial poster style" | `photograph, photorealistic, busy gradient, neon glow` |
-| `diagram` (인포그래픽) | "clean schematic diagram, monochrome with one accent color, isometric or top-down, no labels" | `photograph, photorealistic, hand-drawn sketch, watercolor` |
+| `editorial-photo` (실제 사진 톤) | "editorial photograph, natural light, shallow depth of field, muted palette keyed to `<accent>`, no text overlay" | `illustration, cartoon, 3d render, vector, gradient, glow` (`photograph` 제외) |
+| `flat-vector` (라인/플랫) | "minimal flat vector illustration, single accent color `<accent>` on `<bg>`, generous negative space, editorial poster style" | `photograph, photorealistic, gradient, neon glow` |
+| `isometric-schematic` (인포그래픽) | "clean isometric technical illustration, monochrome with one accent `<accent>`, top-down or 3/4 view, no labels" | `photograph, hand-drawn sketch, watercolor, gradient` |
+| `abstract-geometric` (추상 표지) | "restrained abstract geometric composition, single accent `<accent>` on `<bg>`, lots of whitespace, flat shapes" | `photograph, busy, neon, gradient, glow` |
+| `textured-editorial` (리소/판화 톤) | "subtle risograph / paper-grain editorial illustration, two inks (ink `<text>` + accent `<accent>`), poster mood" | `photograph, 3d render, glossy, gradient` |
 
-> 슬롯의 의도와 negative가 충돌하면(예: photography 슬롯인데 negative에 `photograph` 들어감) 어댑터가 해당 단어를 negative에서 빼고 prefix에서 다시 강조한다.
+영구 락 그대로: 단일 accent(2번째 휴 금지) · 이모지 금지 · 그라디언트/글로우 금지 → 모든 negative에 `gradient, glow` 유지.
+
+> 아키타입 의도와 negative가 충돌하면(예: `editorial-photo`인데 negative에 `photograph`) 해당 단어를 negative에서 빼고 prefix에서 다시 강조한다.
 
 **✅ Checkpoint — 모든 `<img src="../images/<slot>.png">` 슬롯 파일이 `images/`에 존재하면 3단계로.**
 
@@ -477,6 +489,8 @@ Converting N slides via html2pptx...
 | `scripts/init-project.sh` | 프로젝트 셋업 자동화 (preset → output 복사) |
 | `scripts/export_deck_pptx.mjs` + `html2pptx.js` | HTML → editable PPTX 변환 엔진 (Playwright + pptxgenjs) |
 | `scripts/prebuild-svg.mjs` | 빌드 직전 icons/*.svg를 PNG로 래스터화 (PptxGenJS의 SVG embed 버그 우회) |
+| `scripts/validate-diversity.mjs` | 빌드 prebuild **다양성 게이트(WARN)** — `data-layout` 커버리지/distinct/card-type 비율/visual 존재 (`references/layouts.md`) |
+| `scripts/active-accent.mjs` | 활성 preset accent palette 해석 → §2.5 이미지 **style-lock accent 주입(Fix2)** |
 | `scripts/render-diagram.mjs` | **diagram-design HTML → 투명 고해상도 PNG** (Playwright; 웹폰트·CJK 정확). 2.6 다이어그램 슬롯용 |
 | `../diagram-design/SKILL.md` | **다이어그램 작곡 스킬** (14종). slide-html 안에서는 §0.5 라우팅 → `diagram-slots.md` 계약 |
 | `../codex-image/SKILL.md` | **AI 이미지 생성 (단일 백엔드, OAuth)** — Codex CLI `image_gen` 도구로 `gpt-image-2` 호출. 2.5단계 참조 |
