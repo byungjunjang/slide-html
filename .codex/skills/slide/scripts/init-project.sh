@@ -92,16 +92,11 @@ else
   exit 1
 fi
 
-# --- build.mjs 생성 (output 파일명을 프로젝트 이름으로) ---
-sed "s|__OUT_FILENAME__|${PROJECT_NAME}.pptx|" "$TEMPLATES_DIR/build.mjs.template" > "$PROJECT_DIR/build.mjs"
-
-# 만약 template 에 placeholder가 없으면 그대로 복사
-if ! grep -q "__OUT_FILENAME__" "$TEMPLATES_DIR/build.mjs.template"; then
-  cp "$TEMPLATES_DIR/build.mjs.template" "$PROJECT_DIR/build.mjs"
-  # 출력 파일명 패치 (default jangpm-ds-showcase.pptx → 프로젝트명.pptx)
-  sed -i.bak "s|jangpm-ds-showcase.pptx|${PROJECT_NAME}.pptx|g" "$PROJECT_DIR/build.mjs"
-  rm -f "$PROJECT_DIR/build.mjs.bak"
-fi
+# --- build.mjs 생성 ---
+# build.mjs는 현재 폴더명(output/<slug>-pptx)에서 산출명(<slug>.pptx)을
+# 동적으로 계산한다. output 폴더를 복사/이름 변경해 실험해도 verify_deck.py의
+# 폴더명 기반 slug 추론과 충돌하지 않는다.
+cp "$TEMPLATES_DIR/build.mjs.template" "$PROJECT_DIR/build.mjs"
 
 # --- 보일러플레이트 슬라이드 1장 (Title) ---
 # Starter slide comes from the preset's pptx-boilerplate (tokenized per theme)

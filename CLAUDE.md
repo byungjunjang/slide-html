@@ -93,6 +93,10 @@ slide-html/
 bash .claude/skills/slide/scripts/init-project.sh <slug>
 bash .claude/skills/slide/scripts/init-project.sh <slug> <preset>
 
+# Windows PowerShell without Git Bash
+powershell -ExecutionPolicy Bypass -File .claude/skills/slide/scripts/init-project.ps1 <slug>
+powershell -ExecutionPolicy Bypass -File .claude/skills/slide/scripts/init-project.ps1 <slug> <preset>
+
 # 2. 슬라이드 작성 → output/<slug>-pptx/slides/NN-*.html
 #    (4-constraints + css-helpers를 준수하며 LLM이 직접 작성)
 
@@ -120,7 +124,7 @@ python3 .claude/skills/slide/scripts/dev/sync_codex_mirror.py         # 미러 �
 python3 .claude/skills/slide/scripts/dev/sync_codex_mirror.py --check  # 드리프트 확인 (게이트)
 ```
 
-완료 게이트(두 호스트 공용): `node build.mjs`가 빌드 후 `verify_deck.py`를 자동 호출한다(네이티브성·dangling `<img>`·미디어 하한·≥10장 plan·미러 freshness 하드 페일). Codex는 done 선언 전 `python3 .codex/skills/slide/scripts/verify_deck.py output/<slug>-pptx` 통과 필수. 미러가 stale면 게이트가 하드 페일하므로 위 sync를 먼저 돌린다.
+완료 게이트(두 호스트 공용): `node build.mjs`가 빌드 후 `verify_deck.py`를 자동 호출한다(네이티브성·dangling `<img>`·미디어 하한·placeholder가 남은 declared image slot·≥10장 plan·미러 freshness 하드 페일). Codex는 done 선언 전 `python3 .codex/skills/slide/scripts/verify_deck.py output/<slug>-pptx` 통과 필수. 미러가 stale면 게이트가 하드 페일하므로 위 sync를 먼저 돌린다.
 
 ## 빌드 시 주의
 
@@ -132,7 +136,9 @@ python3 .claude/skills/slide/scripts/dev/sync_codex_mirror.py --check  # 드리�
 
 `/slide` Step 2.5(이미지 슬롯이 있을 때만)가 사용.
 
-**백엔드는 단일**: Codex CLI 내장 `image_gen` 도구 → `gpt-image-2` (OAuth, API key 불필요). slide-html은 이 외 다른 이미지 백엔드를 동봉하지 않는다 — preflight(`codex --version` / `codex login status`)가 실패하면 대체 생성기로 넘어가지 않고 이미지 단계를 중단한 뒤 `<img>` 슬롯을 placeholder 도형(`<div class="img-placeholder">`)으로 대체한다.
+**백엔드는 단일**: Codex CLI 내장 `image_gen` 도구 → `gpt-image-2` (OAuth, API key 불필요). slide-html은 이 외 다른 이미지 백엔드를 동봉하지 않는다 — preflight(`codex --version` / `codex login status`)가 실패하면 대체 생성기로 넘어가지 않고 이미지 단계를 중단한 뒤 `<img>` 슬롯을 placeholder 도형(`<div class="img-placeholder">`)으로 대체한다. 이 fallback은 **`data-image-slot`을 제거해야** 한다. `data-image-slot`이 남아 있으면 verify가 "실제 미디어가 있어야 하는 슬롯"으로 보고 하드 페일한다.
+
+`codex exec`는 성공해도 플러그인/메모리 관련 non-fatal WARN을 함께 찍을 수 있다. 성공 판정은 마지막의 saved path, byte size, dimensions 라인과 실제 `output/<deck>-pptx/images/<slot>.png` 존재 여부로 한다.
 
 **호출 경로는 두 갈래** (둘 다 같은 codex/gpt-image-2 백엔드로 수렴 — `/codex-image` 스킬은 *필수가 아니라 편의용 래퍼*):
 - 기본(primary): 직접 `codex exec` 호출 (`SKILL.md` Step 2.5)

@@ -36,6 +36,7 @@ PLAN_AUTO_THRESHOLD = 10               # slide-html SKILL.md: >=10 -> systematic
 A_T = re.compile(rb"<a:t>")
 IMG_REF = re.compile(r"""<img[^>]*\bsrc\s*=\s*["']([^"']+)["']""", re.I)
 DATA_SLOT = re.compile(r"""data-image-slot""", re.I)
+IMG_PLACEHOLDER = re.compile(r"""class\s*=\s*["'][^"']*\bimg-placeholder\b""", re.I)
 
 
 class Gate:
@@ -92,11 +93,13 @@ def check_text_runs(g: Gate, slides: dict):
 
 def check_images(g: Gate, project: Path, media: dict):
     slides_dir = project / "slides"
-    missing, declared = [], False
+    missing, placeholder_slots, declared = [], [], False
     for html in sorted(slides_dir.glob("*.html")):
         text = html.read_text(encoding="utf-8", errors="ignore")
         if DATA_SLOT.search(text):
             declared = True
+            if IMG_PLACEHOLDER.search(text):
+                placeholder_slots.append(html.name)
         for src in IMG_REF.findall(text):
             if src.startswith(("http://", "https://", "data:")):
                 continue
@@ -106,6 +109,9 @@ def check_images(g: Gate, project: Path, media: dict):
                 declared = True
             if not (slides_dir / src).resolve().exists():
                 missing.append(f"{html.name} -> {src}")
+    g.H(not placeholder_slots,
+        "Placeholder fallback still declares data-image-slot; remove the "
+        f"data-image-slot marker or generate a real images/<slot>.png asset: {placeholder_slots}")
     g.H(not missing, f"Dangling <img> references (file missing): {missing}")
     if declared:
         total = sum(media.values())

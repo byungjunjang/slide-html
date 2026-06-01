@@ -16,13 +16,17 @@ Edit `.claude/skills/...`, then run
    reimplementation** — never hand-roll python-pptx, image-flatten a deck, or
    build slides outside `node build.mjs`.
 
-2. **Plan auto-entry.** If the deck is **≥10 slides**, OR a reference file is
+2. **Plan auto-entry.** This is a Codex execution contract, not a hidden build
+   feature: the agent must enter `/slide-plan` before authoring. If the deck is
+   **≥10 slides**, OR a reference file is
    attached/in `inputs/`, OR the brief carries an attitude keyword
    (계획·철저·상세·꼼꼼·체계·제대로·thorough·detailed·comprehensive·polished),
    first run `.codex/skills/slide-plan/SKILL.md` to produce
    `output/<project>-pptx/slide_plan.json`. Only the bypass keywords
    (`간단히`, `빠르게`, `quick`, `simple로`, `plan 없이`) skip this — and when
    bypassing a ≥10-slide deck, write `output/<project>-pptx/.deck-mode` = `simple`.
+   `verify_deck.py` hard-fails ≥10-slide decks that missed both the plan and the
+   explicit bypass marker.
 
 3. **Single build path.** `init-project.sh` → author per-slide HTML (4 hard
    constraint, compose-don't-copy) → [§2.5 images / §2.6 diagrams] →
@@ -30,9 +34,11 @@ Edit `.claude/skills/...`, then run
 
 4. **Image discipline.** Run the §2.5 preflight (`codex --version`,
    `codex login status`). If images are required but real generation is not
-   possible, use SKILL §2.5's `<div class="img-placeholder">` fallback. NEVER
-   fabricate image files, generate local PIL/solid-color placeholders, or fall
-   back silently.
+   possible, use SKILL §2.5's `<div class="img-placeholder">` fallback **and
+   remove `data-image-slot` from that placeholder container**. A placeholder is
+   a visible fallback, not evidence media; declared image slots must resolve to
+   real `images/<slot>.png` files. NEVER fabricate image files, generate local
+   PIL/solid-color placeholders, or fall back silently.
 
 5. **Verify before "done".** Before declaring completion, `node build.mjs` must
    succeed AND

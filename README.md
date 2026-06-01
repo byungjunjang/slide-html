@@ -174,7 +174,8 @@ slide-html은 **하나의 정본 소스로 Claude Code와 Codex(클라우드/웹
 - `.claude/skills/`가 **정본** 스킬 트리입니다 (여기만 편집).
 - `.codex/skills/`는 **생성형 미러**(`sync_codex_mirror.py`)입니다 — Codex는 루트 `AGENTS.md`를 통해 발견합니다. 미러는 **직접 편집하지 마세요.**
 - `.claude/skills`를 바꾼 뒤에는 재생성: `python3 .claude/skills/slide/scripts/dev/sync_codex_mirror.py`
-- 두 호스트는 하나의 완료 게이트(`verify_deck.py`)를 공유합니다 — `node build.mjs`가 빌드 후 자동 호출하고, `AGENTS.md`가 done 선언 전 통과를 강제합니다.
+- 두 호스트는 하나의 완료 게이트(`verify_deck.py`)를 공유합니다 — `node build.mjs`가 빌드 후 자동 호출하고, `AGENTS.md`가 done 선언 전 통과를 강제합니다. `slide_plan.json` 자동 생성 자체는 agent가 AGENTS/SKILL을 읽고 수행하는 계약이며, gate는 미준수를 막는 안전망입니다.
+- **Windows (Git Bash 없이 PowerShell)**: `powershell -ExecutionPolicy Bypass -File .claude\skills\slide\scripts\init-project.ps1 <slug>` 로 셋업 (`init-project.sh`의 네이티브 PowerShell 포트).
 
 이로써 **Claude Code 품질은 그대로 유지**하면서 Codex에도 같은 실행 규율(즉흥 fallback 금지 · placeholder 이미지 금지 · 계획 자동 진입)을 부여합니다.
 

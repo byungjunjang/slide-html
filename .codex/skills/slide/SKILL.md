@@ -217,7 +217,7 @@ codex --version 2>/dev/null || { echo "NOT_FOUND — run: npm install -g @openai
 codex login status 2>&1 | grep -q "Logged in using ChatGPT" || { echo "NOT_LOGGED_IN — run: codex login"; exit 1; }
 ```
 
-위 preflight가 실패하면 이 단계 중단 — 사용자에게 `codex login` 안내하고 이미지 슬롯이 있는 슬라이드는 `<img>` 슬롯을 placeholder 도형(예: `<div class="img-placeholder">…</div>`)으로 대체한다. slide-html은 codex-image 외 다른 이미지 백엔드를 동봉하지 않는다.
+위 preflight가 실패하면 이 단계 중단 — 사용자에게 `codex login` 안내하고 이미지 슬롯이 있는 슬라이드는 `<img>` 슬롯을 placeholder 도형(예: `<div class="img-placeholder">…</div>`)으로 대체한다. 이때 **placeholder 컨테이너에는 `data-image-slot`을 남기지 않는다.** `data-image-slot`은 "실제 `images/<slot>.png`가 있어야 하는 증거 슬롯"이라는 계약이므로, placeholder에 남아 있으면 `verify_deck.py`가 하드 페일한다. slide-html은 codex-image 외 다른 이미지 백엔드를 동봉하지 않는다.
 
 **이미지 1장마다 per-slot 호출 (배치 단위 ❌). 직접 `codex exec` 호출:**
 
@@ -245,6 +245,8 @@ codex exec "Perform the following tasks:
 ```
 
 직렬로 1장씩, 호출 사이 2–5초 간격. 다음 슬롯으로 넘어가기 전 `test -f output/<project>-pptx/images/<slot>.png && file …` 으로 산출 확인.
+
+`codex exec`는 성공한 실행에서도 플러그인/메모리 관련 non-fatal WARN을 함께 출력할 수 있다. 성공 판정은 마지막의 saved path, byte size, dimensions 라인과 실제 `output/<project>-pptx/images/<slot>.png` 존재 여부다. saved path/bytes가 없거나 파일이 없으면 실패로 보고 placeholder fallback(위 규칙에 따라 `data-image-slot` 제거)로 전환한다.
 
 **Size 매핑 (gpt-image-2는 1024×1024 / 1024×1536 / 1536×1024 세 가지뿐 — 진짜 16:9 없음):**
 

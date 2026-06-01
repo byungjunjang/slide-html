@@ -17,7 +17,11 @@ const VERIFY_SCRIPT = path.join(SKILL_DIR, 'scripts/verify_deck.py');
 // Project lives at output/<name>-pptx/. Build artifact (.pptx) lands in the
 // same folder alongside slides/, so each generation request stays self-contained.
 const slidesDir = path.join(__dirname, 'slides');
-const outFile   = path.join(__dirname, '__OUT_FILENAME__');
+const projectDirName = path.basename(__dirname);
+const projectSlug = projectDirName.endsWith('-pptx')
+  ? projectDirName.slice(0, -'-pptx'.length)
+  : projectDirName;
+const outFile = path.join(__dirname, `${projectSlug}.pptx`);
 
 // slide-plan integration — systematic path: slide_plan.json present.
 // Validate R2 (chart/table strategy ↔ takeaway pairing) and R5 (evidence
