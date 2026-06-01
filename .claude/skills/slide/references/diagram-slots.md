@@ -143,7 +143,7 @@ node build.mjs
 | 매체 | 경로 | PPTX 편집? |
 |---|---|---|
 | **다이어그램** | diagram-design → PNG (위 Part A) | 도형 텍스트 불가 · 슬라이드 텍스트 가능 |
-| **차트 — 단순 bar/KPI** | `_pptx-slide.css` div 프리미티브(`ev-bar*` / `ev-kpi*`, `var(--accent)` + opacity) — html2pptx가 번역 | **텍스트 편집 가능** |
+| **차트 — 단순 bar/column/KPI** | `_pptx-slide.css` div 프리미티브(`ev-bar`/`ev-col-*`/`ev-fill*`/`ev-spark` — `var(--accent)` + **rgba alpha**, `opacity`는 html2pptx가 무시) — html2pptx가 번역 | **텍스트 편집 가능** |
 | **차트 — 복잡(산점·stacked·퍼널)** | diagram-design → PNG (Part A 경로) | 불가 |
 | **이미지** | AI 이미지 슬롯(§2.5) 또는 사진, full-bleed / ≥55% | n/a |
 

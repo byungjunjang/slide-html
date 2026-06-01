@@ -73,6 +73,24 @@ If prompt is empty, ask via AskUserQuestion:
 > "What image should I generate? Enter a prompt."
 > "어떤 이미지를 생성할까? 프롬프트를 입력해줘."
 
+## Step 2.5 — Sanitize transparent-background requests / 투명 배경 요청 무력화
+
+**Why / 원인**: `gpt-image-2` renders "transparent background" as a painted gray/white **checkerboard** — it fakes transparency in pixels instead of real alpha (known model behavior). This wrapper is the shared chokepoint, so neutralizing it here protects **every** caller (slide pipelines included) even if they pass "transparent background".
+
+- A transparency request with **no** explicit backdrop color → rewrite to a clean solid background.
+- A caller-named backdrop color (`#FAFAF9`, `white`, `흰색` …) → **preserve it** (sed only touches the transparent phrasing, never the color).
+
+```bash
+_PROMPT=$(printf '%s' "${_PROMPT}" | sed -E \
+  -e 's/(fully |perfectly |pure )?transparent (background|backdrop|bg)/clean solid background/Ig' \
+  -e 's/\bno background\b/clean solid background/Ig' \
+  -e 's/투명(한)? *배경/단색 배경/g' \
+  -e 's/배경[ ]*없(음|이|는|다)/단색 배경/g')
+echo "[codex-image] prompt after bg-sanitize: ${_PROMPT}"
+```
+
+> Real alpha transparency is NOT available from `gpt-image-2`. If a caller genuinely needs a transparent PNG (e.g. a diagram/icon cutout), that is a different backend — render it with Chromium `omitBackground` (slide-html `scripts/render-diagram.mjs`), not this skill.
+
 ## Step 3 — Determine Save Path / 저장 경로 결정
 
 ```bash
@@ -96,11 +114,12 @@ _FILENAME="${_FILENAME_ARG:-codex-image-${_TIMESTAMP}}"
 codex exec "Perform the following tasks:
 1. Use the built-in image_gen tool to generate an image.
 2. Prompt: '${_PROMPT}'
-3. Size: ${_SIZE}
-4. Quality: ${_QUALITY}
-5. Count: ${_N}
-6. Copy the generated image to '${_OUT_DIR}/${_FILENAME}.png'. For multiple images use -1.png, -2.png suffix.
-7. Print the saved file path and size." \
+3. Background rule (HARD): render on a SOLID FLAT background. NEVER output a transparency checkerboard (gray/white squares). If the prompt implies transparency, substitute a solid color instead — the named backdrop color if any, else white.
+4. Size: ${_SIZE}
+5. Quality: ${_QUALITY}
+6. Count: ${_N}
+7. Copy the generated image to '${_OUT_DIR}/${_FILENAME}.png'. For multiple images use -1.png, -2.png suffix.
+8. Print the saved file path and size." \
   -C "${_PROJECT_ROOT}" \
   -s workspace-write \
   -c 'model_reasoning_effort="medium"' \

@@ -7,10 +7,10 @@
 ## `data-layout` 부여 규칙
 
 - 모든 슬라이드 루트에 `<body data-layout="<family-id>">` — **한 슬라이드 = 한 family**.
-- `family-id`는 아래 14개 중 하나. (게이트는 distinct 카운팅에 임의 문자열도 허용하지만, **레지스트리 id 사용 권장** — card-type/visual 분류가 정확해진다.)
+- `family-id`는 아래 15개 중 하나. (게이트는 distinct 카운팅에 임의 문자열도 허용하지만, **레지스트리 id 사용 권장** — card-type/visual 분류가 정확해진다.)
 - 이미지/차트/다이어그램 **증거 슬롯**이 있으면 그 슬롯 컨테이너에 `data-image-slot="<name>"`을 추가한다 (Phase 3·C evidence-slots 계약과 연결). 게이트의 visual 존재 점검이 이를 인식한다. `<img>` 태그 자체도 visual 신호로 인정.
 
-## 14 family
+## 15 family
 
 | family-id | 카테고리 (§5) | card? | visual? | §5 어휘 매핑 | 언제 |
 |---|---|:--:|:--:|---|---|
@@ -28,8 +28,9 @@
 | `cards-points` | D Density | ✓ | | `three-point` · `four-point` · `six-point` | 번호 포인트 카드 |
 | `kpi-grid` | D Density | ✓ | | `kpi-grid` | KPI 타일 그리드 |
 | `paired-concept` | D Density | ✓ | | `paired-concept` | 2축 큰 카드 |
+| `chart` | D Density | | | `ev-bar`/`ev-col-*` 하이브리드 차트 (§8) | 단순 bar/column/KPI 차트가 주역 — visual 신호는 차트 컨테이너의 `data-image-slot` |
 
-**card-type 4/14 ≤ 1/3** — 레지스트리 구성 자체가 카드형을 소수로 묶어 "카드 반복 탈피"(P1)를 구조적으로 유도한다. 데크 단위 cap은 `DESIGN.md` §10(Density ≤ 50%, 이상적으로 ≤ 1/3) · `anti-slop.md` §13이 SSOT.
+**card-type 4/15 ≤ 1/3** — 레지스트리 구성 자체가 카드형을 소수로 묶어 "카드 반복 탈피"(P1)를 구조적으로 유도한다. 데크 단위 cap은 `DESIGN.md` §10(Density ≤ 50%, 이상적으로 ≤ 1/3) · `anti-slop.md` §13이 SSOT.
 
 ## 게이트(B)가 보는 것 — WARN
 

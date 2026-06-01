@@ -224,12 +224,13 @@ codex login status 2>&1 | grep -q "Logged in using ChatGPT" || { echo "NOT_LOGGE
 ```bash
 codex exec "Perform the following tasks:
 1. Use the built-in image_gen tool to generate an image.
-2. Prompt: '<style-anchor> <subject prompt> Avoid: <negative list>'
-3. Size: <size>
-4. Quality: high
-5. Count: 1
-6. Copy the generated image to '<project>-pptx/images/<slot>.png'.
-7. Print the saved file path and size." \
+2. Prompt: '<style-anchor> <subject prompt> on a solid flat background. Avoid: <negative list>, transparent background, checkerboard'
+3. Background rule (HARD): render on a SOLID FLAT background — never a transparency checkerboard (gray/white squares). 슬라이드 AI 이미지는 항상 프레임을 꽉 채우는 단색·실사 배경이지 투명 컷아웃이 아니다 (full-bleed/카드 fill).
+4. Size: <size>
+5. Quality: high
+6. Count: 1
+7. Copy the generated image to '<project>-pptx/images/<slot>.png'.
+8. Print the saved file path and size." \
   -s workspace-write \
   --skip-git-repo-check \
   -c 'model_reasoning_effort="medium"'
@@ -273,7 +274,7 @@ node ../../.claude/skills/slide/scripts/active-accent.mjs   # 또는 --deck outp
 | `abstract-geometric` (추상 표지) | "restrained abstract geometric composition, single accent `<accent>` on `<bg>`, lots of whitespace, flat shapes" | `photograph, busy, neon, gradient, glow` |
 | `textured-editorial` (리소/판화 톤) | "subtle risograph / paper-grain editorial illustration, two inks (ink `<text>` + accent `<accent>`), poster mood" | `photograph, 3d render, glossy, gradient` |
 
-영구 락 그대로: 단일 accent(2번째 휴 금지) · 이모지 금지 · 그라디언트/글로우 금지 → 모든 negative에 `gradient, glow` 유지.
+영구 락 그대로: 단일 accent(2번째 휴 금지) · 이모지 금지 · 그라디언트/글로우 금지 → 모든 negative에 `gradient, glow` 유지. **투명 배경 금지**도 함께 — gpt-image-2는 `transparent background` 요청을 회색 격자(체커보드)로 그리므로 negative에 `transparent background, checkerboard`를 유지하고 항상 단색 배경을 명시한다. (진짜 투명 PNG가 필요한 다이어그램은 §2.6의 Chromium `omitBackground` 경로이지 이 codex 경로가 아니다.)
 
 > 아키타입 의도와 negative가 충돌하면(예: `editorial-photo`인데 negative에 `photograph`) 해당 단어를 negative에서 빼고 prefix에서 다시 강조한다.
 

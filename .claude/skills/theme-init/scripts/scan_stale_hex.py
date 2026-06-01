@@ -105,6 +105,13 @@ def scan_file(html: Path) -> list[tuple[int, str]]:
 
 
 def main() -> int:
+    # Korean summary/WARN lines contain an em-dash (—); force UTF-8 so a cp949
+    # console (Korean Windows) doesn't raise UnicodeEncodeError on print. Mirrors
+    # the same guard in slide-plan/scripts/validate_plan.py.
+    for _stream in (sys.stdout, sys.stderr):
+        if hasattr(_stream, "reconfigure"):
+            _stream.reconfigure(encoding="utf-8")
+
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--root", type=Path, default=DEFAULT_OUTPUT_ROOT,
                     help="output/ root containing <deck>/slides/ (default: repo output/)")

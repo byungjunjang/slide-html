@@ -28,6 +28,7 @@ const VISUAL_FAMILIES = new Set(['image-hero', 'annotated-visual', 'diagram-hero
 const KNOWN_FAMILIES = new Set([
   'hero-statement', 'hero-number', 'image-hero', 'annotated-visual', 'diagram-hero',
   'compare-split', 'editorial-prose', 'data-table', 'sequence-flow', 'narrative-frame',
+  'chart',
   ...CARD_FAMILIES,
 ]);
 
