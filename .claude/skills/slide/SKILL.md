@@ -96,7 +96,7 @@ slide-plan 자동 진입 — 조건 충족: <어떤 조건이 트리거됐는지
 명시적으로 simple 모드를 원하시면 `simple로` / `plan 없이` 라고 응답하세요.
 ```
 
-명시적 우회 keyword (`simple로`, `plan 없이`, `빠르게`, `간단히`, `quick`)가 들어오면 trigger 무시하고 simple로.
+명시적 우회 keyword (`simple로`, `plan 없이`, `빠르게`, `간단히`, `quick`)가 들어오면 trigger 무시하고 simple로. **단 데크가 ≥10장이면** `output/<project-name>-pptx/.deck-mode`에 `simple` 한 단어를 기록한다 — `verify_deck.py`의 plan-강제 게이트가 이 마커로 정당한 대형 simple 덱을 통과시킨다 (마커가 없으면 ≥10장 무계획은 하드 페일).
 
 ### 1. 프로젝트 셋업
 

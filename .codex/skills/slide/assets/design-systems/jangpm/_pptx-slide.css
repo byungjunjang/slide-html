@@ -1,0 +1,170 @@
+/* ============================================================
+   Jangpm Slide CSS — html2pptx safe (no gradients, no pseudos)
+   Canvas: 960pt × 540pt (= 1280px × 720px = 13.333" × 7.5")
+   ============================================================ */
+
+@import url('design-system/colors_and_type.css');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 960pt; height: 540pt;
+  background: #FAFAF9;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Segoe UI', Roboto, sans-serif;
+  color: #1A1A1A;
+  overflow: hidden;
+}
+
+/* canvas wrapper helpers */
+.pad         { padding: 42pt 42pt 36pt 42pt; height: 540pt; width: 960pt; position: relative; }
+.pad-wide    { padding: 42pt 56pt 56pt 56pt; height: 540pt; width: 960pt; position: relative; }
+
+/* GM (governing message) — bottom centered text */
+.gm-band     { position: absolute; bottom: 18pt; left: 56pt; right: 56pt; text-align: center; }
+
+/* card — chrome governed by surface.card_style:
+   hairline = fill + 1px border (editorial default); filled = fill, no border;
+   borderless = no fill / no border (content separated by whitespace only). */
+.card        { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12pt; padding: 18pt 20pt; }
+.card-accent { background: #E8E5FC; border: 1px solid #4633E3; border-radius: 12pt; padding: 18pt 20pt; }
+.card-alt    { background: #F5F5F4; border: 1px solid #E5E7EB; border-radius: 12pt; padding: 18pt 20pt; }
+.card-dark   { background: #1A1A1A; border-radius: 12pt; padding: 18pt 20pt; }
+
+/* badges (div-wrapped: bg on div, p inside) */
+.badge-accent-soft { display: inline-block; background: #E8E5FC; border-radius: 9999pt; padding: 6pt 14pt; }
+.badge-accent      { display: inline-block; background: #4633E3; border-radius: 9999pt; padding: 5pt 14pt; }
+.badge-dark        { display: inline-block; background: #1A1A1A; border-radius: 9999pt; padding: 5pt 14pt; }
+.badge-square      { display: inline-block; background: #4633E3; border-radius: 4pt; padding: 8pt 18pt; }
+.number-circle     { display: inline-block; width: 22pt; height: 22pt; background: #4633E3; border-radius: 50%; text-align: center; }
+.number-circle-lg  { display: inline-block; width: 28pt; height: 28pt; background: #4633E3; border-radius: 50%; text-align: center; }
+
+/* divider lines (use div, not <hr>) */
+.rule        { background: #E5E7EB; height: 1pt; width: 100%; }
+.rule-accent { background: #4633E3; height: 2pt; width: 64pt; }
+
+/* accent vertical strip (replaces ::before pseudo) */
+.strip-accent { background: #4633E3; width: 3pt; border-radius: 2pt; }
+
+/* report table — use grid of divs (html2pptx friendly) */
+.tbl-row     { display: grid; }
+.tbl-cell    { padding: 8pt 12pt; border-bottom: 1px solid #E5E7EB; }
+.tbl-head    { background: #E8E5FC; }
+.tbl-zebra   { background: #FAFAF9; }
+.tbl-hi      { background: rgba(70, 51, 227, 0.06); border-left: 2px solid #4633E3; border-right: 2px solid #4633E3; }
+
+/* placeholder frame (solid colors only) */
+.ph-frame    { background: #F5F5F4; border: 2px dashed #D4D4D4; border-radius: 12pt; padding: 16pt; text-align: center; }
+.ph-frame-accent { background: #E8E5FC; border: 2px dashed #4633E3; border-radius: 12pt; padding: 16pt; text-align: center; }
+
+/* terminal */
+.term-window { background: #1A1A1A; border-radius: 8pt; padding: 0; overflow: hidden; }
+.term-chrome { background: rgba(255, 255, 255, 0.07); padding: 8pt 12pt; }
+.term-dot    { display: inline-block; width: 9pt; height: 9pt; border-radius: 50%; margin-right: 4pt; }
+.term-body   { background: #1A1A1A; padding: 14pt 16pt; }
+
+/* layout helpers */
+.row         { display: flex; }
+.col         { display: flex; flex-direction: column; }
+.between     { justify-content: space-between; }
+.center      { align-items: center; }
+
+/* size helpers (pt) */
+.gap-1 { gap: 4pt; } .gap-2 { gap: 8pt; } .gap-3 { gap: 12pt; }
+.gap-4 { gap: 16pt; } .gap-5 { gap: 20pt; } .gap-6 { gap: 24pt; }
+.gap-8 { gap: 32pt; } .gap-10 { gap: 40pt; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18pt; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18pt; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14pt; }
+.grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12pt; }
+.grid-6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12pt; }
+
+/* typography classes — for use INSIDE p/h* (override colors_and_type.css rem with pt).
+   Sizes / line-height / letter-spacing are canvas-calibrated (960pt×540pt) literals and
+   stay locked; font-weight follows the theme type-scale step it maps to so a preset's
+   weight intent is honored. t-h1 tracks display weight (heavy-heading tier); t-cap-up
+   maps to the label step (uppercase eyebrow). */
+.t-display  { font-size: 42pt; font-weight: 800; line-height: 1.05; letter-spacing: -1pt; color: #1A1A1A; }
+.t-display2 { font-size: 36pt; font-weight: 800; line-height: 1.05; letter-spacing: -1pt; color: #1A1A1A; }
+.t-h1       { font-size: 30pt; font-weight: 800; line-height: 1.1;  letter-spacing: -0.6pt; color: #1A1A1A; }
+.t-h2       { font-size: 24pt; font-weight: 700; line-height: 1.2;  letter-spacing: -0.4pt; color: #1A1A1A; }
+.t-h3       { font-size: 18pt; font-weight: 700; line-height: 1.25; color: #1A1A1A; }
+.t-title    { font-size: 14pt; font-weight: 600; line-height: 1.3;  color: #1A1A1A; }
+.t-body     { font-size: 12pt; font-weight: 400; line-height: 1.5;  color: #1A1A1A; }
+.t-body-sec { font-size: 12pt; font-weight: 400; line-height: 1.5;  color: #6B7280; }
+.t-cap      { font-size: 9pt;  font-weight: 500; line-height: 1.4;  color: #6B7280; }
+.t-cap-up   { font-size: 9pt;  font-weight: 600; line-height: 1.4;  color: #6B7280; letter-spacing: 0.4pt; text-transform: uppercase; }
+.t-mono     { font-family: 'SF Mono', 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace; }
+
+/* color modifiers */
+.c-accent     { color: #4633E3; }
+.c-accent-ink { color: #2E1FB3; }
+.c-text       { color: #1A1A1A; }
+.c-secondary  { color: #6B7280; }
+.c-tertiary   { color: #9CA3AF; }
+.c-bg         { color: #FAFAF9; }
+.c-white      { color: #FFFFFF; }
+.c-positive   { color: #059669; }
+.c-negative   { color: #E11D48; }
+.c-warning    { color: #D97706; }
+
+.bg-accent      { background: #4633E3; }
+.bg-accent-soft { background: #E8E5FC; }
+.bg-surface-alt { background: #F5F5F4; }
+.bg-text        { background: #1A1A1A; }
+
+/* ============================================================
+   Brand layout-authoring helpers (theme-init Phase 2)
+   Shape-only structural primitives for recomposing IDENTITY
+   slides (cover / section / closing / feature-board / hero) into
+   brand layouts. html2pptx-safe: solid fills only, no gradients,
+   no pseudo-elements. Brand-specific colors (e.g. a navy hero
+   band when navy is not the accent) are applied INLINE as literal
+   hex on the wrapping div — never on <p>/<h*>. Token-colored
+   defaults below cover the common case.
+   See references/layout-recipes.md for composition recipes.
+   ============================================================ */
+
+/* full-bleed / banner bands — set top + height (and bg if not accent) inline */
+.band-full    { position: absolute; left: 0; right: 0; }
+.hero-band    { position: absolute; left: 0; right: 0; top: 0; height: 220pt; background: #1A1A1A; }
+.banner-strip { display: inline-block; border-radius: 6pt; padding: 7pt 16pt; }
+
+/* brand spectrum dots — a row of small solid dots, each colored inline (literal hex) */
+.dot-row         { display: flex; align-items: center; gap: 6pt; }
+.spectrum-dot    { display: inline-block; width: 10pt; height: 10pt; border-radius: 50%; }
+.spectrum-dot-sm { display: inline-block; width: 7pt;  height: 7pt;  border-radius: 50%; }
+
+/* CTA buttons — accent fill + white text by default; div wrapper, <p> inside */
+.btn-cta     { display: inline-block; background: #4633E3; border-radius: 9999pt; padding: 11pt 24pt; }
+.btn-cta-sq  { display: inline-block; background: #4633E3; border-radius: 8pt;    padding: 11pt 22pt; }
+.btn-outline { display: inline-block; background: #FFFFFF; border: 1.5px solid #4633E3; border-radius: 9999pt; padding: 10pt 22pt; }
+
+/* feature-board tiles — pastel/surface card variants (chrome dropped when borderless) */
+.feature-tile        { background: #F5F5F4; border-radius: 14pt; padding: 20pt 22pt; }
+.feature-tile-accent { background: #E8E5FC; border-radius: 14pt; padding: 20pt 22pt; }
+
+/* chip — eyebrow pill on a band (color inline when on dark band) */
+.chip { display: inline-block; border-radius: 9999pt; padding: 5pt 14pt; }
+
+/* ============================================================
+   Evidence-chart primitives (Phase 3·D — hybrid charts)
+   Simple bar / column / KPI charts as html2pptx-safe div shapes:
+   a track div + a fill div, both SOLID or rgba fills. Do NOT use
+   the CSS `opacity` property — html2pptx ignores it; grade a single
+   accent with rgba ALPHA instead (mapped to shape transparency).
+   Set the data value as an inline width (horizontal) or height
+   (column) percent/pt on the fill. Complex charts (scatter /
+   stacked / funnel) route to diagram-design PNG — see DESIGN.md §8
+   and references/diagram-slots.md Part B.
+   ============================================================ */
+.ev-bar       { display: flex; align-items: center; gap: 10pt; }            /* one row: label + track [+ value] */
+.ev-track     { flex: 1; height: 14pt; background: #F5F5F4; border-radius: 7pt; position: relative; }
+.ev-track-lg  { flex: 1; height: 20pt; background: #F5F5F4; border-radius: 10pt; position: relative; }
+.ev-fill      { height: 100%; background: #4633E3; border-radius: inherit; }                 /* primary — set width inline */
+.ev-fill-mid  { height: 100%; background: rgba(70, 51, 227, 0.55); border-radius: inherit; } /* secondary series (same hue, graded) */
+.ev-fill-soft { height: 100%; background: rgba(70, 51, 227, 0.30); border-radius: inherit; } /* tertiary / de-emphasis */
+.ev-fill-muted{ height: 100%; background: #D4D4D4; border-radius: inherit; }          /* neutral comparison bar (grey, not a 2nd hue) */
+.ev-col-track { width: 100%; background: #F5F5F4; border-radius: 6pt 6pt 0 0; position: relative; } /* vertical column — set height inline */
+.ev-col-fill  { position: absolute; bottom: 0; left: 0; width: 100%; background: #4633E3; border-radius: 6pt 6pt 0 0; } /* set height inline (% of track) */
+.ev-spark     { height: 4pt; background: #4633E3; border-radius: 2pt; }                      /* KPI underline / sparkbar — set width inline */

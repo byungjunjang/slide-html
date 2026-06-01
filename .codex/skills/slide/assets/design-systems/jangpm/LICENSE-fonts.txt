@@ -1,0 +1,17 @@
+Pretendard Font License
+=======================
+
+The Pretendard font files in `fonts/` are distributed under the
+SIL Open Font License (OFL), Version 1.1.
+
+Copyright (c) 2021- Kil Hyung-jin (orioncactus)
+Project: https://github.com/orioncactus/pretendard
+License: https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
+
+Under the OFL, you may use, study, modify, and redistribute the fonts
+freely. The fonts must not be sold by themselves; they may be bundled,
+embedded, redistributed, or sold with software, including for
+commercial use. The full license text is available at the URL above.
+
+This LICENSE file accompanies the bundled font files to satisfy the
+OFL's notice requirement.

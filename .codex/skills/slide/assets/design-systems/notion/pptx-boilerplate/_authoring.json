@@ -1,0 +1,96 @@
+{
+  "version": "1.0",
+  "preset": "notion",
+  "status": "confirmed",
+  "updated_at": "2026-05-29T12:34:40",
+  "identity_set": {
+    "cover": [
+      "01-title",
+      "23-cover-with-character",
+      "25-cover-vertical"
+    ],
+    "section": [
+      "09-section",
+      "07-quote-section"
+    ],
+    "closing": [
+      "21-closing-light",
+      "22-closing-big",
+      "08-closing-dark"
+    ],
+    "feature-board": [
+      "02-overview",
+      "26-overview-split",
+      "12-four-point"
+    ],
+    "hero-impact": [
+      "16-stats",
+      "18-quote-attribution"
+    ],
+    "summary": [
+      "17-summary"
+    ],
+    "agenda": [
+      "10-agenda"
+    ]
+  },
+  "data_set": [
+    "03-color-grid",
+    "04-type-scale",
+    "05-card-kpi",
+    "06-table",
+    "11-three-point",
+    "13-six-point",
+    "14-comparison",
+    "15-process",
+    "19-table-detailed",
+    "20-forecast-table",
+    "24-checklist",
+    "27-matrix-trends",
+    "28-pnl",
+    "29-seasonal",
+    "30-paired-concept",
+    "31-kpi-dashboard",
+    "32-terminal-split",
+    "33-terminal-full",
+    "34-exercise-1up",
+    "35-exercise-2up",
+    "36-image-1up",
+    "37-image-2up"
+  ],
+  "authored": [
+    "01-title",
+    "23-cover-with-character",
+    "25-cover-vertical",
+    "09-section",
+    "07-quote-section",
+    "21-closing-light",
+    "22-closing-big",
+    "08-closing-dark",
+    "02-overview",
+    "26-overview-split",
+    "12-four-point",
+    "16-stats",
+    "18-quote-attribution",
+    "17-summary",
+    "10-agenda"
+  ],
+  "blueprint": {
+    "signature_elements": [],
+    "per_family": {},
+    "helper_hex_map": {},
+    "chrome_treatment": ""
+  },
+  "source_artifacts": {
+    "design_md": ".codex/skills/slide/assets/design-systems/notion/DESIGN.md",
+    "original_design_md": null,
+    "reference_blueprint": null,
+    "user_direction": "navy hero band + 5-color spectrum dots, pastel feature board with yellow-bold banner, purple CTA"
+  },
+  "verification": {
+    "lint": "ok",
+    "build": "ok",
+    "unzip": "ok",
+    "thumbs": "ok"
+  }
+}

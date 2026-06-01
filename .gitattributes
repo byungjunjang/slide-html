@@ -1,0 +1,11 @@
+# Generative-mirror cross-platform stability (see sync_codex_mirror.py).
+#
+# Force LF in the working tree for BOTH the canonical skills and the generated
+# .codex mirror so the drift-check (`sync_codex_mirror.py --check`) is byte-stable
+# under core.autocrlf=true. Without this, autocrlf rewrites freshly checked-out
+# .codex text files to CRLF while unchanged .claude files stay LF, producing a
+# phantom "mirror STALE" that hard-fails every Codex-side gate after a merge/pull.
+#
+# text=auto leaves binary assets (png/woff/ttf/jpg/…) untouched.
+.claude/skills/** text=auto eol=lf
+.codex/skills/**  text=auto eol=lf

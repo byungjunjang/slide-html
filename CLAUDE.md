@@ -106,6 +106,22 @@ unzip -t output/<slug>-pptx/<slug>.pptx
 /upload-drive
 ```
 
+## Codex dual-host (정본 + 생성형 미러)
+
+이 repo는 Claude Code와 Codex(클라우드/웹) 양쪽에서 동작한다. 진입점:
+
+- **Claude Code:** `.claude/skills/` (정본) — Skill 런타임이 `SKILL.md`를 절차로 실행.
+- **Codex:** 루트 `AGENTS.md` → `.codex/skills/`(생성형 미러)를 절차로 실행.
+
+`.codex/skills`는 **생성물이다. 직접 편집 금지.** `.claude/skills`를 고친 뒤 반드시 미러를 재생성한다:
+
+```bash
+python3 .claude/skills/slide/scripts/dev/sync_codex_mirror.py         # 미러 재생성
+python3 .claude/skills/slide/scripts/dev/sync_codex_mirror.py --check  # 드리프트 확인 (게이트)
+```
+
+완료 게이트(두 호스트 공용): `node build.mjs`가 빌드 후 `verify_deck.py`를 자동 호출한다(네이티브성·dangling `<img>`·미디어 하한·≥10장 plan·미러 freshness 하드 페일). Codex는 done 선언 전 `python3 .codex/skills/slide/scripts/verify_deck.py output/<slug>-pptx` 통과 필수. 미러가 stale면 게이트가 하드 페일하므로 위 sync를 먼저 돌린다.
+
 ## 빌드 시 주의
 
 - `init-project.sh` 가 `output/<slug>-pptx/` 에 `build.mjs`, `_pptx-slide.css`, `slides/01-title.html` 스캐폴드를 만든다. `01-title.html` 만 있으면 init 상태일 뿐 — 계획한 장수만큼 `NN-*.html` 이 채워지고 `node build.mjs` 가 성공해야 `built`로 본다 (WorkOS 운영 게이트).

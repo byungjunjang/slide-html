@@ -167,6 +167,19 @@ R2/R5 위반 시 빌드 자동 차단 (exit 1). 자세한 사양은 `.claude/ski
 
 ---
 
+## Claude Code / Codex dual-host
+
+slide-html은 **하나의 정본 소스로 Claude Code와 Codex(클라우드/웹) 양쪽**에서 동작합니다.
+
+- `.claude/skills/`가 **정본** 스킬 트리입니다 (여기만 편집).
+- `.codex/skills/`는 **생성형 미러**(`sync_codex_mirror.py`)입니다 — Codex는 루트 `AGENTS.md`를 통해 발견합니다. 미러는 **직접 편집하지 마세요.**
+- `.claude/skills`를 바꾼 뒤에는 재생성: `python3 .claude/skills/slide/scripts/dev/sync_codex_mirror.py`
+- 두 호스트는 하나의 완료 게이트(`verify_deck.py`)를 공유합니다 — `node build.mjs`가 빌드 후 자동 호출하고, `AGENTS.md`가 done 선언 전 통과를 강제합니다.
+
+이로써 **Claude Code 품질은 그대로 유지**하면서 Codex에도 같은 실행 규율(즉흥 fallback 금지 · placeholder 이미지 금지 · 계획 자동 진입)을 부여합니다.
+
+---
+
 ## claude.ai에 단독 업로드하기
 
 이 프로젝트의 `/slide` 스킬은 **`.claude/skills/slide/` 폴더만 zip으로 묶어 claude.ai에 그대로 업로드**할 수 있게 자기완결화되어 있습니다. 외부 MCP 서버나 다른 스킬 폴더를 참조하지 않으며, 변환 엔진(`export_deck_pptx.mjs` + `html2pptx.js`), 디자인 시스템(jangpm + acme-warm + Pretendard 폰트), 보일러플레이트 37개가 모두 폴더 안에 들어 있습니다 (~21MB).
