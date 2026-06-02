@@ -78,6 +78,16 @@ def check_integrity(g: Gate, pptx: Path) -> bool:
         return False
 
 
+def check_slide_count(g: Gate, slides: dict, n_slides: int):
+    # A real run emits exactly one PPTX slide per source HTML. A mismatch means
+    # export_deck_pptx.mjs dropped a slide on a per-slide conversion failure
+    # (it exits 0 on PARTIAL failure), which would otherwise ship silently.
+    g.H(len(slides) == n_slides,
+        f"Slide count mismatch: PPTX has {len(slides)} slide(s) vs {n_slides} "
+        f"source HTML file(s) - a per-slide conversion failure dropped slides "
+        f"(real runs are 1:1).")
+
+
 def check_nativeness(g: Gate, slides: dict):
     flat = sorted(n for n, xml in slides.items() if not A_T.search(xml))
     g.H(not flat, f"Image-flattened slides (no editable <a:t>): {flat}")
@@ -165,6 +175,7 @@ def main(argv: list) -> int:
     g = Gate()
     if check_integrity(g, pptx):
         slides, media = load_pptx(pptx)
+        check_slide_count(g, slides, n_slides)
         check_nativeness(g, slides)
         check_text_runs(g, slides)
         check_images(g, project, media)

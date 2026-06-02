@@ -10,15 +10,15 @@
  *   - 文字是真文本框，PPT 里直接双击能编辑
  *   - body 尺寸 960pt × 540pt（LAYOUT_WIDE，13.333″ × 7.5″）
  *
- * ⚠️ HTML 必须符合 4 条硬约束（见 references/editable-pptx.md）：
+ * ⚠️ HTML 必须符合 4 条硬约束（见 references/4-constraints.md）：
  *   1. 文字包在 <p>/<h1>-<h6> 里（div 不能直接放文字）
  *   2. 不用 CSS 渐变
  *   3. <p>/<h*> 不能有 background/border/shadow（放外层 div）
  *   4. div 不能 background-image（用 <img>）
  *
- * 视觉驱动的 HTML 几乎无法 pass —— 必须从写 HTML 的第一行就按约束写。
- * 视觉自由度优先的场景（动画、web component、CSS 渐变、复杂 SVG）
- * 应改用 export_deck_pdf.mjs / export_deck_stage_pdf.mjs 导出 PDF。
+ * 视觉驱动的 HTML 几乎无法 pass —— 必须从写 HTML 的第一行就按 4 条硬约束写。
+ * slide-html 只有这一条路径（editable PPTX）：视觉自由度优先的需求靠
+ * 降低视觉复杂度来满足约束，而不是切换到别的导出器。
  *
  * 依赖：npm install playwright pptxgenjs sharp
  *
@@ -42,8 +42,8 @@ function parseArgs() {
   if (!args.slides || !args.out) {
     console.error('用法: node export_deck_pptx.mjs --slides <dir> --out <file.pptx>');
     console.error('');
-    console.error('⚠️ HTML 必须符合 4 条硬约束（见 references/editable-pptx.md）。');
-    console.error('   视觉自由度优先的场景请改用 export_deck_pdf.mjs 导出 PDF。');
+    console.error('⚠️ HTML 必须符合 4 条硬约束（见 references/4-constraints.md）。');
+    console.error('   slide-html 是 editable PPTX 单一路径，无 PDF 备选。');
     process.exit(1);
   }
   return args;
@@ -93,7 +93,7 @@ async function main() {
 
   if (errors.length) {
     console.error(`\n⚠️ ${errors.length} 张 slide 转换失败。常见原因：HTML 不符合 4 条硬约束。`);
-    console.error(`  详见 references/editable-pptx.md 的「常见错误速查」。`);
+    console.error(`  详见 references/error-patterns.md 的「常见错误速查」。`);
     if (errors.length === files.length) {
       console.error(`✗ 全部失败，不生成 PPTX。`);
       process.exit(1);

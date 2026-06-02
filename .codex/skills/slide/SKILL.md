@@ -150,7 +150,7 @@ npx playwright install chromium
   2. CSS gradient (linear/radial) 금지 — 순색만
   3. `<p>/<h*>`에 background/border/shadow 금지 — 외부 div가 담당
   4. div에 `background-image` 금지 — `<img>` 태그 사용
-- **`data-layout` 태그** — 슬라이드 루트 `<body data-layout="<family>">`. family는 `references/layouts.md`의 14개 중 1개(선택한 §5 어휘가 귀속되는 family). 빌드 prebuild 다양성 게이트(WARN)가 커버리지·distinct·card-type 비율·visual 존재를 점검 — "카드 반복 탈피"를 머신 체크로 강제. 증거 이미지/차트/다이어그램 슬롯에는 추가로 `data-image-slot="<name>"`.
+- **`data-layout` 태그** — 슬라이드 루트 `<body data-layout="<family>">`. family는 `references/layouts.md`의 15개 중 1개(선택한 §5 어휘가 귀속되는 family). 빌드 prebuild 다양성 게이트(WARN)가 커버리지·distinct·card-type 비율·visual 존재를 점검 — "카드 반복 탈피"를 머신 체크로 강제. 증거 이미지/차트/다이어그램 슬롯에는 추가로 `data-image-slot="<name>"`.
 
 #### 2.1 슬라이드별 5 questions (작성 전)
 
@@ -173,6 +173,8 @@ npx playwright install chromium
 7. **카테고리 분포 자기 점검** — 데크 전체에서 cap을 안 넘기는지 확인 (DESIGN.md §10). 양 권장 분포는 두지 않음 — 어휘 다양성·변형 자유도가 우선. Hero/Visual-Primary 0장 / Density 50%+ / 같은 카테고리 연속 3장 / 같은 어휘 연속 2장 = ❌. closing은 항상 closing-light = ✅.
 
 **핵심 모델**: chrome + 미세 서식 = jangpm 정체성 (anchor에서 그대로 복사). body 영역 = 어휘 다양성 (시각 다양성의 원천). 둘은 분리 관리.
+
+> **DESIGN.md가 없는 프리셋(theme-init 산출물) 폴백**: `/theme-init`이 구운 프리셋은 `DESIGN.md`를 만들지 않는다(현재 `jangpm`·`notion`만 보유). 활성 프리셋에 `DESIGN.md`가 없으면 §5 어휘 표 대신 **`references/layouts.md`의 15 family**를 레이아웃 어휘로, 그 프리셋의 `pptx-boilerplate/`(베이스라인 8장)를 참고 갤러리로 삼는다. §2.5 이미지 무드 형용사는 `DESIGN.md §1` 대신 프리셋의 `brand-spec-generated.md` / `theme.json` 토큰에서 가져온다. (Q4의 6 카테고리는 프리셋과 무관하게 유효하다.)
 
 #### 2.3 보일러플레이트 카탈로그 (참고용)
 
@@ -481,7 +483,7 @@ Converting N slides via html2pptx...
 | `references/text-formatting-rules.md` | **미세 서식 polish 규칙 (원형 텍스트 valign, 카드 padding, BR 처리, accent 빈도 등)** |
 | `references/error-patterns.md` | 알려진 빌드 에러 + 픽스 (E1~E12) |
 | `references/css-helpers.md` | `_pptx-slide.css` 헬퍼 클래스 카탈로그 |
-| `references/layouts.md` | **`data-layout` 레지스트리** — 14 family(card-type ≤1/3) + `<body data-layout>` 규칙 + 다양성 게이트(B)가 보는 것 |
+| `references/layouts.md` | **`data-layout` 레지스트리** — 15 family(card-type ≤1/3) + `<body data-layout>` 규칙 + 다양성 게이트(B)가 보는 것 |
 | `references/diagram-slots.md` | **다이어그램 슬롯 계약** — `diagram-design` 스킬 → PNG `<img>` 슬롯 임베드 (2.6단계 전체 가이드 + 의미역→CSS변수 매핑) |
 | `references/canvas-spec.md` | 960pt × 540pt 캔버스 / 좌표 / 폰트 가이드 |
 | `assets/design-systems/<preset>/pptx-boilerplate/*.html` | 베이스라인 8 패턴 (01~08, 모든 preset 공통) + preset별 추가 콘텐츠 패턴. `jangpm`은 29 패턴(09~37) 추가 제공. 실제 보유 목록은 `ls assets/design-systems/<preset>/pptx-boilerplate/`로 확인 |
@@ -495,6 +497,8 @@ Converting N slides via html2pptx...
 | `scripts/validate-diversity.mjs` | 빌드 prebuild **다양성 게이트(WARN)** — `data-layout` 커버리지/distinct/card-type 비율/visual 존재 (`references/layouts.md`) |
 | `scripts/active-accent.mjs` | 활성 preset accent palette 해석 → §2.5 이미지 **style-lock accent 주입(Fix2)** |
 | `scripts/render-diagram.mjs` | **diagram-design HTML → 투명 고해상도 PNG** (Playwright; 웹폰트·CJK 정확). 2.6 다이어그램 슬롯용 |
+| `scripts/verify_deck.py` | **완료 게이트** — `build.mjs`가 빌드 후 자동 호출(dual-host 공용). 네이티브성 · 슬라이드 수 1:1 · dangling `<img>` · 미디어 하한 · placeholder가 남은 slot · ≥10장 plan · 미러 freshness 하드 페일 |
+| `scripts/preflight.py` | **선택 환경 게이트** (파이프라인 시작 전) — node deps/chromium, `--images` 시 codex 로그인, 미러 freshness 점검. `build.mjs`엔 비연결, Codex `AGENTS.md` 6번/CI에서 옵션 호출 |
 | `../diagram-design/SKILL.md` | **다이어그램 작곡 스킬** (14종). slide-html 안에서는 §0.5 라우팅 → `diagram-slots.md` 계약 |
 | `../codex-image/SKILL.md` | **AI 이미지 생성 (단일 백엔드, OAuth)** — Codex CLI `image_gen` 도구로 `gpt-image-2` 호출. 2.5단계 참조 |
 

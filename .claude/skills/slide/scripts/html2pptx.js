@@ -47,6 +47,22 @@ const PT_PER_PX = 0.75;
 const PX_PER_IN = 96;
 const EMU_PER_IN = 914400;
 
+// Text-bearing element types shared by the post-extraction passes
+// (bottom-margin validation + overlap auto-fix). NOTE: this is the *post-extract*
+// element vocabulary (lowercase el.type), not the in-browser DOM tag list inside
+// extractSlideData() — that one runs in the page context and can't see this.
+const TEXT_ELEMENT_TYPES = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'list'];
+
+// Extract a representative string from an element's text payload, which may be a
+// plain string, an array of runs ({text}), or list items ({text}). Used only to
+// build human-readable labels in validation/warning messages.
+function elementText(el) {
+  if (typeof el.text === 'string') return el.text;
+  if (Array.isArray(el.text)) return el.text.map(t => t.text || '').join('');
+  if (Array.isArray(el.items)) return el.items.map(item => item.text || '').join('');
+  return '';
+}
+
 // Helper: Get body dimensions and check for overflow
 async function getBodyDimensions(page) {
   const bodyDimensions = await page.evaluate(() => {
@@ -106,19 +122,14 @@ function validateTextBoxPosition(slideData, bodyDimensions) {
 
   for (const el of slideData.elements) {
     // Check text elements (p, h1-h6, list)
-    if (['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'list'].includes(el.type)) {
+    if (TEXT_ELEMENT_TYPES.includes(el.type)) {
       const fontSize = el.style?.fontSize || 0;
       const bottomEdge = el.position.y + el.position.h;
       const distanceFromBottom = slideHeightInches - bottomEdge;
 
       if (fontSize > 12 && distanceFromBottom < minBottomMargin) {
-        const getText = () => {
-          if (typeof el.text === 'string') return el.text;
-          if (Array.isArray(el.text)) return el.text.find(t => t.text)?.text || '';
-          if (Array.isArray(el.items)) return el.items.find(item => item.text)?.text || '';
-          return '';
-        };
-        const textPrefix = getText().substring(0, 50) + (getText().length > 50 ? '...' : '');
+        const full = elementText(el);
+        const textPrefix = full.substring(0, 50) + (full.length > 50 ? '...' : '');
 
         errors.push(
           `Text box "${textPrefix}" ends too close to bottom edge ` +
@@ -155,7 +166,7 @@ function validateTextBoxPosition(slideData, bodyDimensions) {
 function autoFixOverlaps(slideData, slideHeightInches) {
   const errors = [];
   const warnings = [];
-  const textTypes = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'list'];
+  const textTypes = TEXT_ELEMENT_TYPES;
 
   const tolXin = 5 / 72;
   const tolYin = 8 / 72;
@@ -170,13 +181,6 @@ function autoFixOverlaps(slideData, slideHeightInches) {
     (inner.position.x + inner.position.w) <= (outer.position.x + outer.position.w + containSlackIn) &&
     (inner.position.y + inner.position.h) <= (outer.position.y + outer.position.h + containSlackIn)
   );
-
-  const getText = (el) => {
-    if (typeof el.text === 'string') return el.text;
-    if (Array.isArray(el.text)) return el.text.map(t => t.text || '').join('');
-    if (Array.isArray(el.items)) return el.items.map(item => item.text || '').join('');
-    return '';
-  };
 
   // Build rigid groups via union-find on containment.
   //   - Every element with a position starts in its own set.
@@ -298,7 +302,7 @@ function autoFixOverlaps(slideData, slideHeightInches) {
   const groupSummary = (group) => {
     const textEls = groupTextEls(group);
     if (textEls.length === 0) return '<shape-only>';
-    return getText(textEls[0]).trim().substring(0, 40) || '<empty-text>';
+    return elementText(textEls[0]).trim().substring(0, 40) || '<empty-text>';
   };
 
   // Sort groups by their current minY (top of group).
@@ -377,9 +381,9 @@ function autoFixOverlaps(slideData, slideHeightInches) {
 }
 
 // Helper: Add background to slide
-async function addBackground(slideData, targetSlide, tmpDir) {
+function addBackground(slideData, targetSlide) {
   if (slideData.background.type === 'image' && slideData.background.path) {
-    let imagePath = srcToFsPath(slideData.background.path);
+    const imagePath = srcToFsPath(slideData.background.path);
     targetSlide.background = { path: imagePath };
   } else if (slideData.background.type === 'color' && slideData.background.value) {
     targetSlide.background = { color: slideData.background.value };
@@ -440,7 +444,6 @@ function addElements(slideData, targetSlide, pres) {
         paraSpaceAfter: el.style.paraSpaceAfter,
         margin: el.style.margin
       };
-      if (el.style.margin) listOptions.margin = el.style.margin;
       targetSlide.addText(el.items, listOptions);
     } else {
       // Check if text is single-line (height suggests one line)
@@ -1303,7 +1306,7 @@ async function html2pptx(htmlFile, pres, options = {}) {
 
     const targetSlide = slide || pres.addSlide();
 
-    await addBackground(slideData, targetSlide, tmpDir);
+    addBackground(slideData, targetSlide);
     addElements(slideData, targetSlide, pres);
 
     return { slide: targetSlide, placeholders: slideData.placeholders };

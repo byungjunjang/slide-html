@@ -2,7 +2,7 @@
 
 > **목적**: 슬라이드 레이아웃을 **머신 체크 가능한 coarse family**로 태깅해 데크 시각 다양성을 강제한다 (`PIPELINE_UPDATE_PLAN.md` 항목 A·B). 각 슬라이드 `<body>`에 `data-layout="<family>"`를 부여하면, 빌드 prebuild 게이트(`scripts/validate-diversity.mjs`)가 커버리지 · distinct 수 · card-type 비율 · visual 존재를 점검한다.
 >
-> **두 단계 어휘**: 세밀한 작곡 어휘는 `assets/design-systems/<preset>/DESIGN.md` §5(6 카테고리, ~30 어휘)가 SSOT. 본 레지스트리는 그 위에 얹는 **coarse 분류 태그**(14 family)일 뿐 — 다양성 카운팅용이지 작곡 메뉴가 아니다. §5 어휘 항목은 아래 매핑 컬럼으로 한 family에 귀속된다.
+> **두 단계 어휘**: 세밀한 작곡 어휘는 `assets/design-systems/<preset>/DESIGN.md` §5(6 카테고리, ~30 어휘)가 SSOT. 본 레지스트리는 그 위에 얹는 **coarse 분류 태그**(15 family)일 뿐 — 다양성 카운팅용이지 작곡 메뉴가 아니다. §5 어휘 항목은 아래 매핑 컬럼으로 한 family에 귀속된다.
 
 ## `data-layout` 부여 규칙
 
