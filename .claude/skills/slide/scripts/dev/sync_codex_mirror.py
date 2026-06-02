@@ -4,7 +4,9 @@
 Canonical source: .claude/skills  (humans edit ONLY here).
 Generated output: .codex/skills    (committed, NEVER hand-edited).
 
-The ONLY transform is a path-string rewrite inside TEXT files:
+The mirror excludes Codex-native or Claude-only helper skills listed in
+EXCLUDE_TOP_LEVEL. For mirrored files, the only content transform is a
+path-string rewrite inside TEXT files:
     ".claude/skills"  ->  ".codex/skills"
 Binary assets (fonts/images) are copied byte-for-byte.
 
@@ -22,6 +24,7 @@ from __future__ import annotations
 import shutil
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[5]  # depth: dev/scripts/slide/skills/.claude/repo
@@ -42,6 +45,7 @@ TEXT_SUFFIXES = {".md", ".py", ".sh", ".mjs", ".js", ".json",
 EXCLUDE_DIRS = {"__pycache__", "node_modules", ".venv", ".git", ".pytest_cache"}
 EXCLUDE_SUFFIXES = {".pyc"}
 EXCLUDE_NAMES = {".DS_Store", "_GENERATED.md"}  # marker is synthesized, not mirrored content → keep out of the drift comparison
+EXCLUDE_TOP_LEVEL = {"codex-image"}  # Codex uses its built-in imagegen/image_gen skill instead.
 
 # f-string over OLD (not a literal ".claude/skills") so the marker is
 # copy-INDEPENDENT: both the canonical and the mirrored sync evaluate {OLD} to
@@ -61,9 +65,11 @@ Hand-edits here are overwritten and fail the drift-check
 """
 
 
-def _iter_files(root: Path):
+def _iter_files(root: Path, *, exclude_top_level: bool = True):
     for p in sorted(root.rglob("*")):
         rel_parts = p.relative_to(root).parts
+        if exclude_top_level and rel_parts and rel_parts[0] in EXCLUDE_TOP_LEVEL:
+            continue
         if any(part in EXCLUDE_DIRS for part in rel_parts):
             continue
         if p.is_dir():
@@ -82,9 +88,24 @@ def _transform(path: Path, data: bytes) -> bytes:
     return data
 
 
+def _rmtree_with_retry(path: Path) -> None:
+    # Windows can briefly hold read handles from git/indexers while tests or
+    # agents inspect .codex. Retry before surfacing a real stale lock.
+    last_error = None
+    for _ in range(10):
+        try:
+            shutil.rmtree(path)
+            return
+        except PermissionError as e:
+            last_error = e
+            time.sleep(0.5)
+    if last_error:
+        raise last_error
+
+
 def generate(dst: Path) -> int:
     if dst.exists():
-        shutil.rmtree(dst)
+        _rmtree_with_retry(dst)
     dst.mkdir(parents=True)
     # write_bytes (not write_text) to avoid Windows \n->\r\n translation, so the
     # marker stays LF like every other mirrored file (no perpetual git "modified").
@@ -102,8 +123,11 @@ def check() -> int:
     with tempfile.TemporaryDirectory() as tmp:
         ref = Path(tmp) / "skills"
         generate(ref)
-        ref_files = {p.relative_to(ref) for p in _iter_files(ref)}
-        dst_files = {p.relative_to(DST) for p in _iter_files(DST)} if DST.exists() else set()
+        ref_files = {p.relative_to(ref) for p in _iter_files(ref, exclude_top_level=False)}
+        dst_files = (
+            {p.relative_to(DST) for p in _iter_files(DST, exclude_top_level=False)}
+            if DST.exists() else set()
+        )
         stale = []
         for rel in sorted(ref_files | dst_files):
             a, b = ref / rel, DST / rel

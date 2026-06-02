@@ -61,10 +61,10 @@ npx playwright install chromium      # html2pptx의 브라우저 캡처용
 
 > 루트의 `package.json` / `package-lock.json`은 로컬 사용용이고, `.claude/skills/slide/package.json`은 claude.ai에 zip으로 올렸을 때 self-contained로 동작하도록 동일한 의존성을 따로 들고 있습니다. 의존성 버전을 바꿀 때는 **두 파일을 같이 갱신**하세요 (드리프트 시 claude.ai 번들이 어긋남).
 
-### 4단계. (선택) AI 이미지 생성 — `/codex-image`
+### 4단계. (선택) AI 이미지 생성 — Codex 기본 `imagegen` / `image_gen`
 
-표지·인포그래픽·세로 카드에 AI 이미지가 필요할 때 `/slide` 2.5단계가 자동으로 호출하는 기본 경로입니다.
-**API 키 발급·관리 없이 Codex CLI OAuth(ChatGPT 로그인)만으로** `gpt-image-2`를 호출하고, 슬라이드 빌더가 미리 정한 슬롯명 그대로 (`images/<slot>.png`) 파일을 떨굽니다.
+표지·인포그래픽·세로 카드에 AI 이미지가 필요할 때 `/slide` 2.5단계가 사용하는 기본 경로입니다.
+**API 키 발급·관리 없이 Codex 기본 이미지 생성 기능**으로 `gpt-image-2`를 호출하고, 슬라이드 빌더가 미리 정한 슬롯명 그대로 (`images/<slot>.png`) 파일을 저장합니다.
 
 **최초 1회 준비 (한 번만 하면 됩니다):**
 
@@ -77,22 +77,24 @@ codex login status                 # "Logged in using ChatGPT" 표시되면 끝
 `codex login`은 OAuth 토큰을 `~/.codex/auth.json`에 한 번 저장하고, 이후 모든 이미지 호출은 그 토큰을 자동 재사용합니다.
 **`sk-*` 형식 API 키는 어디에도 저장되지 않습니다.** Codex OAuth 토큰은 ChatGPT 세션 토큰이라 OpenAI REST API로 직접 던지면 401이 떨어지지만, `codex exec`의 내부 브릿지가 OAuth → 내장 `image_gen` 도구 → `gpt-image-2` 경로로 라우팅해줍니다.
 
-`/slide` 외에 직접 호출하고 싶을 때는 Claude Code 채팅창에 그대로:
+`/slide` 외에 직접 호출해야 할 때도 Codex 기본 이미지 생성 경로를 사용합니다. 슬롯 파일명은 슬라이드 HTML의 `<img src="../images/<slot>.png">`와 정확히 맞춰야 합니다.
 
-```
-/codex-image --size 1536x1024 --out output/my-deck-pptx/images --filename hero-cover \
-  "minimal flat line-art illustration of a globe, single accent color, neutral palette"
+```bash
+codex exec "Use the built-in image_gen tool to generate one 1536x1024 high-quality image from this prompt: minimal flat line-art illustration of a globe, single accent color, neutral palette. Save it to output/my-deck-pptx/images/hero-cover.png and print the saved path and byte size." \
+  -s workspace-write \
+  --skip-git-repo-check \
+  -c 'model_reasoning_effort="medium"'
 ```
 
 | 증상 | 해결 |
 |---|---|
 | `auth expired` / 401 | `codex login` 재실행 (토큰 갱신) |
 | `NOT_FOUND` | `npm install -g @openai/codex` |
-| 트러스트 오류 | 스킬이 `--skip-git-repo-check` 사용 — 자세한 내용은 `.claude/skills/codex-image/README.md` |
-| 생성 파일이 슬롯명과 다름 | `--filename <slot>` 인자 확인. 슬라이드 HTML의 `<img src>` 경로와 정확히 일치해야 함 |
+| 트러스트 오류 | `codex exec` 호출에 `--skip-git-repo-check`를 포함 |
+| 생성 파일이 슬롯명과 다름 | 저장 경로가 슬라이드 HTML의 `<img src>` 경로와 정확히 일치하는지 확인 |
 | 16:9 인데 양옆이 좀 잘림 | 정상. `gpt-image-2`는 1536×1024(약 3:2)만 가능 → CSS `object-fit: cover`로 960×540 슬롯에 맞춰 자동 크롭 |
 
-**스킬 위치:** `.claude/skills/codex-image/` (이 저장소에 vendored. 업스트림: [wjb127/codex-image](https://github.com/wjb127/codex-image))
+**Codex 패키징:** `.codex/skills`에는 `codex-image`를 포함하지 않습니다. Codex에는 기본 `imagegen`/`image_gen` 기능이 있기 때문입니다. `.claude/skills/codex-image/`는 Claude Code에서만 쓸 수 있는 독립 편의 헬퍼로 남아 있으며, slide 파이프라인의 필수 계약은 아닙니다.
 **비용:** ChatGPT Plus/Team/Enterprise 계정의 OpenAI 사용량에 청구 (`1024x1024 high` ≈ $0.04, `1536x1024 high` ≈ $0.06).
 
 Codex CLI가 미설치 또는 `codex login` 미인증 상태면 슬라이드는 **이미지 슬롯 없이 텍스트·아이콘·도형**만으로 생성됩니다 (Jangpm 기본 동작에서도 충분히 임팩트 있는 데크가 됩니다). 필요하면 슬롯 경로(`output/<주제>-pptx/images/<slot>.png`)에 직접 그린·다운로드한 이미지를 떨궈도 됩니다.
@@ -198,7 +200,7 @@ npx playwright install chromium
 권장 동봉 안 하는 것:
 
 - **`/theme-init` 스킬** — 새 디자인 시스템을 굽는 용도라 Claude Code 로컬 전용. theme-init은 자기 출력물을 `slide/assets/design-systems/`에 직접 떨궈 카탈로그(`README.md`)까지 자동 갱신하므로, 로컬에서 새 프리셋을 굽고 그 결과가 박힌 slide 번들을 claude.ai에 올리는 흐름.
-- **`/codex-image` 스킬** — Codex CLI 바이너리가 claude.ai 샌드박스에 설치되지 않음. claude.ai 환경에서 이미지가 필요한 슬롯은 텍스트·아이콘·도형으로 대체되거나, 사용자가 직접 이미지를 슬롯 경로에 떨궈서 사용.
+- **AI 이미지 생성** (Codex 기본 `imagegen`/`image_gen`, 또는 Claude Code 전용 `codex-image` 헬퍼) — 어느 경로든 Codex CLI 바이너리가 필요한데 claude.ai 샌드박스에는 설치되지 않음. claude.ai 환경에서 이미지가 필요한 슬롯은 텍스트·아이콘·도형으로 대체되거나, 사용자가 직접 이미지를 슬롯 경로에 떨궈서 사용.
 
 번들 사용 가이드는 `.claude/skills/slide/README.md`에 더 자세히 적혀 있습니다.
 
@@ -320,6 +322,7 @@ A. 안 끼어듭니다. 각 요청 = `output/<주제>-pptx/` 독립 폴더로 �
 
 - **라이선스:** 본 저장소는 [alchaincyf/huashu-design](https://github.com/alchaincyf/huashu-design)의 **Personal-Use License를 계승**합니다 — 개인·학습·비상업 용도에 한해 자유롭게 사용 가능, **상업적 이용은 금지**. 자세한 조건은 [`LICENSE`](./LICENSE) 참조.
 - **다이어그램 스킬:** `/slide`의 다이어그램 기능은 [cathrynlavery/diagram-design](https://github.com/cathrynlavery/diagram-design)(Cathryn Lavery, **MIT**)을 vendoring 한 것입니다. 원본 라이선스는 [`.claude/skills/diagram-design/LICENSE`](./.claude/skills/diagram-design/LICENSE), 통합 내역은 `.claude/skills/diagram-design/PROVENANCE.md` 참조.
+- **이미지 생성 헬퍼:** Claude Code 전용 `codex-image` 헬퍼는 [wjb127/codex-image](https://github.com/wjb127/codex-image)를 vendoring 한 것입니다 — Claude Code에서만 쓰는 선택 편의 헬퍼이며 Codex 패키지(`.codex/skills`)에는 포함되지 않습니다 (Codex는 기본 `imagegen`/`image_gen` 사용).
 - **버그 리포트·패턴 제안:** GitHub 이슈 환영
 - **PR:** 새 프리셋 추가, 보일러플레이트 패턴 추가, 4 constraint 위반 사례 환영
 - **테마 추가 제안:** `/theme-init` 사용법은 `.claude/skills/theme-init/SKILL.md` 참조

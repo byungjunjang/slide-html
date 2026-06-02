@@ -80,7 +80,7 @@ slide-html/
 │       ├── slide-plan/                ← 기획 단계 (Systematic 모드용 slide_plan.json 생성)
 │       ├── theme-init/                ← 새 프리셋 추가 (Claude Code 로컬 전용)
 │       ├── upload-drive/              ← Google Drive 업로드 + Slides 변환 (로컬 전용)
-│       ├── codex-image/               ← OAuth 경유 이미지 생성 (gpt-image-2)
+│       ├── codex-image/               ← Claude Code 전용 선택 헬퍼 (Codex mirror 제외)
 │       └── huashu-design/             ← 디자인 레퍼런스 (보조)
 ├── node_modules/
 └── output/                            ← 사용자 워크스페이스 (각 데크 = <slug>-pptx/)
@@ -117,7 +117,7 @@ unzip -t output/<slug>-pptx/<slug>.pptx
 - **Claude Code:** `.claude/skills/` (정본) — Skill 런타임이 `SKILL.md`를 절차로 실행.
 - **Codex:** 루트 `AGENTS.md` → `.codex/skills/`(생성형 미러)를 절차로 실행.
 
-`.codex/skills`는 **생성물이다. 직접 편집 금지.** `.claude/skills`를 고친 뒤 반드시 미러를 재생성한다:
+`.codex/skills`는 **생성물이다. 직접 편집 금지.** `.claude/skills`를 고친 뒤 반드시 미러를 재생성한다. 단, `codex-image`처럼 Codex에 기본 기능이 있는 Claude-only 헬퍼는 mirror 생성기에서 제외된다:
 
 ```bash
 python3 .claude/skills/slide/scripts/dev/sync_codex_mirror.py         # 미러 재생성
@@ -136,13 +136,11 @@ python3 .claude/skills/slide/scripts/dev/sync_codex_mirror.py --check  # 드리�
 
 `/slide` Step 2.5(이미지 슬롯이 있을 때만)가 사용.
 
-**백엔드는 단일**: Codex CLI 내장 `image_gen` 도구 → `gpt-image-2` (OAuth, API key 불필요). slide-html은 이 외 다른 이미지 백엔드를 동봉하지 않는다 — preflight(`codex --version` / `codex login status`)가 실패하면 대체 생성기로 넘어가지 않고 이미지 단계를 중단한 뒤 `<img>` 슬롯을 placeholder 도형(`<div class="img-placeholder">`)으로 대체한다. 이 fallback은 **`data-image-slot`을 제거해야** 한다. `data-image-slot`이 남아 있으면 verify가 "실제 미디어가 있어야 하는 슬롯"으로 보고 하드 페일한다.
+**백엔드는 단일**: Codex 기본 `imagegen`/`image_gen` 경로 → `gpt-image-2` (OAuth, API key 불필요). slide-html은 이 외 다른 이미지 백엔드를 동봉하지 않는다 — preflight(`codex --version` / `codex login status`)가 실패하면 대체 생성기로 넘어가지 않고 이미지 단계를 중단한 뒤 `<img>` 슬롯을 placeholder 도형(`<div class="img-placeholder">`)으로 대체한다. 이 fallback은 **`data-image-slot`을 제거해야** 한다. `data-image-slot`이 남아 있으면 verify가 "실제 미디어가 있어야 하는 슬롯"으로 보고 하드 페일한다.
 
 `codex exec`는 성공해도 플러그인/메모리 관련 non-fatal WARN을 함께 찍을 수 있다. 성공 판정은 마지막의 saved path, byte size, dimensions 라인과 실제 `output/<deck>-pptx/images/<slot>.png` 존재 여부로 한다.
 
-**호출 경로는 두 갈래** (둘 다 같은 codex/gpt-image-2 백엔드로 수렴 — `/codex-image` 스킬은 *필수가 아니라 편의용 래퍼*):
-- 기본(primary): 직접 `codex exec` 호출 (`SKILL.md` Step 2.5)
-- 선택: `/codex-image` 래퍼 스킬 — `--out`/`--filename` 인자만 정확히 박으면 슬롯 파일 저장까지 처리
+**호출 경로**: `/slide` Step 2.5는 Codex 기본 이미지 생성 경로를 직접 사용한다. Codex 사용자용 `.codex/skills` 패키지에는 `codex-image` 스킬을 포함하지 않는다. Claude Code 사용자는 `.claude/skills/codex-image/`를 독립 편의 헬퍼로 쓸 수 있지만, slide 파이프라인의 필수 계약은 아니다.
 
 16:9 슬롯은 `1536x1024` 생성 후 `<img object-fit:cover object-position:center>` 로 960×540 크롭 — html2pptx가 박스 크기 그대로 PPTX `pic` frame에 임베드하므로 양옆 크롭이 보존된다.
 

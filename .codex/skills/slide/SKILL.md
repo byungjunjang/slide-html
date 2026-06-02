@@ -219,9 +219,9 @@ codex --version 2>/dev/null || { echo "NOT_FOUND — run: npm install -g @openai
 codex login status 2>&1 | grep -q "Logged in using ChatGPT" || { echo "NOT_LOGGED_IN — run: codex login"; exit 1; }
 ```
 
-위 preflight가 실패하면 이 단계 중단 — 사용자에게 `codex login` 안내하고 이미지 슬롯이 있는 슬라이드는 `<img>` 슬롯을 placeholder 도형(예: `<div class="img-placeholder">…</div>`)으로 대체한다. 이때 **placeholder 컨테이너에는 `data-image-slot`을 남기지 않는다.** `data-image-slot`은 "실제 `images/<slot>.png`가 있어야 하는 증거 슬롯"이라는 계약이므로, placeholder에 남아 있으면 `verify_deck.py`가 하드 페일한다. slide-html은 codex-image 외 다른 이미지 백엔드를 동봉하지 않는다.
+위 preflight가 실패하면 이 단계 중단 — 사용자에게 `codex login` 안내하고 이미지 슬롯이 있는 슬라이드는 `<img>` 슬롯을 placeholder 도형(예: `<div class="img-placeholder">…</div>`)으로 대체한다. 이때 **placeholder 컨테이너에는 `data-image-slot`을 남기지 않는다.** `data-image-slot`은 "실제 `images/<slot>.png`가 있어야 하는 증거 슬롯"이라는 계약이므로, placeholder에 남아 있으면 `verify_deck.py`가 하드 페일한다. Codex 사용자는 기본 내장 `imagegen`/`image_gen` 경로를 사용하며, slide-html은 별도 이미지 백엔드를 동봉하지 않는다.
 
-**이미지 1장마다 per-slot 호출 (배치 단위 ❌). 직접 `codex exec` 호출:**
+**이미지 1장마다 per-slot 호출 (배치 단위 ❌). Codex 기본 이미지 생성 경로를 직접 호출:**
 
 ```bash
 codex exec "Perform the following tasks:
@@ -236,14 +236,6 @@ codex exec "Perform the following tasks:
   -s workspace-write \
   --skip-git-repo-check \
   -c 'model_reasoning_effort="medium"'
-```
-
-또는 wrapper 스킬 `/codex-image` 사용 (선택, `--out`/`--filename` 인자만 정확히 박으면 됨):
-
-```bash
-/codex-image --size <size> --quality high \
-  --out output/<project>-pptx/images --filename <slot> \
-  "<style-anchor> <subject prompt> Avoid: <negative list>"
 ```
 
 직렬로 1장씩, 호출 사이 2–5초 간격. 다음 슬롯으로 넘어가기 전 `test -f output/<project>-pptx/images/<slot>.png && file …` 으로 산출 확인.
@@ -500,7 +492,6 @@ Converting N slides via html2pptx...
 | `scripts/verify_deck.py` | **완료 게이트** — `build.mjs`가 빌드 후 자동 호출(dual-host 공용). 네이티브성 · 슬라이드 수 1:1 · dangling `<img>` · 미디어 하한 · placeholder가 남은 slot · ≥10장 plan · 미러 freshness 하드 페일 |
 | `scripts/preflight.py` | **선택 환경 게이트** (파이프라인 시작 전) — node deps/chromium, `--images` 시 codex 로그인, 미러 freshness 점검. `build.mjs`엔 비연결, Codex `AGENTS.md` 6번/CI에서 옵션 호출 |
 | `../diagram-design/SKILL.md` | **다이어그램 작곡 스킬** (14종). slide-html 안에서는 §0.5 라우팅 → `diagram-slots.md` 계약 |
-| `../codex-image/SKILL.md` | **AI 이미지 생성 (단일 백엔드, OAuth)** — Codex CLI `image_gen` 도구로 `gpt-image-2` 호출. 2.5단계 참조 |
 
 ---
 
