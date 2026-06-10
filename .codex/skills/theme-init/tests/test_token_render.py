@@ -78,6 +78,41 @@ def test_ifneq_missing_path_removed():
     assert render("{{IFNEQ:surface.nope:borderless}}x{{/IFNEQ}}", THEME) == ""
 
 
+# ---------------- SCALE (canvas type-scale factors) ----------------
+
+def test_scale_identity_renders_base_literal():
+    theme = {**THEME, "typography": {"scale": {"display": 1.0}}}
+    assert render("font-size: {{SCALE:42:typography.scale.display}}pt;", theme) == "font-size: 42pt;"
+
+
+def test_scale_factor_multiplies_and_trims():
+    theme = {**THEME, "typography": {"scale": {"display": 1.1, "heading": 1.25}}}
+    assert render("{{SCALE:42:typography.scale.display}}pt", theme) == "46.2pt"
+    assert render("{{SCALE:24:typography.scale.heading}}pt", theme) == "30pt"
+
+
+def test_scale_missing_path_defaults_to_one():
+    # pre-scale themes (no typography.scale group) must render unchanged
+    assert render("{{SCALE:30:typography.scale.heading}}pt", THEME) == "30pt"
+
+
+def test_scale_rounds_to_two_decimals():
+    theme = {**THEME, "typography": {"scale": {"display": 1.0715}}}
+    assert render("{{SCALE:42:typography.scale.display}}", theme) == "45"  # 45.003 → 45.0 → "45"
+    theme2 = {**THEME, "typography": {"scale": {"display": 0.85}}}
+    assert render("{{SCALE:18:typography.scale.display}}", theme2) == "15.3"
+
+
+def test_scale_non_numeric_factor_raises():
+    theme = {**THEME, "typography": {"scale": {"display": "big"}}}
+    try:
+        render("{{SCALE:42:typography.scale.display}}", theme)
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("expected ValueError for non-numeric scale factor")
+
+
 def test_ifeq_byte_identical_hairline_card_line():
     """The card_style refactor must render jangpm's .card byte-for-byte."""
     tpl = (".card        { "

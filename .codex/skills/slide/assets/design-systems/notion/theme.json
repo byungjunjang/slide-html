@@ -19,8 +19,16 @@
     "warning": "#D9730D",
     "warning-soft": "#FAEBDD"
   },
+  "surface": {
+    "card_style": "hairline"
+  },
   "typography": {
     "font-chain": "'Inter', -apple-system, 'Segoe UI', 'Pretendard', sans-serif",
+    "font-mono": "ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace",
+    "scale": {
+      "display": 1.0,
+      "heading": 1.0
+    },
     "display": {
       "size": 56,
       "weight": 800,

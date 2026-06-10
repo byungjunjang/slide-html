@@ -188,7 +188,7 @@ zebra row 는 grid div 의 background 로 OK: `background: var(--bg);` (또는 `
 | `.t-cap-up` | 9pt | 600 | UPPERCASE caption (라벨용) |
 | `.t-mono` | inherit | inherit | 모노스페이스 폰트 (`--font-mono`, 코드/경로) |
 
-> 사이즈는 캔버스(960pt×540pt)에 calibrated된 고정값(잠금). 굵기 열은 jangpm 기준이며, 실제 굵기는 활성 프리셋의 타입스케일 weight를 따른다 (다른 프리셋은 해당 weight가 자동 적용). 임의 hex·폰트를 박지 말고 헬퍼 클래스나 `var(--*)`를 쓸 것.
+> 사이즈는 캔버스(960pt×540pt)에 calibrated된 기준값. body 이하 티어(t-title/t-body/t-cap 등)는 고정(잠금)이고, display·heading 티어는 활성 프리셋의 `typography.scale.display`(t-display/t-display2)·`typography.scale.heading`(t-h1/t-h2/t-h3) 팩터가 곱해질 수 있다 — 표의 값은 팩터 1.0(jangpm 기준). 굵기 열도 jangpm 기준이며, 실제 굵기는 활성 프리셋의 타입스케일 weight를 따른다 (다른 프리셋은 해당 weight가 자동 적용). 임의 hex·폰트를 박지 말고 헬퍼 클래스나 `var(--*)`를 쓸 것.
 
 ---
 

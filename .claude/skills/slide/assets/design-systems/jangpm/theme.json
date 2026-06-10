@@ -25,6 +25,10 @@
   "typography": {
     "font-chain": "'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Segoe UI', Roboto, sans-serif",
     "font-mono": "'SF Mono', 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace",
+    "scale": {
+      "display": 1.0,
+      "heading": 1.0
+    },
     "display": {
       "size": 56,
       "weight": 800,

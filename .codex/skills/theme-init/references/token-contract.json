@@ -71,6 +71,15 @@
           "type": "string",
           "description": "Monospace font-family chain for code / terminal / numeric-tabular contexts (e.g. .t-mono, code, --font-mono)."
         },
+        "scale": {
+          "type": "object",
+          "description": "OPTIONAL canvas type-scale factors for the pt-locked .t-* helpers in _pptx-slide.css. display multiplies .t-display/.t-display2 (base 42/36pt); heading multiplies .t-h1/.t-h2/.t-h3 (base 30/24/18pt). Body/caption tiers stay locked. Omitted group or key = 1.0 (jangpm baseline) — pre-scale themes are unaffected.",
+          "additionalProperties": false,
+          "properties": {
+            "display": { "type": "number", "minimum": 0.5, "maximum": 1.5 },
+            "heading": { "type": "number", "minimum": 0.5, "maximum": 1.5 }
+          }
+        },
         "display":    { "$ref": "#/$defs/typeScale", "description": "Title slide large text." },
         "display-sm": { "$ref": "#/$defs/typeScale", "description": "Hero stat, closing accent." },
         "headline":   { "$ref": "#/$defs/typeScale", "description": "Content slide titles." },

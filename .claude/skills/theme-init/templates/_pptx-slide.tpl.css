@@ -80,15 +80,18 @@ html, body {
 .grid-6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12pt; }
 
 /* typography classes — for use INSIDE p/h* (override colors_and_type.css rem with pt).
-   Sizes / line-height / letter-spacing are canvas-calibrated (960pt×540pt) literals and
-   stay locked; font-weight follows the theme type-scale step it maps to so a preset's
-   weight intent is honored. t-h1 tracks display weight (heavy-heading tier); t-cap-up
-   maps to the label step (uppercase eyebrow). */
-.t-display  { font-size: 42pt; font-weight: {{TOKEN:typography.display.weight}}; line-height: 1.05; letter-spacing: -1pt; color: {{TOKEN:colors.text}}; }
-.t-display2 { font-size: 36pt; font-weight: {{TOKEN:typography.display-sm.weight}}; line-height: 1.05; letter-spacing: -1pt; color: {{TOKEN:colors.text}}; }
-.t-h1       { font-size: 30pt; font-weight: {{TOKEN:typography.display.weight}}; line-height: 1.1;  letter-spacing: -0.6pt; color: {{TOKEN:colors.text}}; }
-.t-h2       { font-size: 24pt; font-weight: {{TOKEN:typography.headline.weight}}; line-height: 1.2;  letter-spacing: -0.4pt; color: {{TOKEN:colors.text}}; }
-.t-h3       { font-size: 18pt; font-weight: {{TOKEN:typography.headline.weight}}; line-height: 1.25; color: {{TOKEN:colors.text}}; }
+   Body-tier sizes / line-height / letter-spacing are canvas-calibrated (960pt×540pt)
+   literals and stay locked; display/heading tiers multiply the calibrated base by the
+   optional typography.scale tokens (display → t-display/t-display2, heading →
+   t-h1/t-h2/t-h3; missing scale = 1.0, i.e. the jangpm baseline). font-weight follows
+   the theme type-scale step it maps to so a preset's weight intent is honored. t-h1
+   tracks display weight (heavy-heading tier); t-cap-up maps to the label step
+   (uppercase eyebrow). */
+.t-display  { font-size: {{SCALE:42:typography.scale.display}}pt; font-weight: {{TOKEN:typography.display.weight}}; line-height: 1.05; letter-spacing: -1pt; color: {{TOKEN:colors.text}}; }
+.t-display2 { font-size: {{SCALE:36:typography.scale.display}}pt; font-weight: {{TOKEN:typography.display-sm.weight}}; line-height: 1.05; letter-spacing: -1pt; color: {{TOKEN:colors.text}}; }
+.t-h1       { font-size: {{SCALE:30:typography.scale.heading}}pt; font-weight: {{TOKEN:typography.display.weight}}; line-height: 1.1;  letter-spacing: -0.6pt; color: {{TOKEN:colors.text}}; }
+.t-h2       { font-size: {{SCALE:24:typography.scale.heading}}pt; font-weight: {{TOKEN:typography.headline.weight}}; line-height: 1.2;  letter-spacing: -0.4pt; color: {{TOKEN:colors.text}}; }
+.t-h3       { font-size: {{SCALE:18:typography.scale.heading}}pt; font-weight: {{TOKEN:typography.headline.weight}}; line-height: 1.25; color: {{TOKEN:colors.text}}; }
 .t-title    { font-size: 14pt; font-weight: {{TOKEN:typography.title.weight}}; line-height: 1.3;  color: {{TOKEN:colors.text}}; }
 .t-body     { font-size: 12pt; font-weight: {{TOKEN:typography.body.weight}}; line-height: 1.5;  color: {{TOKEN:colors.text}}; }
 .t-body-sec { font-size: 12pt; font-weight: {{TOKEN:typography.body.weight}}; line-height: 1.5;  color: {{TOKEN:colors.text-secondary}}; }

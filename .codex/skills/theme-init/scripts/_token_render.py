@@ -3,6 +3,11 @@
 Placeholder grammar:
     {{TOKEN:<dotted.path>}}              — raw token value
     {{TOKEN:<dotted.path>|<filter>}}     — value run through a named filter
+    {{SCALE:<base>:<dotted.path>}}       — base number × numeric factor token,
+                                           trimmed to 2 decimals (unit stays in
+                                           the template, e.g. "...}}pt"). A
+                                           missing path defaults to factor 1.0
+                                           so pre-scale themes render unchanged
     {{IF:<dotted.path>}}...{{/IF}}      — keep block iff path resolves to truthy
     {{IFEQ:<dotted.path>:<value>}}...{{/IFEQ}}
                                          — keep block iff str(path) == value
@@ -29,6 +34,7 @@ from pathlib import Path
 from typing import Any
 
 _PLACEHOLDER_RE = re.compile(r"\{\{TOKEN:([a-zA-Z0-9_.\-]+)(?:\|([a-z]+))?\}\}")
+_SCALE_RE = re.compile(r"\{\{SCALE:([0-9]+(?:\.[0-9]+)?):([a-zA-Z0-9_.\-]+)\}\}")
 _BLOCK_RE = re.compile(r"\{\{IF:([a-zA-Z0-9_.\-]+)\}\}(.*?)\{\{/IF\}\}", re.DOTALL)
 _IFEQ_RE = re.compile(
     r"\{\{IFEQ:([a-zA-Z0-9_.\-]+):([a-zA-Z0-9_.\-]+)\}\}(.*?)\{\{/IFEQ\}\}", re.DOTALL
@@ -130,8 +136,25 @@ def _render_blocks(tpl_text: str, theme: dict[str, Any]) -> str:
     return _BLOCK_RE.sub(_sub, tpl_text)
 
 
+def _format_scaled(base: float, factor: Any) -> str:
+    if not isinstance(factor, (int, float)) or isinstance(factor, bool):
+        raise ValueError(f"SCALE expects numeric factor token, got {type(factor).__name__}")
+    s = f"{round(base * factor, 2):.2f}".rstrip("0").rstrip(".")
+    return s
+
+
 def render(tpl_text: str, theme: dict[str, Any]) -> str:
     tpl_text = _render_blocks(tpl_text, theme)
+
+    def _sub_scale(match: re.Match[str]) -> str:
+        base, dotted = float(match.group(1)), match.group(2)
+        try:
+            factor = _lookup(theme, dotted)
+        except KeyError:
+            factor = 1.0  # pre-scale themes (no typography.scale) render unchanged
+        return _format_scaled(base, factor)
+
+    tpl_text = _SCALE_RE.sub(_sub_scale, tpl_text)
 
     def _sub(match: re.Match[str]) -> str:
         dotted, fmt = match.group(1), match.group(2)

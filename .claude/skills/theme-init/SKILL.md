@@ -44,7 +44,7 @@ description: >
 | Identity | `name`, `display_name`, `description` |
 | Colors (17) | `bg`, `surface`, `surface-alt`, `text`, `text-secondary`, `text-tertiary`, `border`, `border-strong`, `accent`, `accent-soft`, `accent-ink`, `positive`, `positive-soft`, `negative`, `negative-soft`, `warning`, `warning-soft` |
 | Surface | `card_style` (filled / hairline / borderless) — 카드·타일 chrome 처리 (기본 hairline) |
-| Typography | `font-chain`, `font-mono`, 7-step type scale (display, display-sm, headline, title, body, caption, label) — 각각 size/weight/line-height/letter-spacing/transform |
+| Typography | `font-chain`, `font-mono`, 7-step type scale (display, display-sm, headline, title, body, caption, label) — 각각 size/weight/line-height/letter-spacing/transform. **선택**: `scale.display` / `scale.heading` (0.5–1.5) — `_pptx-slide.css`의 pt-locked `.t-display/.t-display2`(display)·`.t-h1/.t-h2/.t-h3`(heading) 크기를 프리셋별로 배율 조정. 생략 시 1.0 (jangpm 기준값) |
 | Radius (6) | xs, sm, md, lg, xl, pill |
 | Stroke (3) | icon, divider, emphasis |
 | Spacing (11) | 1, 2, 3, 4, 5, 6, 8, 10, 12, 14, 16 (8px grid) |

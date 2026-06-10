@@ -80,10 +80,13 @@ html, body {
 .grid-6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12pt; }
 
 /* typography classes — for use INSIDE p/h* (override colors_and_type.css rem with pt).
-   Sizes / line-height / letter-spacing are canvas-calibrated (960pt×540pt) literals and
-   stay locked; font-weight follows the theme type-scale step it maps to so a preset's
-   weight intent is honored. t-h1 tracks display weight (heavy-heading tier); t-cap-up
-   maps to the label step (uppercase eyebrow). */
+   Body-tier sizes / line-height / letter-spacing are canvas-calibrated (960pt×540pt)
+   literals and stay locked; display/heading tiers multiply the calibrated base by the
+   optional typography.scale tokens (display → t-display/t-display2, heading →
+   t-h1/t-h2/t-h3; missing scale = 1.0, i.e. the jangpm baseline). font-weight follows
+   the theme type-scale step it maps to so a preset's weight intent is honored. t-h1
+   tracks display weight (heavy-heading tier); t-cap-up maps to the label step
+   (uppercase eyebrow). */
 .t-display  { font-size: 42pt; font-weight: 800; line-height: 1.05; letter-spacing: -1pt; color: #1A1410; }
 .t-display2 { font-size: 36pt; font-weight: 800; line-height: 1.05; letter-spacing: -1pt; color: #1A1410; }
 .t-h1       { font-size: 30pt; font-weight: 800; line-height: 1.1;  letter-spacing: -0.6pt; color: #1A1410; }
