@@ -81,7 +81,7 @@ slide-html/
 │       ├── theme-init/                ← 새 프리셋 추가 (Claude Code 로컬 전용)
 │       ├── upload-drive/              ← Google Drive 업로드 + Slides 변환 (로컬 전용)
 │       ├── codex-image/               ← Claude Code 전용 선택 헬퍼 (Codex mirror 제외)
-│       └── huashu-design/             ← 디자인 레퍼런스 (보조)
+│       └── huashu-design/             ← 디자인 레퍼런스 (보조, Codex mirror 제외 — BGM/중복 자산 제거된 경량 번들)
 ├── node_modules/
 └── output/                            ← 사용자 워크스페이스 (각 데크 = <slug>-pptx/)
 ```
@@ -117,7 +117,7 @@ unzip -t output/<slug>-pptx/<slug>.pptx
 - **Claude Code:** `.claude/skills/` (정본) — Skill 런타임이 `SKILL.md`를 절차로 실행.
 - **Codex:** 루트 `AGENTS.md` → `.codex/skills/`(생성형 미러)를 절차로 실행.
 
-`.codex/skills`는 **생성물이다. 직접 편집 금지.** `.claude/skills`를 고친 뒤 반드시 미러를 재생성한다. 단, `codex-image`처럼 Codex에 기본 기능이 있는 Claude-only 헬퍼는 mirror 생성기에서 제외된다:
+`.codex/skills`는 **생성물이다. 직접 편집 금지.** `.claude/skills`를 고친 뒤 반드시 미러를 재생성한다. 단, Claude-only 스킬은 mirror 생성기에서 제외된다 — `codex-image`(Codex 기본 기능 존재) + `huashu-design`(파이프라인 비참여 디자인 레퍼런스):
 
 ```bash
 python3 .claude/skills/slide/scripts/dev/sync_codex_mirror.py         # 미러 재생성
@@ -129,8 +129,12 @@ python3 .claude/skills/slide/scripts/dev/sync_codex_mirror.py --check  # 드리�
 ## 빌드 시 주의
 
 - `init-project.sh` 가 `output/<slug>-pptx/` 에 `build.mjs`, `_pptx-slide.css`, `slides/01-title.html` 스캐폴드를 만든다. `01-title.html` 만 있으면 init 상태일 뿐 — 계획한 장수만큼 `NN-*.html` 이 채워지고 `node build.mjs` 가 성공해야 `built`로 본다 (WorkOS 운영 게이트).
+- `node build.mjs` prebuild 체인: 다양성 게이트(`validate-diversity.mjs --strict`, **HARD** — `<body data-layout>` 누락/다양성 미달 시 빌드 실패) → 디자인 B-게이트(`check_design_gates.py`, WARN — FAIL 항목은 완료 선언 전 수정 의무) → stale-hex 가드(WARN). postbuild: `verify_deck.py` (HARD).
+- 빌드가 `_screenshots/NN-*.png` 슬라이드 렌더를 자동 저장한다 — Step 5 비주얼 self-review 의무 (Read로 직접 보고 겹침/여백/chrome 점검).
+- 빌드가 `build-report.json`(슬라이드별 성공/실패 + overlap auto-fix 내역)을 남긴다 — `overlap_autofix_total > 0`이면 소스 HTML을 고쳐 0으로 만든 뒤 완료 선언.
 - 빌드 에러는 `references/error-patterns.md` 의 픽스 패턴부터 적용. 임의 CSS 변경으로 우회하지 말 것.
 - 완료 판정: PPTX 존재 + 빌드 성공 + `unzip -t` 무결성 통과 + (Systematic 모드면) `slide_plan.json` plan-fidelity self-check 통과.
+- (선택) 변환 충실도 회귀 점검: `python3 .claude/skills/slide/scripts/dev/roundtrip_check.py output/<slug>-pptx` — PPTX를 LibreOffice로 재렌더해 `_screenshots/`와 비교 (기본 임계 0.90).
 
 ## 이미지 생성
 

@@ -27,7 +27,6 @@
 
 const { chromium } = require('playwright');
 const path = require('path');
-const sharp = require('sharp');
 const { fileURLToPath } = require('url');
 
 // Convert an element's resolved src (a file:// URL from the browser) into a
@@ -394,14 +393,30 @@ function addBackground(slideData, targetSlide) {
 function addElements(slideData, targetSlide, pres) {
   for (const el of slideData.elements) {
     if (el.type === 'image') {
-      let imagePath = srcToFsPath(el.src);
-      targetSlide.addImage({
-        path: imagePath,
+      const imageOptions = {
+        path: srcToFsPath(el.src),
         x: el.position.x,
         y: el.position.y,
         w: el.position.w,
         h: el.position.h
-      });
+      };
+      // Translate CSS object-fit. Default 'fill' = stretch (pptxgenjs default,
+      // matches HTML). For cover/contain, pptxgenjs needs the image's natural
+      // size in w/h and the on-slide frame in sizing — it then emits an
+      // <a:srcRect> center crop. Without this, a 3:2 AI image in a 16:9 hero
+      // frame ships visibly distorted (the HTML preview hides it via object-fit).
+      // object-position is not translated: crops are always centered.
+      if ((el.objectFit === 'cover' || el.objectFit === 'contain') &&
+          el.naturalWidth > 0 && el.naturalHeight > 0) {
+        imageOptions.w = el.naturalWidth / PX_PER_IN;
+        imageOptions.h = el.naturalHeight / PX_PER_IN;
+        imageOptions.sizing = {
+          type: el.objectFit,
+          w: el.position.w,
+          h: el.position.h
+        };
+      }
+      targetSlide.addImage(imageOptions);
     } else if (el.type === 'line') {
       targetSlide.addShape(pres.ShapeType.line, {
         x: el.x1,
@@ -444,6 +459,7 @@ function addElements(slideData, targetSlide, pres) {
         paraSpaceAfter: el.style.paraSpaceAfter,
         margin: el.style.margin
       };
+      if (el.style.charSpacing != null) listOptions.charSpacing = el.style.charSpacing;
       targetSlide.addText(el.items, listOptions);
     } else {
       // Check if text is single-line (height suggests one line)
@@ -530,6 +546,7 @@ function addElements(slideData, targetSlide, pres) {
       };
 
       if (el.style.align) textOptions.align = el.style.align;
+      if (el.style.charSpacing != null) textOptions.charSpacing = el.style.charSpacing;
       if (el.style.margin) textOptions.margin = el.style.margin;
       if (el.style.rotate !== undefined) textOptions.rotate = el.style.rotate;
       if (el.style.transparency !== null && el.style.transparency !== undefined) textOptions.transparency = el.style.transparency;
@@ -573,6 +590,16 @@ async function extractSlideData(page) {
       if (!match || !match[4]) return null;
       const alpha = parseFloat(match[4]);
       return Math.round((1 - alpha) * 100);
+    };
+
+    // CSS letter-spacing (px) → PptxGenJS charSpacing (pt). 'normal' → null.
+    // Without this, tracked-out uppercase eyebrows (.t-cap-up etc.) lose their
+    // letterforms in PPT AND the Chromium-measured box width no longer matches
+    // what PowerPoint renders (spacing was measured but never emitted).
+    const extractCharSpacing = (letterSpacing) => {
+      if (!letterSpacing || letterSpacing === 'normal') return null;
+      const pt = pxToPoints(letterSpacing);
+      return Number.isFinite(pt) && pt !== 0 ? pt : null;
     };
 
     const applyTextTransform = (text, textTransform) => {
@@ -771,6 +798,8 @@ async function extractSlideData(page) {
               if (transparency !== null) options.transparency = transparency;
             }
             if (computed.fontSize) options.fontSize = pxToPoints(computed.fontSize);
+            const spanCharSpacing = extractCharSpacing(computed.letterSpacing);
+            if (spanCharSpacing !== null) options.charSpacing = spanCharSpacing;
 
             // Apply text-transform on the span element itself
             if (computed.textTransform && computed.textTransform !== 'none') {
@@ -901,9 +930,16 @@ async function extractSlideData(page) {
       if (el.tagName === 'IMG') {
         const rect = el.getBoundingClientRect();
         if (rect.width > 0 && rect.height > 0) {
+          const computed = window.getComputedStyle(el);
           elements.push({
             type: 'image',
             src: el.src,
+            // object-fit semantics must survive into the PPTX: a cover-cropped
+            // image looks fine in the HTML preview but ships stretched unless
+            // the natural aspect ratio is forwarded for srcRect computation.
+            objectFit: computed.objectFit,
+            naturalWidth: el.naturalWidth || 0,
+            naturalHeight: el.naturalHeight || 0,
             position: {
               x: pxToInch(rect.left),
               y: pxToInch(rect.top),
@@ -1109,6 +1145,7 @@ async function extractSlideData(page) {
             transparency: extractAlpha(computed.color),
             align: computed.textAlign === 'start' ? 'left' : computed.textAlign,
             lineSpacing: computed.lineHeight && computed.lineHeight !== 'normal' ? pxToPoints(computed.lineHeight) : null,
+            charSpacing: extractCharSpacing(computed.letterSpacing),
             paraSpaceBefore: 0,
             paraSpaceAfter: pxToPoints(computed.marginBottom),
             // PptxGenJS margin array is [left, right, bottom, top]
@@ -1147,6 +1184,7 @@ async function extractSlideData(page) {
         color: rgbToHex(computed.color),
         align: computed.textAlign === 'start' ? 'left' : computed.textAlign,
         lineSpacing: pxToPoints(computed.lineHeight),
+        charSpacing: extractCharSpacing(computed.letterSpacing),
         paraSpaceBefore: pxToPoints(computed.marginTop),
         paraSpaceAfter: pxToPoints(computed.marginBottom),
         // PptxGenJS margin array is [left, right, bottom, top] (not [top, right, bottom, left] as documented)
@@ -1216,30 +1254,36 @@ async function extractSlideData(page) {
   });
 }
 
+// Launch the conversion browser. Prefer the system Google Chrome channel on
+// macOS, but fall back to the bundled Playwright Chromium if Chrome isn't
+// installed (fresh macOS / CI). On non-darwin we always use bundled Chromium.
+// Exported so deck-level callers (export_deck_pptx.mjs) can launch ONCE and
+// share the instance across every slide instead of paying a full browser
+// boot per slide file.
+async function launchBrowser(tmpDir = process.env.TMPDIR || '/tmp') {
+  const baseLaunch = { env: { TMPDIR: tmpDir } };
+  if (process.platform === 'darwin') {
+    try {
+      return await chromium.launch({ ...baseLaunch, channel: 'chrome' });
+    } catch (e) {
+      const reason = (e && e.message ? e.message.split('\n')[0] : String(e));
+      console.warn(`[html2pptx] Google Chrome channel unavailable (${reason}); falling back to bundled Chromium.`);
+      return await chromium.launch(baseLaunch);
+    }
+  }
+  return await chromium.launch(baseLaunch);
+}
+
 async function html2pptx(htmlFile, pres, options = {}) {
   const {
     tmpDir = process.env.TMPDIR || '/tmp',
-    slide = null
+    slide = null,
+    browser: sharedBrowser = null,   // caller-owned browser (not closed here)
+    screenshotPath = null            // when set, save a PNG of the rendered slide
   } = options;
 
   try {
-    // Prefer the system Google Chrome channel on macOS, but fall back to the
-    // bundled Playwright Chromium if Chrome isn't installed (fresh macOS / CI).
-    // On non-darwin we always use bundled Chromium. Channel branch only — no
-    // other launch logic changes (this file is shared by every preset).
-    const baseLaunch = { env: { TMPDIR: tmpDir } };
-    let browser;
-    if (process.platform === 'darwin') {
-      try {
-        browser = await chromium.launch({ ...baseLaunch, channel: 'chrome' });
-      } catch (e) {
-        const reason = (e && e.message ? e.message.split('\n')[0] : String(e));
-        console.warn(`[html2pptx] Google Chrome channel unavailable (${reason}); falling back to bundled Chromium.`);
-        browser = await chromium.launch(baseLaunch);
-      }
-    } else {
-      browser = await chromium.launch(baseLaunch);
-    }
+    const browser = sharedBrowser || await launchBrowser(tmpDir);
 
     let bodyDimensions;
     let slideData;
@@ -1254,18 +1298,26 @@ async function html2pptx(htmlFile, pres, options = {}) {
         console.log(`Browser console: ${msg.text()}`);
       });
 
-      await page.goto(`file://${filePath}`);
+      try {
+        await page.goto(`file://${filePath}`);
 
-      bodyDimensions = await getBodyDimensions(page);
+        bodyDimensions = await getBodyDimensions(page);
 
-      await page.setViewportSize({
-        width: Math.round(bodyDimensions.width),
-        height: Math.round(bodyDimensions.height)
-      });
+        await page.setViewportSize({
+          width: Math.round(bodyDimensions.width),
+          height: Math.round(bodyDimensions.height)
+        });
 
-      slideData = await extractSlideData(page);
+        slideData = await extractSlideData(page);
+
+        if (screenshotPath) {
+          await page.screenshot({ path: screenshotPath });
+        }
+      } finally {
+        await page.close();
+      }
     } finally {
-      await browser.close();
+      if (!sharedBrowser) await browser.close();
     }
 
     // Collect all validation errors
@@ -1309,7 +1361,11 @@ async function html2pptx(htmlFile, pres, options = {}) {
     addBackground(slideData, targetSlide);
     addElements(slideData, targetSlide, pres);
 
-    return { slide: targetSlide, placeholders: slideData.placeholders };
+    // warnings (overlap auto-fixes) are also returned so deck-level callers can
+    // persist them (build-report.json) — console output alone gets lost in
+    // background/subagent runs, and every auto-fix means the source HTML and
+    // the shipped PPTX no longer agree.
+    return { slide: targetSlide, placeholders: slideData.placeholders, warnings: overlapResult.warnings };
   } catch (error) {
     if (!error.message.startsWith(htmlFile)) {
       throw new Error(`${htmlFile}: ${error.message}`);
@@ -1319,3 +1375,4 @@ async function html2pptx(htmlFile, pres, options = {}) {
 }
 
 module.exports = html2pptx;
+module.exports.launchBrowser = launchBrowser;

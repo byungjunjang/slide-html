@@ -45,7 +45,10 @@ TEXT_SUFFIXES = {".md", ".py", ".sh", ".mjs", ".js", ".json",
 EXCLUDE_DIRS = {"__pycache__", "node_modules", ".venv", ".git", ".pytest_cache"}
 EXCLUDE_SUFFIXES = {".pyc"}
 EXCLUDE_NAMES = {".DS_Store", "_GENERATED.md"}  # marker is synthesized, not mirrored content → keep out of the drift comparison
-EXCLUDE_TOP_LEVEL = {"codex-image"}  # Codex uses its built-in imagegen/image_gen skill instead.
+EXCLUDE_TOP_LEVEL = {
+    "codex-image",    # Codex uses its built-in imagegen/image_gen skill instead.
+    "huashu-design",  # Claude-only design reference (upstream provenance) — not part of the PPTX pipeline.
+}
 
 # f-string over OLD (not a literal ".claude/skills") so the marker is
 # copy-INDEPENDENT: both the canonical and the mirrored sync evaluate {OLD} to

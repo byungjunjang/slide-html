@@ -42,18 +42,43 @@ if (existsSync(planPath)) {
   console.log('[build] slide_plan.json not present → simple path (no R2/R5 enforcement)');
 }
 
-// Diversity gate (WARN) — data-layout coverage / distinct count / card-type ratio /
-// visual presence (PIPELINE_UPDATE_PLAN.md item B; registry: references/layouts.md).
-// Non-blocking during rollout (the script exits 0 in warn mode); promote to hard
-// by appending '--strict' here once the registry settles (Phase 4). This is
-// independent of the 4-constraints enforced inside html2pptx.js.
+// Diversity gate (HARD, --strict) — data-layout coverage / distinct count /
+// card-type ratio / visual presence (registry: references/layouts.md). Promoted
+// from WARN to hard-fail (Phase 4): every slide must tag <body data-layout>,
+// and the deck must clear the distinct/card-ratio/visual floors before any
+// Playwright work starts. Boilerplates ship pre-tagged, so a fresh init build
+// passes. This is independent of the 4-constraints enforced in html2pptx.js.
 try {
   execFileSync('node', [
     path.join(SKILL_DIR, 'scripts/validate-diversity.mjs'),
-    '--slides', slidesDir,
+    '--slides', slidesDir, '--strict',
   ], { stdio: 'inherit' });
 } catch (e) {
-  console.error('[build] diversity gate skipped (non-fatal):', e.message);
+  console.error('\n✗ diversity gate failed — <body data-layout> 태깅/레이아웃 회전을 고치세요 (references/layouts.md).');
+  process.exit(1);
+}
+
+// Design self-check gates (WARN) — B-r2/B-gm/B-density/B-plan-* heuristics
+// (scripts/check_design_gates.py, extracted from SKILL.md Step 5 inline blocks).
+// Warn-only: heuristic false-positives must never block a build, but /slide
+// treats any FAIL line as must-fix before declaring the deck complete.
+try {
+  execFileSync('python3', [
+    path.join(SKILL_DIR, 'scripts/check_design_gates.py'), __dirname,
+  ], { stdio: 'inherit' });
+} catch (e) {
+  console.error('[build] design gates skipped (non-fatal):', e.message);
+}
+
+// Stale-hex guard (WARN) — hardcoded color hex in slides/ that doesn't match
+// the active palette is likely left over from a prior theme (theme-init Fix1).
+try {
+  execFileSync('python3', [
+    path.join(REPO_ROOT, '.claude/skills/theme-init/scripts/scan_stale_hex.py'),
+    '--deck', projectDirName,
+  ], { stdio: 'inherit' });
+} catch (e) {
+  console.error('[build] stale-hex guard skipped (non-fatal):', e.message);
 }
 
 // Prebuild: PptxGenJS embeds <img src="…svg"> as a fake .png that PowerPoint

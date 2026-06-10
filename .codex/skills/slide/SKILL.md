@@ -150,7 +150,7 @@ npx playwright install chromium
   2. CSS gradient (linear/radial) 금지 — 순색만
   3. `<p>/<h*>`에 background/border/shadow 금지 — 외부 div가 담당
   4. div에 `background-image` 금지 — `<img>` 태그 사용
-- **`data-layout` 태그** — 슬라이드 루트 `<body data-layout="<family>">`. family는 `references/layouts.md`의 15개 중 1개(선택한 §5 어휘가 귀속되는 family). 빌드 prebuild 다양성 게이트(WARN)가 커버리지·distinct·card-type 비율·visual 존재를 점검 — "카드 반복 탈피"를 머신 체크로 강제. 증거 이미지/차트/다이어그램 슬롯에는 추가로 `data-image-slot="<name>"`.
+- **`data-layout` 태그** — 슬라이드 루트 `<body data-layout="<family>">`. family는 `references/layouts.md`의 15개 중 1개(선택한 §5 어휘가 귀속되는 family). 빌드 prebuild 다양성 게이트(**HARD, --strict**)가 커버리지·distinct·card-type 비율·visual 존재를 점검 — 태그 누락/다양성 미달이면 빌드가 실패한다. 증거 이미지/차트/다이어그램 슬롯에는 추가로 `data-image-slot="<name>"`.
 
 #### 2.1 슬라이드별 5 questions (작성 전)
 
@@ -174,12 +174,11 @@ npx playwright install chromium
 
 **핵심 모델**: chrome + 미세 서식 = jangpm 정체성 (anchor에서 그대로 복사). body 영역 = 어휘 다양성 (시각 다양성의 원천). 둘은 분리 관리.
 
-> **DESIGN.md가 없는 프리셋(theme-init 산출물) 폴백**: `/theme-init`이 구운 프리셋은 `DESIGN.md`를 만들지 않는다(현재 `jangpm`·`notion`만 보유). 활성 프리셋에 `DESIGN.md`가 없으면 §5 어휘 표 대신 **`references/layouts.md`의 15 family**를 레이아웃 어휘로, 그 프리셋의 `pptx-boilerplate/`(베이스라인 8장)를 참고 갤러리로 삼는다. §2.5 이미지 무드 형용사는 `DESIGN.md §1` 대신 프리셋의 `brand-spec-generated.md` / `theme.json` 토큰에서 가져온다. (Q4의 6 카테고리는 프리셋과 무관하게 유효하다.)
+> **DESIGN.md가 draft인 프리셋(theme-init 산출물) 폴백**: `/theme-init`이 구운 프리셋의 `DESIGN.md`는 **draft 스텁**으로 생성된다(§5 어휘 표 비어 있음 — 사용자가 채우고 `status: confirmed`로 바꿔야 유효). 활성 프리셋의 `DESIGN.md`가 없거나 draft면 §5 어휘 표 대신 **`references/layouts.md`의 15 family**를 레이아웃 어휘로, 그 프리셋의 `pptx-boilerplate/`(37장 전체)를 참고 갤러리로 삼는다. §2.5 이미지 무드 형용사는 `DESIGN.md §1` 대신 프리셋의 `brand-spec-generated.md` / `theme.json` 토큰에서 가져온다. (Q4의 6 카테고리는 프리셋과 무관하게 유효하다.)
 
 #### 2.3 보일러플레이트 카탈로그 (참고용)
 
-- 베이스라인 8개 (01~08): 모든 preset 공통. 디자인 시스템 검증·최소 동작 보장.
-- 콘텐츠 패턴 09~: preset별로 보유 여부 다름. `jangpm`은 09~37 (29개) 추가 제공. 실제 보유 목록은 `ls assets/design-systems/<preset>/pptx-boilerplate/`.
+- 모든 preset 공통 37장 (01~37): theme-init이 토큰 치환으로 전체 렌더. 01~08은 디자인 시스템 검증·최소 동작 보장용 베이스라인, 09~37은 콘텐츠 패턴. 실제 보유 목록은 `ls assets/design-systems/<preset>/pptx-boilerplate/`.
 - **위상**: 어휘 표(DESIGN.md §5)의 "보일러플레이트 참고" 컬럼에 매핑됨. 카탈로그에 없는 어휘(`mega-quote`, `mega-number`, `dramatic-type`, `annotated-screenshot`, `single-portrait-quote`, `diagram-as-hero`, `image-with-callouts`, `knowledge-graph`, `margin-note-layout`, `pull-quote-inline`, `drop-cap-opener`, `magazine-columns`, `timeline-horizontal`, `numbered-progression`, `bold-statement-split`, `full-bleed-image-with-overlay`)는 **신규 작곡** — 보일러플레이트 만들지 말고 슬라이드 안에서 직접 작곡.
 
 #### 2.4 ≥5장 데크: 2-page Showcase Checkpoint (필수)
@@ -331,111 +330,23 @@ Converting N slides via html2pptx...
 
 - **디자인 anti-slop self-check** — 빌드 직전 `references/anti-slop.md` §1-§9 (시각 다양성), §11 (jangpm 시그니처), §12 (미세 서식) 통과 여부 확인. 한 항목이라도 ❌면 그 슬라이드 재작성.
 - **미세 서식 self-check** — `references/text-formatting-rules.md` §10 체크리스트 통과. 원형/badge 텍스트 line-height = 컨테이너 height, 카드 padding 18pt 20pt, gm-band centered, inline span margin 없음 등.
-- **B-r2-simple + B-gm-simple + B-family-diversity-simple (simple 모드 보강 — plan 부재 시에도 활성):**
+- **B-게이트 (머신 체크)** — `node build.mjs`가 prebuild에서 자동 실행한다 (`scripts/check_design_gates.py`). 수동 실행:
   ```bash
-  python3 -c "
-  import re,glob,sys; sys.stdout.reconfigure(encoding='utf-8')
-  plans=glob.glob('slide_plan.json') + glob.glob('output/*/slide_plan.json')
-  if plans:
-      print('B-r2-simple: SKIP (plan-mode 활성)'); print('B-gm-simple: SKIP (plan-mode 활성)'); print('B-family-diversity-simple: SKIP (plan-mode 활성)')
-  else:
-      html_files=sorted(glob.glob('slides/*.html'))
-      # B-r2-simple: chart/table 의심 슬라이드에 인사이트 텍스트(.gm-band 또는 ≥40자 본문)가 함께 있는지
-      r2_fails=[]
-      for f in html_files:
-          c=open(f,encoding='utf-8').read(); name=f.split('/')[-1]
-          has_visual=bool(re.search(r'<svg|class=\"chart|tbl-row|chart-|<canvas', c, re.I))
-          has_takeaway=bool(re.search(r'gm-band|t-h3[^>]*c-accent|t-body[^>]*c-secondary[^>]*>[^<]{30,}', c, re.I))
-          if has_visual and not has_takeaway:
-              r2_fails.append(f'{name}: visual but no takeaway text')
-      print('B-r2-simple FAIL:',r2_fails) if r2_fails else print('B-r2-simple: PASS')
-      # B-gm-simple: 콘텐츠 슬라이드(cover/section/closing 제외)에 .gm-band 존재
-      gm_fails=[]
-      for f in html_files:
-          c=open(f,encoding='utf-8').read(); name=f.split('/')[-1]
-          if re.search(r'-cover\b|01-(title|cover)|closing|section', name):
-              continue
-          if not re.search(r'gm-band', c):
-              gm_fails.append(f'{name}: missing .gm-band')
-      print('B-gm-simple FAIL:',gm_fails) if gm_fails else print('B-gm-simple: PASS')
-      # B-family-diversity-simple: 파일명 slug 다양성 (≥6장 데크는 distinct slug ≥ 3)
-      if len(html_files) >= 6:
-          slugs=set()
-          for f in html_files:
-              m=re.match(r'.*/\d+-([a-z-]+)\.html', f)
-              if m: slugs.add(m.group(1))
-          if len(slugs) < 3:
-              print(f'B-family-diversity-simple FAIL: only {len(slugs)} distinct slide slugs in {len(html_files)} files — possible lazy repetition')
-          else:
-              print(f'B-family-diversity-simple: PASS ({len(slugs)} distinct slugs)')
-      else:
-          print('B-family-diversity-simple: SKIP (< 6 slides)')
-  "
+  python3 .codex/skills/slide/scripts/check_design_gates.py output/<project-name>-pptx
   ```
-- **B-plan-count + B-plan-fidelity (plan 모드 전용 — plan_json 있을 때만 활성, 없으면 자동 SKIP):**
-  ```bash
-  python3 -c "
-  import json,glob,re,os,sys; sys.stdout.reconfigure(encoding='utf-8')
-  plans=glob.glob('slide_plan.json') + glob.glob('output/*/slide_plan.json')
-  if not plans:
-      print('B-plan-count: SKIP (simple mode)')
-      print('B-plan-fidelity: SKIP (simple mode)')
-  else:
-      d=json.load(open(plans[0],encoding='utf-8'))
-      plan_slides=d.get('slides',[])
-      html_files=sorted(glob.glob('slides/*.html'))
-      # B-plan-count: 슬라이드 수 일치
-      if len(plan_slides)!=len(html_files):
-          print(f'B-plan-count FAIL: plan={len(plan_slides)} vs HTML={len(html_files)}')
-      else:
-          print(f'B-plan-count: PASS ({len(plan_slides)})')
-      # B-plan-fidelity: 슬라이드별 core_message 핵심 키워드가 HTML 안에 존재 (heuristic)
-      fails=[]
-      for s in plan_slides:
-          n=s.get('slide_number')
-          # 매칭 HTML 파일 찾기 (NN-* 패턴)
-          matching=[f for f in html_files if re.match(rf'.*/0*{n}-', f)]
-          if not matching:
-              fails.append(f'slide #{n}: no matching NN-*.html'); continue
-          html=open(matching[0],encoding='utf-8').read()
-          core=s.get('core_message','')
-          # 한국어/영어 nouns 추출 — 2글자 이상 한글 단어 또는 4글자 이상 영문 단어
-          keywords=set(re.findall(r'[가-힣]{2,}|[A-Za-z]{4,}', core))
-          # accent/조사 등 단순 stopwords 제거
-          stopwords={'있다','없다','한다','하는','되는','된다','대한','위한','수','것','이','그','저','등','및','또는','that','this','with','from','have','will','they','your','their','about'}
-          keywords-=stopwords
-          if not keywords:
-              continue  # core_message가 너무 짧으면 skip
-          if not any(k in html for k in keywords):
-              fails.append(f'slide #{n}: core_message keywords {sorted(keywords)[:5]} NOT in slide HTML')
-      print('B-plan-fidelity FAIL:',fails) if fails else print('B-plan-fidelity: PASS')
-  "
-  ```
-- **B-density 밀도 검증 (plan / simple 양쪽 모두 활성):**
-  ```bash
-  # plan 모드: plan.json의 min_lines_estimate (있으면) vs slide HTML 줄 수
-  # simple 모드: 카테고리별 default 임계치 — chart/dense slide ≥ 80줄, 일반 ≥ 60줄, cover/section/closing ≥ 40줄
-  python3 -c "
-  import re,glob,json,os,sys; sys.stdout.reconfigure(encoding='utf-8')
-  plan_files=glob.glob('slide_plan.json') + glob.glob('output/*/slide_plan.json')
-  plan={s['slide_number']:s for s in json.load(open(plan_files[0],encoding='utf-8')).get('slides',[])} if plan_files else {}
-  fails=[]
-  for f in sorted(glob.glob('slides/*.html')):
-      c=open(f,encoding='utf-8').read(); lines=c.count(chr(10))+1; name=f.split('/')[-1]
-      m=re.match(r'^(\d+)-', name); n=int(m.group(1)) if m else None
-      if n and n in plan and isinstance(plan[n].get('min_lines_estimate'),(int,float)):
-          thr=int(plan[n]['min_lines_estimate']); src='plan'
-      elif re.search(r'class=\"chart|<svg|tbl-row|chart-|card-accent.*card-accent', c, re.I):
-          thr=80; src='simple-chart/dense'
-      elif re.search(r'-cover\b|01-(title|cover)|closing|section', name):
-          thr=40; src='simple-section/cover/closing'
-      else:
-          thr=60; src='simple-general'
-      if lines < thr:
-          fails.append(f'{name}:lines={lines}<{thr}({src})')
-  print('B-density FAIL:',fails) if fails else print('B-density: PASS')
-  "
-  ```
+  - simple 모드 (plan 없음): **B-r2-simple** (chart/table 의심 슬라이드에 takeaway 텍스트 동반) · **B-gm-simple** (콘텐츠 슬라이드에 `.gm-band` 존재) · **B-family-diversity-simple** (≥6장 데크는 distinct 파일명 slug ≥3)
+  - plan 모드 (slide_plan.json 존재): **B-plan-count** (plan ↔ HTML 장수 1:1) · **B-plan-fidelity** (슬라이드별 core_message 키워드가 HTML에 존재)
+  - 양쪽 공통: **B-density** (plan의 `min_lines_estimate` 또는 카테고리 기본 임계치 — chart/dense ≥80줄, 일반 ≥60줄, cover/section/closing ≥40줄) · **B-accent-card** (card-accent 슬라이드당 ≤1) · **B-dark-usage** (다크 카드는 closing/terminal만) · **B-chrome-consistency** (eyebrow/.rule/페이지 카운터가 콘텐츠 슬라이드 간 일관) · **B-line-length** (한글 한 줄 >60자 지목 — 규칙 자체는 50자, anti-slop §6)
+
+  빌드는 WARN으로 통과시키지만(휴리스틱 오탐 방지), **FAIL 항목은 데크 완료 선언 전 반드시 수정**한다.
+- **build-report.json 확인 (필수)** — 빌드가 데크 루트에 슬라이드별 결과를 남긴다. `overlap_autofix_total > 0`이면 해당 슬라이드의 PPTX 좌표가 겹침 회피를 위해 자동 보정된 것 — **소스 HTML과 산출물이 어긋난 상태**이므로, `slides[].warnings`에 지목된 슬라이드의 HTML 레이아웃을 고쳐 auto-fix가 0이 될 때까지 재빌드한다. auto-fix에 기댄 채 완료 선언 금지.
+- **비주얼 self-review (필수)** — 빌드가 슬라이드별 렌더 스크린샷을 `output/<project-name>-pptx/_screenshots/NN-*.png`에 자동 저장한다. 각 PNG를 **Read 도구로 직접 보고** 다음을 점검:
+  1. **겹침/잘림** — 텍스트가 카드 밖으로 나가거나, 블록끼리 겹치거나, 하단에서 잘리지 않는지
+  2. **anti-slop §13** — 여백 ≥30%, 우상단 공백, 장식 비주얼 없음, 사진은 지배 요소
+  3. **chrome 일관성** — eyebrow/page counter/rule 위치·스타일이 모든 본문 슬라이드에서 동일한지
+  4. **미려함** — 카드 호흡 균일, accent 1-2 events, 시각 주역이 명확한지
+
+  위반 슬라이드는 HTML 수정 → 재빌드 → 해당 스크린샷만 다시 확인. 텍스트 휴리스틱이 못 잡는 배치 문제는 이 단계가 마지막 방어선이다.
 - PowerPoint/Keynote/LibreOffice에서 .pptx 열기
 - 임의 텍스트 더블클릭 → 직접 편집 가능 확인
 - N/N 통과율 확인
@@ -457,7 +368,7 @@ Converting N slides via html2pptx...
 - `theme.json` (v1 토큰 컨트랙트)
 - `colors_and_type.css` (CSS 변수)
 - `_pptx-slide.css` (이 프리셋의 헬퍼 클래스)
-- `pptx-boilerplate/01~08-*.html` (이 프리셋으로 토큰 치환된 베이스라인 보일러플레이트 8장 — 모든 preset 공통 의무 산출물. preset 작성자가 콘텐츠 패턴 09~를 추가로 제공해도 되지만 의무는 아님)
+- `pptx-boilerplate/01~37-*.html` (이 프리셋으로 토큰 치환된 보일러플레이트 37장 전체 — 모든 preset 공통 의무 산출물)
 - `brand-spec-generated.md` (인간 가독 토큰 레퍼런스)
 
 `/theme-init`은 별도 스킬(`.codex/skills/theme-init/`)이며 **Claude Code 로컬 환경 전용**이다 (claude.ai에는 업로드하지 않음). theme-init은 결과물을 이 슬라이드 번들의 `assets/design-systems/<new-preset>/`에 직접 떨구고, `assets/design-systems/README.md` 카탈로그를 자동 갱신한다.
@@ -478,7 +389,7 @@ Converting N slides via html2pptx...
 | `references/layouts.md` | **`data-layout` 레지스트리** — 15 family(card-type ≤1/3) + `<body data-layout>` 규칙 + 다양성 게이트(B)가 보는 것 |
 | `references/diagram-slots.md` | **다이어그램 슬롯 계약** — `diagram-design` 스킬 → PNG `<img>` 슬롯 임베드 (2.6단계 전체 가이드 + 의미역→CSS변수 매핑) |
 | `references/canvas-spec.md` | 960pt × 540pt 캔버스 / 좌표 / 폰트 가이드 |
-| `assets/design-systems/<preset>/pptx-boilerplate/*.html` | 베이스라인 8 패턴 (01~08, 모든 preset 공통) + preset별 추가 콘텐츠 패턴. `jangpm`은 29 패턴(09~37) 추가 제공. 실제 보유 목록은 `ls assets/design-systems/<preset>/pptx-boilerplate/`로 확인 |
+| `assets/design-systems/<preset>/pptx-boilerplate/*.html` | 보일러플레이트 37 패턴 (01~37, 모든 preset 공통 — theme-init이 전체 토큰 렌더). 실제 보유 목록은 `ls assets/design-systems/<preset>/pptx-boilerplate/`로 확인 |
 | `assets/design-systems/<preset>/_pptx-slide.css` | preset 별 공통 CSS (프로젝트마다 복사됨) |
 | `assets/design-systems/<preset>/colors_and_type.css` | preset 토큰 (색/타이포) — 프로젝트마다 복사됨 |
 | `assets/design-systems/README.md` | 사용 가능한 모든 preset 카탈로그 (theme-init이 자동 갱신) |
@@ -486,7 +397,9 @@ Converting N slides via html2pptx...
 | `scripts/init-project.sh` | 프로젝트 셋업 자동화 (preset → output 복사) |
 | `scripts/export_deck_pptx.mjs` + `html2pptx.js` | HTML → editable PPTX 변환 엔진 (Playwright + pptxgenjs) |
 | `scripts/prebuild-svg.mjs` | 빌드 직전 icons/*.svg를 PNG로 래스터화 (PptxGenJS의 SVG embed 버그 우회) |
-| `scripts/validate-diversity.mjs` | 빌드 prebuild **다양성 게이트(WARN)** — `data-layout` 커버리지/distinct/card-type 비율/visual 존재 (`references/layouts.md`) |
+| `scripts/validate-diversity.mjs` | 빌드 prebuild **다양성 게이트(HARD, --strict)** — `data-layout` 커버리지/distinct/card-type 비율/visual 존재. 위반 시 빌드 실패 (`references/layouts.md`) |
+| `scripts/check_design_gates.py` | **B-게이트 통합 스크립트(WARN)** — B-r2/B-gm/B-family-diversity (simple) · B-plan-count/B-plan-fidelity (plan) · B-density + anti-slop 정적 체크 4종(B-accent-card/B-dark-usage/B-chrome-consistency/B-line-length) (공통). `build.mjs`가 prebuild에서 자동 실행 |
+| `scripts/dev/roundtrip_check.py` | **변환 충실도 회귀 체크** — 빌드된 PPTX를 LibreOffice로 재렌더해 `_screenshots/`와 유사도 비교 (기본 임계 0.90). HTML은 멀쩡한데 PPTX만 깨지는 부류를 잡는 안전망 |
 | `scripts/active-accent.mjs` | 활성 preset accent palette 해석 → §2.5 이미지 **style-lock accent 주입(Fix2)** |
 | `scripts/render-diagram.mjs` | **diagram-design HTML → 투명 고해상도 PNG** (Playwright; 웹폰트·CJK 정확). 2.6 다이어그램 슬롯용 |
 | `scripts/verify_deck.py` | **완료 게이트** — `build.mjs`가 빌드 후 자동 호출(dual-host 공용). 네이티브성 · 슬라이드 수 1:1 · dangling `<img>` · 미디어 하한 · placeholder가 남은 slot · ≥10장 plan · 미러 freshness 하드 페일 |

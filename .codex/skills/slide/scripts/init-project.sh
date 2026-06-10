@@ -118,7 +118,7 @@ cat > "$PROJECT_DIR/README.md" <<EOF
 
 1. \`slides/\` 안에 슬라이드 HTML 파일 작성/추가 (\`NN-name.html\` 형식, 파일명 순으로 빌드됨)
 2. 모든 슬라이드는 \`/slide\` 스킬의 4 hard constraint 통과 필수 (\`.codex/skills/slide/references/4-constraints.md\`)
-3. 새 슬라이드는 처음부터 그리지 말고 \`.codex/skills/slide/templates/\` 의 가까운 패턴 복사 → 콘텐츠만 교체
+3. 새 슬라이드는 \`design-system/pptx-boilerplate/\` 의 anchor 패턴에서 chrome 골격을 복사 → body 영역만 작곡 (SKILL.md §2.2)
 4. 빌드:
 
    \`\`\`bash

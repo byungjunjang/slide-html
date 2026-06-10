@@ -6,7 +6,7 @@
 
 ## `data-layout` 부여 규칙
 
-- 모든 슬라이드 루트에 `<body data-layout="<family-id>">` — **한 슬라이드 = 한 family**.
+- 모든 슬라이드 루트에 `<body data-layout="<family-id>">` — **한 슬라이드 = 한 family**. 태그 누락 시 빌드가 실패한다(HARD 게이트).
 - `family-id`는 아래 15개 중 하나. (게이트는 distinct 카운팅에 임의 문자열도 허용하지만, **레지스트리 id 사용 권장** — card-type/visual 분류가 정확해진다.)
 - 이미지/차트/다이어그램 **증거 슬롯**이 있으면 그 슬롯 컨테이너에 `data-image-slot="<name>"`을 추가한다 (Phase 3·C evidence-slots 계약과 연결). 게이트의 visual 존재 점검이 이를 인식한다. `<img>` 태그 자체도 visual 신호로 인정.
 
@@ -32,15 +32,15 @@
 
 **card-type 4/15 ≤ 1/3** — 레지스트리 구성 자체가 카드형을 소수로 묶어 "카드 반복 탈피"(P1)를 구조적으로 유도한다. 데크 단위 cap은 `DESIGN.md` §10(Density ≤ 50%, 이상적으로 ≤ 1/3) · `anti-slop.md` §13이 SSOT.
 
-## 게이트(B)가 보는 것 — WARN
+## 게이트(B)가 보는 것 — HARD (--strict)
 
-`scripts/validate-diversity.mjs` — `build.mjs` prebuild에서 **non-blocking** 실행:
+`scripts/validate-diversity.mjs` — `build.mjs` prebuild에서 `--strict`로 실행 (위반 시 빌드 실패):
 
-1. **커버리지** — `data-layout` 없는 슬라이드 → WARN (어느 파일인지 나열).
-2. **distinct** — 서로 다른 family 수 < `⌈슬라이드수 × 0.6⌉` → WARN (이상 ≥ 0.7).
-3. **card-type 비율** — card-type family 슬라이드 > 데크의 50% → WARN (이상 ≤ 1/3).
-4. **visual 존재** — 데크(≥5장)에 visual family / `<img>` / `data-image-slot`이 하나도 없음 → WARN.
+1. **커버리지** — `data-layout` 없는 슬라이드 → FAIL (어느 파일인지 나열). 보일러플레이트 37장은 family 태그가 미리 박혀 있다.
+2. **distinct** — 서로 다른 family 수 < `⌈슬라이드수 × 0.6⌉` → FAIL (이상 ≥ 0.7).
+3. **card-type 비율** — card-type family 슬라이드 > 데크의 50% → FAIL (이상 ≤ 1/3).
+4. **visual 존재** — 데크(≥5장)에 visual family / `<img>` / `data-image-slot`이 하나도 없음 → FAIL.
 
 게이트는 vocabulary에 관대하다 — 레지스트리에 없는 family-id도 distinct 카운트엔 포함되고, 오타로 의심되면 INFO로만 알린다. **card-type/visual 분류만** 위 표에서 인지한다 (그래서 새 비-카드 family를 추가해도 거짓 경고가 안 난다).
 
-WARN은 빌드를 막지 않는다. `--strict` 플래그로 게이트화 — Phase 4에서 레지스트리 정착 후 `build.mjs`에 `--strict` 승격 예정.
+Phase 4 승격 완료 — `build.mjs`가 `--strict`로 호출하므로 위반은 빌드를 막는다. 수동 WARN 모드: `node scripts/validate-diversity.mjs --slides <dir>` (--strict 생략).

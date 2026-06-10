@@ -5,7 +5,7 @@ description: >
   Reads a design guide (markdown) or a complete preset folder, extracts
   tokens conforming to the v1 contract, and renders a full preset under
   the slide skill bundle's assets/design-systems/<preset>/ — colors,
-  typography, brand-spec.md, _pptx-slide.css helpers, and 8 reskinned
+  typography, brand-spec.md, _pptx-slide.css helpers, and all 37 reskinned
   boilerplate slides. Also refreshes the slide bundle's preset catalog
   (assets/design-systems/README.md) so /slide picks up the new preset
   immediately. Claude Code 로컬 전용 (claude.ai 업로드 안 함).
@@ -73,7 +73,7 @@ python3 .codex/skills/theme-init/scripts/init_theme.py \
 2. **patch name** — `--preset` 인자로 name/display_name 덮어쓰기
 3. **validate_theme** — v1 토큰 컨트랙트 schema 검증
 4. **resolve prelude** — `--fonts-prelude` → 기존 `_fonts.css` → 자동 생성 `_header.css` (캐스케이드)
-5. **render** — colors_and_type.css, _pptx-slide.css, brand-spec-generated.md, pptx-boilerplate/01..08.html
+5. **render** — colors_and_type.css, _pptx-slide.css, brand-spec-generated.md, pptx-boilerplate/01..37.html
 6. **render_design_md** — `<preset>/DESIGN.md` 초안 생성 (slide-plan Layer 3). frontmatter `status: draft` — 사용자 검토 후 `confirmed`로 변경.
 7. **render_presets_readme** — slide 번들의 `assets/design-systems/README.md` 카탈로그를 새 프리셋 행으로 갱신 (자동 생성, 직접 편집 금지)
 8. **report** — 다음 단계 안내
@@ -105,7 +105,7 @@ open test-<preset>.pptx
 확인 포인트:
 - 악센트 색이 새 브랜드 색인지 (jangpm 인디고가 아니어야 함)
 - 폰트가 가이드의 primary 폰트인지
-- 보일러플레이트 8장 패턴이 새 프리셋 컬러로 reskin 됐는지
+- 보일러플레이트 37장 패턴이 새 프리셋 컬러로 reskin 됐는지
 
 ## Phase 2 — Layout Authoring (브랜드 레이아웃 재작곡)
 
@@ -211,7 +211,7 @@ theme-init은 결과물을 slide 번들의 `assets/design-systems/` 안에 직�
 | `templates/colors_and_type.tpl.css` | colors_and_type.css 템플릿 |
 | `templates/_pptx-slide.tpl.css` | _pptx-slide.css 템플릿 |
 | `templates/brand-spec.tpl.md` | brand-spec-generated.md 템플릿 |
-| `templates/boilerplate/*.tpl.html` | 8장 보일러플레이트 템플릿 |
+| `templates/boilerplate/*.tpl.html` | 37장 보일러플레이트 템플릿 |
 | `scripts/init_theme.py` | Phase 1 오케스트레이터 (token-render + .stock 스냅샷 + 매니페스트 stub) |
 | `scripts/_token_render.py` | 공통 placeholder 치환 엔진 (TOKEN, IF, rgb/rem/csv/optional 필터) |
 | `scripts/render_presets_readme.py` | slide 번들의 `assets/design-systems/README.md` 카탈로그 자동 생성 |

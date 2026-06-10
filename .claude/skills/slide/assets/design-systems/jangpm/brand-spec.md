@@ -115,12 +115,12 @@ editorial · minimal · Korean-lecture · monochrome-first · report-style · tr
 
 ## 사용 체크리스트 (huashu-design이 이 프리셋 썼을 때)
 
-1. 프로젝트 폴더에 프리셋 링크/복사
+1. 프로젝트 폴더에 프리셋 복사 — `init-project.sh`가 자동으로 수행한다
    ```bash
-   # 심볼릭 링크 (권장: 프리셋 업데이트가 즉시 반영)
-   ln -s ../../../.claude/skills/huashu-design/assets/design-systems/jangpm <project>/design-system
-   # 또는 복사 (프로젝트별 수정이 필요하면)
-   cp -r <skill>/assets/design-systems/jangpm <project>/design-system
+   # /slide 표준 경로 (slide 번들의 design-systems가 SSOT)
+   bash .claude/skills/slide/scripts/init-project.sh <project> jangpm
+   # 수동 복사가 필요하면
+   cp -r .claude/skills/slide/assets/design-systems/jangpm <project>/design-system
    ```
 2. `<project>/brand-spec.md` 로 이 파일 복사
 3. HTML `<head>`에 `<link rel="stylesheet" href="design-system/colors_and_type.css">` + 슬라이드면 `<link rel="stylesheet" href="design-system/slides/_slide.css">`
