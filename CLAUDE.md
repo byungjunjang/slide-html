@@ -36,7 +36,7 @@
 
 **Auto-trigger → Systematic 모드:** 슬라이드 수 ≥ 10장, 사용자가 참고 파일 첨부, brief에 `계획/체계/꼼꼼/제대로/thorough/detailed` 등 태도 키워드 포함 — 하나라도 충족하면 `/slide-plan` 먼저 호출.
 
-## 산출물 컨벤션 (WorkOS 루트 규칙)
+## 산출물 컨벤션
 
 - **루트:** `output/` (단수). `outputs/` (복수)를 새로 만들지 말 것
 - **폴더명:** `output/<slug>-pptx/` — 예: `output/kospi-7400-supercycle-pptx/`
@@ -44,7 +44,7 @@
 - **슬라이드 HTML:** `output/<slug>-pptx/slides/NN-name.html` (NN은 두 자리 zero-padded)
 - 새 작업 전에 `ls output/` 으로 기존 slug 컨벤션을 확인한 뒤 폴더명 결정
 
-WorkOS 루트 CLAUDE.md의 `cokacdir-outputs` 규칙은 슬라이드 3종에 적용되지 않는다 — 자기 프로젝트 `output/` 안에 저장한 뒤 cokacdir 전송.
+산출물은 항상 이 저장소의 `output/` 아래에 저장한다 — 저장소 밖 임의 위치에 만들지 말 것.
 
 ## 디렉터리
 
@@ -128,7 +128,7 @@ python3 .claude/skills/slide/scripts/dev/sync_codex_mirror.py --check  # 드리�
 
 ## 빌드 시 주의
 
-- `init-project.sh` 가 `output/<slug>-pptx/` 에 `build.mjs`, `_pptx-slide.css`, `slides/01-title.html` 스캐폴드를 만든다. `01-title.html` 만 있으면 init 상태일 뿐 — 계획한 장수만큼 `NN-*.html` 이 채워지고 `node build.mjs` 가 성공해야 `built`로 본다 (WorkOS 운영 게이트).
+- `init-project.sh` 가 `output/<slug>-pptx/` 에 `build.mjs`, `_pptx-slide.css`, `slides/01-title.html` 스캐폴드를 만든다. `01-title.html` 만 있으면 init 상태일 뿐 — 계획한 장수만큼 `NN-*.html` 이 채워지고 `node build.mjs` 가 성공해야 `built`로 본다 (운영 게이트).
 - `node build.mjs` prebuild 체인: 다양성 게이트(`validate-diversity.mjs --strict`, **HARD** — `<body data-layout>` 누락/다양성 미달 시 빌드 실패) → 디자인 B-게이트(`check_design_gates.py`, WARN — FAIL 항목은 완료 선언 전 수정 의무) → stale-hex 가드(WARN). postbuild: `verify_deck.py` (HARD).
 - 빌드가 `_screenshots/NN-*.png` 슬라이드 렌더를 자동 저장한다 — Step 5 비주얼 self-review 의무 (Read로 직접 보고 겹침/여백/chrome 점검).
 - 빌드가 `build-report.json`(슬라이드별 성공/실패 + overlap auto-fix 내역)을 남긴다 — `overlap_autofix_total > 0`이면 소스 HTML을 고쳐 0으로 만든 뒤 완료 선언.
@@ -164,4 +164,3 @@ python3 .claude/skills/slide/scripts/dev/sync_codex_mirror.py --check  # 드리�
 
 - **풀 사용자 가이드:** `README.md` (디자인 시스템 상세, FAQ, 사용 예제 포함)
 - **워크플로우 상세:** `.claude/skills/slide/SKILL.md` (5단계 + Systematic/Simple 분기 + 검증)
-- **WorkOS 루트 규칙:** `../CLAUDE.md` §3 (슬라이드 3종 병렬 실행 + 운영 게이트 + fallback)
