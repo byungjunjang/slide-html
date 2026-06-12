@@ -81,7 +81,7 @@ slide-html/
 │       ├── theme-init/                ← 새 프리셋 추가 (Claude Code 로컬 전용)
 │       ├── upload-drive/              ← Google Drive 업로드 + Slides 변환 (로컬 전용)
 │       ├── codex-image/               ← Claude Code 전용 선택 헬퍼 (Codex mirror 제외)
-│       └── huashu-design/             ← 디자인 레퍼런스 (보조, Codex mirror 제외 — BGM/중복 자산 제거된 경량 번들)
+│       └── huashu-design/             ← 비슬라이드 시각물 담당 (프로토타입·애니메이션·MP4/GIF·디자인 컨설팅 — 슬라이드는 /slide가 정본. Codex mirror 제외, 경량 번들)
 ├── node_modules/
 └── output/                            ← 사용자 워크스페이스 (각 데크 = <slug>-pptx/)
 ```
@@ -138,29 +138,22 @@ python3 .claude/skills/slide/scripts/dev/sync_codex_mirror.py --check  # 드리�
 
 ## 이미지 생성
 
-`/slide` Step 2.5(이미지 슬롯이 있을 때만)가 사용.
+`/slide` Step 2.5(이미지 슬롯이 있을 때만)가 사용. **백엔드는 단일** — Codex 내장 `imagegen`/`image_gen` 경로(`gpt-image-2`, OAuth, API key 불필요). 다른 이미지 백엔드는 동봉하지 않는다.
 
-**백엔드는 단일**: Codex 기본 `imagegen`/`image_gen` 경로 → `gpt-image-2` (OAuth, API key 불필요). slide-html은 이 외 다른 이미지 백엔드를 동봉하지 않는다 — preflight(`codex --version` / `codex login status`)가 실패하면 대체 생성기로 넘어가지 않고 이미지 단계를 중단한 뒤 `<img>` 슬롯을 placeholder 도형(`<div class="img-placeholder">`)으로 대체한다. 이 fallback은 **`data-image-slot`을 제거해야** 한다. `data-image-slot`이 남아 있으면 verify가 "실제 미디어가 있어야 하는 슬롯"으로 보고 하드 페일한다.
+preflight(`codex --version` / `codex login status`) 실패 시 대체 생성기로 넘어가지 않고 이미지 단계를 중단, `<img>` 슬롯을 placeholder 도형(`<div class="img-placeholder">`)으로 대체하며 이때 **`data-image-slot`을 반드시 제거**한다 — 남아 있으면 `verify_deck.py`가 하드 페일한다.
 
-`codex exec`는 성공해도 플러그인/메모리 관련 non-fatal WARN을 함께 찍을 수 있다. 성공 판정은 마지막의 saved path, byte size, dimensions 라인과 실제 `output/<deck>-pptx/images/<slot>.png` 존재 여부로 한다.
-
-**호출 경로**: `/slide` Step 2.5는 Codex 기본 이미지 생성 경로를 직접 사용한다. Codex 사용자용 `.codex/skills` 패키지에는 `codex-image` 스킬을 포함하지 않는다. Claude Code 사용자는 `.claude/skills/codex-image/`를 독립 편의 헬퍼로 쓸 수 있지만, slide 파이프라인의 필수 계약은 아니다.
-
-16:9 슬롯은 `1536x1024` 생성 후 `<img object-fit:cover object-position:center>` 로 960×540 크롭 — html2pptx가 박스 크기 그대로 PPTX `pic` frame에 임베드하므로 양옆 크롭이 보존된다.
+preflight 명령, per-slot 호출 패턴, 성공 판정(non-fatal WARN 무시 · saved path/byte 확인), size 매핑(16:9 = `1536x1024` + cover 크롭), 스타일 락 상세는 `.claude/skills/slide/SKILL.md` §2.5.
 
 ## 다이어그램
 
-`/slide` Step 2.6(시각 주역이 "구조적 관계"인 슬라이드에만)가 사용. 손으로 SVG를 짜지 않고 **`diagram-design` 스킬**(14종: 아키텍처/플로우/시퀀스/상태도/ER/타임라인/스윔레인/사분면/nested/트리/조직도/계층/벤/피라미드)로 작곡한다.
+`/slide` Step 2.6(시각 주역이 "구조적 관계"인 슬라이드에만)가 사용 — 손으로 SVG를 짜지 않고 **`diagram-design` 스킬**(14종)로 작곡한다.
 
-**왜 별도 경로인가**: `html2pptx.js`에는 inline `<svg>` 핸들러가 없다 — 슬라이드 HTML에 SVG를 직접 넣으면 PPTX에서 **조용히 사라진다**. 이 프로젝트의 유일한 SVG 경로는 **SVG → PNG 래스터 → `<img>` 슬롯**(차트·아이콘도 동일). 따라서 다이어그램은 차트·AI이미지와 같은 **그림(raster figure)** 으로 임베드되며, 도형 텍스트는 PPTX에서 더블클릭 편집 불가다(슬라이드의 나머지 텍스트는 편집 가능). 텍스트 수정은 `diagrams/<slot>.html`을 고쳐 재렌더.
+**왜 별도 경로인가**: `html2pptx.js`에는 inline `<svg>` 핸들러가 없어 슬라이드 HTML에 SVG를 직접 넣으면 PPTX에서 **조용히 사라진다** — 유일한 SVG 경로는 SVG → PNG 래스터 → `<img>` 슬롯(다이어그램 텍스트는 PPTX에서 편집 불가, 수정은 `diagrams/<slot>.html` 재렌더).
 
-**래스터 백엔드**: `prebuild-svg`(sharp)가 아니라 **`scripts/render-diagram.mjs`(Playwright/Chromium)** — sharp는 웹폰트·CJK를 못 불러와 한글이 깨지지만 Chromium은 Pretendard·한글을 정확히 렌더한다.
+**래스터 백엔드**: `prebuild-svg`(sharp)가 아니라 **`scripts/render-diagram.mjs`(Playwright/Chromium)** — sharp는 웹폰트·CJK가 깨진다.
 
-**스킨**: 다이어그램은 색·폰트를 하드코딩하지 않고 데크의 `design-system/colors_and_type.css`를 `<link>` 해 **프리셋 CSS 변수**(`var(--accent)` 등)를 참조 → 활성 프리셋과 자동으로 한 몸. diagram-design 자체의 first-run 온보딩/style-guide 게이트는 slide-html 안에서 **건너뛴다**(활성 프리셋이 SSOT).
-
-**영구 락 준수**: 단일 액센트(focal ≤2) · 이모지 금지 · 그라디언트/글로우 금지는 다이어그램에도 그대로. 전체 계약·단계·의미역→CSS변수 매핑은 `.claude/skills/slide/references/diagram-slots.md` 단일 문서, diagram-design 라우팅은 `.claude/skills/diagram-design/SKILL.md` §0.5.
+**영구 락 준수**: 단일 액센트(focal ≤2) · 이모지 금지 · 그라디언트/글로우 금지는 다이어그램에도 그대로. 워크플로우는 `.claude/skills/slide/SKILL.md` §2.6, 전체 계약·프리셋 CSS변수 스킨·온보딩 게이트 스킵 규칙은 `references/diagram-slots.md` 단일 문서, diagram-design 라우팅은 `.claude/skills/diagram-design/SKILL.md` §0.5.
 
 ## 참고
 
 - **풀 사용자 가이드:** `README.md` (디자인 시스템 상세, FAQ, 사용 예제 포함)
-- **워크플로우 상세:** `.claude/skills/slide/SKILL.md` (5단계 + Systematic/Simple 분기 + 검증)

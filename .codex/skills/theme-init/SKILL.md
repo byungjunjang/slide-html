@@ -2,13 +2,8 @@
 name: theme-init
 description: >
   Generate a new design system preset for the /slide PPTX pipeline.
-  Reads a design guide (markdown) or a complete preset folder, extracts
-  tokens conforming to the v1 contract, and renders a full preset under
-  the slide skill bundle's assets/design-systems/<preset>/ — colors,
-  typography, brand-spec.md, _pptx-slide.css helpers, and all 37 reskinned
-  boilerplate slides. Also refreshes the slide bundle's preset catalog
-  (assets/design-systems/README.md) so /slide picks up the new preset
-  immediately. Claude Code 로컬 전용 (claude.ai 업로드 안 함).
+  입력은 디자인 가이드 마크다운 또는 완결된 프리셋 폴더.
+  Claude Code 로컬 전용 (claude.ai 업로드 안 함).
   Trigger on: "/theme-init", "디자인 시스템 추가", "새 브랜드 프리셋",
   "set up a new theme".
 ---
