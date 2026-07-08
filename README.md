@@ -320,7 +320,7 @@ A. 안 끼어듭니다. 각 요청 = `output/<주제>-pptx/` 독립 폴더로 �
 
 ## 라이선스 & 기여
 
-- **라이선스:** 본 저장소는 [alchaincyf/huashu-design](https://github.com/alchaincyf/huashu-design)의 **Personal-Use License를 계승**합니다 — 개인·학습·비상업 용도에 한해 자유롭게 사용 가능, **상업적 이용은 금지**. 자세한 조건은 [`LICENSE`](./LICENSE) 참조.
+- **라이선스:** 원본 [alchaincyf/huashu-design](https://github.com/alchaincyf/huashu-design)가 2026-05-14부터 **MIT License**로 전환됨에 따라, 본 저장소도 **MIT License**를 따릅니다 — 상업적 이용을 포함해 자유롭게 사용·수정·배포 가능. 자세한 조건은 [`LICENSE`](./LICENSE) 참조.
 - **다이어그램 스킬:** `/slide`의 다이어그램 기능은 [cathrynlavery/diagram-design](https://github.com/cathrynlavery/diagram-design)(Cathryn Lavery, **MIT**)을 vendoring 한 것입니다. 원본 라이선스는 [`.claude/skills/diagram-design/LICENSE`](./.claude/skills/diagram-design/LICENSE), 통합 내역은 `.claude/skills/diagram-design/PROVENANCE.md` 참조.
 - **이미지 생성 헬퍼:** Claude Code 전용 `codex-image` 헬퍼는 [wjb127/codex-image](https://github.com/wjb127/codex-image)를 vendoring 한 것입니다 — Claude Code에서만 쓰는 선택 편의 헬퍼이며 Codex 패키지(`.codex/skills`)에는 포함되지 않습니다 (Codex는 기본 `imagegen`/`image_gen` 사용).
 - **버그 리포트·패턴 제안:** GitHub 이슈 환영
