@@ -14,7 +14,9 @@ Exit 0 = all HARD checks pass. Exit 1 = >=1 HARD check failed.
 """
 from __future__ import annotations
 import json
+import os
 import re
+import shutil
 import subprocess
 import sys
 import zipfile
@@ -152,6 +154,74 @@ def check_plan(g: Gate, project: Path, n_slides: int):
             f"and no '.deck-mode=simple' bypass marker - systematic plan required.")
 
 
+def _officecli_bin() -> str | None:
+    # OFFICECLI_BIN overrides discovery: a path forces that binary, an empty
+    # string disables the gate (hermetic tests / opting out).
+    env = os.environ.get("OFFICECLI_BIN")
+    if env is not None:
+        return env or None
+    found = shutil.which("officecli")
+    if found:
+        return found
+    for cand in ("/opt/homebrew/bin/officecli", "/usr/local/bin/officecli"):
+        if Path(cand).exists():
+            return cand
+    return None
+
+
+def check_officecli(g: Gate, project: Path, pptx: Path):
+    """OpenXML schema validation (HARD) + PPTX render artifact (WARN).
+
+    Skipped entirely when officecli is not installed, so hosts without it
+    (public mirror users, claude.ai) see no behavior change.
+    """
+    binary = _officecli_bin()
+    if binary is None:
+        return
+    # Verdict policy (probed against officecli 1.0.135 on real decks):
+    #   - `error` object  -> file cannot be opened (corrupt/missing parts): HARD
+    #   - success:false with only `warnings` -> schema strictness; pptxgenjs
+    #     output always trips element-order warnings PowerPoint tolerates: WARN
+    #   - unparseable output / timeout -> tool problem, not a deck defect: WARN
+    try:
+        rc = subprocess.run([binary, "validate", str(pptx), "--json"],
+                            capture_output=True, text=True, timeout=120)
+        try:
+            verdict = json.loads(rc.stdout)
+        except Exception:
+            verdict = None
+        if verdict is None:
+            g.W(False, f"officecli validate output unparseable (non-blocking): "
+                       f"{(rc.stdout or rc.stderr)[-300:]}")
+        else:
+            err = verdict.get("error")
+            g.H(not err, f"officecli validate: file unopenable - {err}")
+            if not err and not verdict.get("success"):
+                warns = verdict.get("warnings") or []
+                head = warns[0].get("message", "") if warns else ""
+                g.W(False, f"officecli validate schema warnings "
+                           f"({len(warns)} line(s), non-blocking): {head[:200]}")
+    except subprocess.TimeoutExpired:
+        g.W(False, "officecli validate timed out (>120s, non-blocking)")
+        return
+    # Contact sheet of the CONVERTED pptx (not the source HTML render) so the
+    # agent can eyeball conversion-stage overflow/collisions. Non-blocking.
+    out = project / "_pptx_render" / "grid.png"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        rs = subprocess.run([binary, "view", str(pptx), "screenshot", "--grid",
+                             "--out", str(out), "--json"],
+                            capture_output=True, text=True, timeout=180)
+        shot_ok = rs.returncode == 0 and out.exists()
+        g.W(shot_ok, f"officecli screenshot failed (non-blocking): "
+                     f"{(rs.stderr or rs.stdout)[-300:]}")
+        if shot_ok:
+            print(f"  INFO  pptx render: {out} - Read it to eyeball "
+                  f"overflow/collision issues in the converted deck")
+    except subprocess.TimeoutExpired:
+        g.W(False, "officecli screenshot timed out (>180s, non-blocking)")
+
+
 def check_mirror(g: Gate):
     if SYNC_SCRIPT.exists():
         try:
@@ -179,6 +249,7 @@ def main(argv: list) -> int:
         check_nativeness(g, slides)
         check_text_runs(g, slides)
         check_images(g, project, media)
+        check_officecli(g, project, pptx)
     check_plan(g, project, n_slides)
     check_mirror(g)
 

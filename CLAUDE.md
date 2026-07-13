@@ -124,7 +124,7 @@ python3 .claude/skills/slide/scripts/dev/sync_codex_mirror.py         # 미러 �
 python3 .claude/skills/slide/scripts/dev/sync_codex_mirror.py --check  # 드리프트 확인 (게이트)
 ```
 
-완료 게이트(두 호스트 공용): `node build.mjs`가 빌드 후 `verify_deck.py`를 자동 호출한다(네이티브성·dangling `<img>`·미디어 하한·placeholder가 남은 declared image slot·≥10장 plan·미러 freshness 하드 페일). Codex는 done 선언 전 `python3 .codex/skills/slide/scripts/verify_deck.py output/<slug>-pptx` 통과 필수. 미러가 stale면 게이트가 하드 페일하므로 위 sync를 먼저 돌린다.
+완료 게이트(두 호스트 공용): `node build.mjs`가 빌드 후 `verify_deck.py`를 자동 호출한다(네이티브성·dangling `<img>`·미디어 하한·placeholder가 남은 declared image slot·≥10장 plan·미러 freshness 하드 페일). officecli가 설치된 환경에서는 추가로 OpenXML validate(열 수 없는 corrupt 파일 하드 페일, 스키마 warning은 WARN)와 변환된 PPTX 실물 컨택트 시트(`_pptx_render/grid.png`, 눈검수용 WARN 레이어)를 수행한다 — 미설치 시 자동 skip. Codex는 done 선언 전 `python3 .codex/skills/slide/scripts/verify_deck.py output/<slug>-pptx` 통과 필수. 미러가 stale면 게이트가 하드 페일하므로 위 sync를 먼저 돌린다.
 
 ## 빌드 시 주의
 
@@ -133,7 +133,7 @@ python3 .claude/skills/slide/scripts/dev/sync_codex_mirror.py --check  # 드리�
 - 빌드가 `_screenshots/NN-*.png` 슬라이드 렌더를 자동 저장한다 — Step 5 비주얼 self-review 의무 (Read로 직접 보고 겹침/여백/chrome 점검).
 - 빌드가 `build-report.json`(슬라이드별 성공/실패 + overlap auto-fix 내역)을 남긴다 — `overlap_autofix_total > 0`이면 소스 HTML을 고쳐 0으로 만든 뒤 완료 선언.
 - 빌드 에러는 `references/error-patterns.md` 의 픽스 패턴부터 적용. 임의 CSS 변경으로 우회하지 말 것.
-- 완료 판정: PPTX 존재 + 빌드 성공 + `unzip -t` 무결성 통과 + (Systematic 모드면) `slide_plan.json` plan-fidelity self-check 통과.
+- 완료 판정: PPTX 존재 + 빌드 성공 + `unzip -t` 무결성 통과 + (officecli 설치 시) `verify_deck.py`의 officecli validate 통과 및 `_pptx_render/grid.png` 눈검수 + (Systematic 모드면) `slide_plan.json` plan-fidelity self-check 통과.
 - (선택) 변환 충실도 회귀 점검: `python3 .claude/skills/slide/scripts/dev/roundtrip_check.py output/<slug>-pptx` — PPTX를 LibreOffice로 재렌더해 `_screenshots/`와 비교 (기본 임계 0.90).
 
 ## 이미지 생성

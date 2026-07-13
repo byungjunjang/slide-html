@@ -347,6 +347,7 @@ Converting N slides via html2pptx...
   4. **미려함** — 카드 호흡 균일, accent 1-2 events, 시각 주역이 명확한지
 
   위반 슬라이드는 HTML 수정 → 재빌드 → 해당 스크린샷만 다시 확인. 텍스트 휴리스틱이 못 잡는 배치 문제는 이 단계가 마지막 방어선이다.
+- **PPTX 실물 검수 (officecli 설치 시 자동)** — `verify_deck.py`가 빌드된 PPTX에 대해 (1) `officecli validate` OpenXML 검증(파일이 열리지 않는 corrupt → 하드 페일, 스키마 warning → WARN — pptxgenjs 산출물의 요소 순서 warning은 PowerPoint가 관용하는 정상 상태)과 (2) 변환된 PPTX 컨택트 시트 `_pptx_render/grid.png` 생성을 수행한다. **grid.png를 Read 도구로 직접 보고** 변환 단계에서 생긴 오버플로우·겹침·깨진 텍스트를 점검한다 — `_screenshots/`(변환 전 HTML 렌더) 검수의 대체가 아니라 보완(변환 후 실물). officecli 미설치 환경은 자동 skip되어 동작 변화 없음. `OFFICECLI_BIN` 환경변수로 바이너리 지정 또는 빈 값으로 비활성 가능.
 - PowerPoint/Keynote/LibreOffice에서 .pptx 열기
 - 임의 텍스트 더블클릭 → 직접 편집 가능 확인
 - N/N 통과율 확인
@@ -402,7 +403,7 @@ Converting N slides via html2pptx...
 | `scripts/dev/roundtrip_check.py` | **변환 충실도 회귀 체크** — 빌드된 PPTX를 LibreOffice로 재렌더해 `_screenshots/`와 유사도 비교 (기본 임계 0.90). HTML은 멀쩡한데 PPTX만 깨지는 부류를 잡는 안전망 |
 | `scripts/active-accent.mjs` | 활성 preset accent palette 해석 → §2.5 이미지 **style-lock accent 주입(Fix2)** |
 | `scripts/render-diagram.mjs` | **diagram-design HTML → 투명 고해상도 PNG** (Playwright; 웹폰트·CJK 정확). 2.6 다이어그램 슬롯용 |
-| `scripts/verify_deck.py` | **완료 게이트** — `build.mjs`가 빌드 후 자동 호출(dual-host 공용). 네이티브성 · 슬라이드 수 1:1 · dangling `<img>` · 미디어 하한 · placeholder가 남은 slot · ≥10장 plan · 미러 freshness 하드 페일 |
+| `scripts/verify_deck.py` | **완료 게이트** — `build.mjs`가 빌드 후 자동 호출(dual-host 공용). 네이티브성 · 슬라이드 수 1:1 · dangling `<img>` · 미디어 하한 · placeholder가 남은 slot · ≥10장 plan · 미러 freshness 하드 페일. officecli 설치 시 OpenXML validate(corrupt 하드 페일) + `_pptx_render/grid.png` 변환 실물 렌더(WARN 레이어) 추가 수행 |
 | `scripts/preflight.py` | **선택 환경 게이트** (파이프라인 시작 전) — node deps/chromium, `--images` 시 codex 로그인, 미러 freshness 점검. `build.mjs`엔 비연결, Codex `AGENTS.md` 6번/CI에서 옵션 호출 |
 | `../diagram-design/SKILL.md` | **다이어그램 작곡 스킬** (14종). slide-html 안에서는 §0.5 라우팅 → `diagram-slots.md` 계약 |
 
