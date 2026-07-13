@@ -48,3 +48,6 @@ _preview/
 
 # theme-init Phase 2 token-render baseline (regenerable via init_theme --force)
 .stock/
+
+# local git worktrees
+.worktrees/
