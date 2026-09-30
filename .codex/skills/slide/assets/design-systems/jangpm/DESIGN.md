@@ -8,7 +8,7 @@ status: confirmed
 
 # Jangpm · DESIGN.md
 
-> Layer 3 산출물 (slide-plan introduction guide §Layer 3). 이 문서는 jangpm preset의 **편집·기획 의도**를 박제한 SSOT — slide-plan은 이 어휘로 `recommended_layout_family`를 채우고, `/slide` simple 경로의 LLM도 이를 참조해 layout 일관성을 유지한다.
+> slide-plan 스킬(`slide-plan/SKILL.md`)이 읽는 preset 어휘 문서. 이 문서는 jangpm preset의 **편집·기획 의도**를 박제한 SSOT — slide-plan은 이 어휘로 `recommended_layout_family`를 채우고, `/slide` simple 경로의 LLM도 이를 참조해 layout 일관성을 유지한다.
 >
 > Token·CSS·boilerplate는 자동 산출물이고, 이 문서는 그 위에 얹는 **편집 규약**이다.
 
@@ -115,14 +115,16 @@ status: confirmed
 
 데크의 시각 다양성은 **카테고리 간 분포**에서 나온다. 한 데크에 모든 카테고리가 골고루 등장하면 톤은 jangpm 그대로 유지되면서 슬라이드별 인상은 다르다.
 
-| 카테고리 | 목적 | jangpm에서 권장 빈도 (12장 데크 기준) |
+| 카테고리 | 목적 | 참고 빈도 (12장 데크 예시 — 할당량 아님) |
 |---|---|---|
-| **A. Hero / Impact** | 한 페이지 전체로 강한 메시지 — 큰 인용·큰 숫자·큰 타이포 | **1-2장 (의무)** |
-| **B. Visual-Primary** | 시각 자체가 메시지 — 다이어그램·이미지·관계도·UI 캡쳐 | **2-3장 (의무)** |
+| **A. Hero / Impact** | 한 페이지 전체로 강한 메시지 — 큰 인용·큰 숫자·큰 타이포 | 1-2장 (하한: ≥5장 데크면 1장) |
+| **B. Visual-Primary** | 시각 자체가 메시지 — 다이어그램·이미지·관계도·UI 캡쳐 | 2-3장 (하한: ≥8장 데크면 2장) |
 | **C. Editorial** | 잡지·신문 톤 — 마진 노트·드롭캡·인라인 풀쿼트 | 1-2장 (선택) |
 | **D. Density** | 정보 밀도 — 카드 그리드·KPI·표 | **3-4장 (백본)** |
 | **E. Sequence** | 시간 흐름 — process·timeline·agenda | 1-2장 |
 | **F. Narrative** | 데크 흐름 마디 — cover·section-divider·summary·closing | **3-4장 (백본)** |
+
+> 빈도는 참고치다. 지켜야 하는 것은 §10 「절대 cap·floor」뿐이다(Density 50% 이하, ≥5장 데크 Hero 1장, ≥8장 데크 Visual-Primary 2장). 빌드 게이트 `validate-diversity.mjs --strict` 는 카드형 50% cap 과 ≥5장 데크의 시각 슬라이드 존재를 HARD 로 막는다.
 
 **카테고리 분포 검증** (anti-pattern §10에서 강제):
 - ❌ Hero/Impact 0장 데크 — "120% 다듬은 hero 슬라이드 없음 = 데크 임팩트 0"
@@ -132,7 +134,7 @@ status: confirmed
 
 ---
 
-### Category A · Hero / Impact (의무 1-2장)
+### Category A · Hero / Impact (참고 1-2장)
 
 한 페이지 전체로 한 가지 강력한 메시지를 던진다. 데크의 "120% 다듬은 한 장"이 여기서 나온다. 풀블리드 또는 90%+ 화면 점유.
 
@@ -146,7 +148,7 @@ status: confirmed
 
 ---
 
-### Category B · Visual-Primary (의무 2-3장)
+### Category B · Visual-Primary (참고 2-3장)
 
 시각이 주역. 텍스트는 visual을 설명하거나 라벨링.
 
@@ -333,7 +335,7 @@ cover → agenda → section-divider → 3~4 body → section-divider → 2~3 bo
 
 ## 8. Chart / table treatment
 
-slide-plan introduction guide §"차트의 수사적 역할 어휘" 9종을 jangpm의 시각 구현에 매핑. **하이브리드 원칙 (Fix3)**: 단순 bar/column/KPI는 `_pptx-slide.css`의 **div evidence-chart 프리미티브**(`ev-bar`/`ev-track`/`ev-fill*`/`ev-col-*`/`ev-spark`)로 — `var(--accent)`/토큰 + rgba alpha만 쓰므로 html2pptx가 **편집형 shape**로 번역하고 프리셋 교체 시 자동 반영된다(hex 하드코딩 금지). 복잡 차트(산점·stacked·퍼널 등)는 **diagram-design → PNG**(`references/diagram-slots.md` Part B). 단일 액센트 원칙: 다계열은 `ev-fill`(주)·`ev-fill-mid`/`ev-fill-soft`(같은 휴 graded)·`ev-fill-muted`(중립 grey)로 — 2번째 휴 금지.
+`slide-plan/references/chart-rhetoric.md` 의 9개 chart_strategy를 jangpm의 시각 구현에 매핑. **하이브리드 원칙**: 단순 bar/column/KPI는 `_pptx-slide.css`의 **div evidence-chart 프리미티브**(`ev-bar`/`ev-track`/`ev-fill*`/`ev-col-*`/`ev-spark`)로 — `var(--accent)`/토큰 + rgba alpha만 쓰므로 html2pptx가 **편집형 shape**로 번역하고 프리셋 교체 시 자동 반영된다(hex 하드코딩 금지). 복잡 차트(산점·stacked·퍼널 등)는 **diagram-design → PNG**(`references/diagram-slots.md` Part B). 단일 액센트 원칙: 다계열은 `ev-fill`(주)·`ev-fill-mid`/`ev-fill-soft`(같은 휴 graded)·`ev-fill-muted`(중립 grey)로 — 2번째 휴 금지.
 
 | chart_strategy | 의미 | jangpm 구현 (하이브리드) | 경로 |
 |---|---|---|---|
@@ -401,7 +403,7 @@ slide-plan introduction guide §"차트의 수사적 역할 어휘" 9종을 jang
 
 ### 구조 — 카테고리 분포 (R6 시각 다양성 강제)
 
-- ❌ **Hero/Impact 카테고리(A) 0장 데크** — 데크 안에 "120% 다듬은 한 장"이 없으면 임팩트 0. 12장 데크면 1-2장 의무, ≥5장 데크면 1장 의무
+- ❌ **Hero/Impact 카테고리(A) 0장 데크** — 데크 안에 "120% 다듬은 한 장"이 없으면 임팩트 0. ≥5장 데크면 1장 이상 의무
 - ❌ **Visual-Primary 카테고리(B) 0장 데크** — 텍스트만 N장 = 단조. ≥8장 데크면 2장 이상 의무 (다이어그램/이미지/UI 캡쳐/관계도 중)
 - ❌ **Density 카테고리(D)가 데크의 50% 초과** — 카드 그리드만 12장 중 7장 이상 = "SaaS 컨설팅 슬라이드 도배" 안티패턴
 - ❌ 같은 카테고리 연속 3장 이상 — 카테고리 간 회전 강제

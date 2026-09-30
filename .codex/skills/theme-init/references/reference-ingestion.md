@@ -84,7 +84,6 @@ is read for the authoritative `.card` chrome.
 
 ## Shared-reference note
 
-This extractor is the slide-html reference implementation. slide-svg and
-slide-pencil should mirror the same device set, JSON schema, and
-recommend-don't-apply contract so `card_style` and friends mean the same thing
-across all three.
+This extractor is the slide-html reference implementation. slide-svg should
+mirror the same device set, JSON schema, and recommend-don't-apply contract so
+`card_style` and friends mean the same thing across both.

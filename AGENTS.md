@@ -20,7 +20,7 @@ Edit `.claude/skills/...`, then run
    feature: the agent must enter `/slide-plan` before authoring. If the deck is
    **≥10 slides**, OR a reference file is
    attached/in `inputs/`, OR the brief carries an attitude keyword
-   (계획·철저·상세·꼼꼼·체계·제대로·thorough·detailed·comprehensive·polished),
+   (full list: `.codex/skills/slide/SKILL.md` §0b Auto-trigger #3),
    first run `.codex/skills/slide-plan/SKILL.md` to produce
    `output/<project>-pptx/slide_plan.json`. Only the bypass keywords
    (`간단히`, `빠르게`, `quick`, `simple로`, `plan 없이`) skip this — and when

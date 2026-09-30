@@ -296,7 +296,7 @@ inputs/
 A. 진짜 됩니다. `html2pptx.js`가 슬라이드 HTML의 모든 `<p>` / `<h1~h6>`를 PowerPoint 텍스트 프레임(`<a:txBody>`)으로 번역하기 때문에, PowerPoint/Keynote/Google Slides에서 텍스트를 더블클릭하면 직접 편집할 수 있습니다. 이미지 깔린 가짜 PPTX가 아닙니다.
 
 **Q. 왜 React/Vite 안 쓰고 슬라이드별 HTML 파일을 만드나요?**
-A. html2pptx는 DOM의 computedStyle을 슬라이드 단위로 캡처합니다. 슬라이드 1장 = HTML 파일 1개로 격리하면 (1) 슬라이드 간 CSS 누수 방지, (2) 한 장만 빌드/디버그 가능, (3) PowerPoint의 슬라이드-당-XML 모델과 1:1 매핑 — 세 가지가 자동으로 보장됩니다. 자매 프로젝트 `slide-pencil`은 React 경로, 이 저장소는 HTML 경로입니다 (아래 "자매 프로젝트" 참고).
+A. html2pptx는 DOM의 computedStyle을 슬라이드 단위로 캡처합니다. 슬라이드 1장 = HTML 파일 1개로 격리하면 (1) 슬라이드 간 CSS 누수 방지, (2) 한 장만 빌드/디버그 가능, (3) PowerPoint의 슬라이드-당-XML 모델과 1:1 매핑 — 세 가지가 자동으로 보장됩니다.
 
 **Q. 디자인 색상·폰트를 우리 회사 브랜드로 바꾸고 싶어요.**
 A. `/theme-init`을 쓰세요. 디자인 가이드 마크다운(필수)을 주면 35개 토큰을 추출 → `theme.json` → `colors_and_type.css` + `_pptx-slide.css` + 보일러플레이트 37장까지 새 폴더로 렌더링합니다. 기존 jangpm은 그대로 보존되므로, 한 사용자가 N개 프리셋을 동시에 가질 수 있습니다. 수동 편집 금지 — 토큰 컨트랙트가 어긋나면 빌드가 실패합니다.

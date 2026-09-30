@@ -12,7 +12,7 @@ trigger: /slide-plan, 슬라이드 기획, 데크 구조, deck plan, 체계적
 
 ---
 
-## Layer 1 — 보편 규율 (절대 위반 금지)
+## Layer 1 — 보편 규율
 
 slide_plan.json의 모든 슬라이드는 다음 5개 규율을 통과해야 한다. R2/R5는 자동 검증으로 빌드 거부, R1/R3/R4는 lint 경고.
 
@@ -140,7 +140,7 @@ HIGH/MEDIUM만 fact-check. 슬라이드별로 최대 3개까지 자동 추출(�
    ```
 2. 각 claim에 대해:
    ```
-   WebSearch("<claim text> source authoritative 2025 2026")
+   WebSearch("<claim text> <현재 연도> 공식 출처")
    ```
 3. 검색 결과에서 신뢰 source 1-2개 선별 (정부/공식 발표/주요 매체/위키 등). 의심스러우면 WebFetch로 본문 확인.
 4. claim과 source 내용을 비교 → `verified` / `corrected` / `unverified` 분류.
@@ -220,7 +220,7 @@ exit 1이면 R2/R5 위반 — 수정 후 재검증.
 수정이 필요하면 `다시` / `수정` / `멈춰` / `잠깐` / `wait` / `stop` 중 하나로 응답하세요.
 ```
 
-**진행 분기 (3개 슬라이드 파이프라인 공통):**
+**진행 분기 (슬라이드 파이프라인 공통):**
 
 | 사용자 다음 메시지 | 행동 |
 |---|---|
@@ -243,7 +243,7 @@ exit 1이면 R2/R5 위반 — 수정 후 재검증.
 
 `/slide`는 진입 시 `output/<project-name>-pptx/slide_plan.json` 존재 여부로 자동 분기:
 
-- **있음** (systematic 경로) — 이 plan을 입력으로 받아 각 슬라이드의 `recommended_layout_family`를 `pptx-boilerplate/`에서 그대로 복사·교체. R2/R5는 빌드 시점에 재검증 (`build.mjs`가 validate_plan.py 호출).
+- **있음** (systematic 경로) — 이 plan을 입력으로 받아 각 슬라이드를 `recommended_layout_family` 어휘로 작곡한다(보일러플레이트는 anchor 참고용). R2/R5는 빌드 시점에 재검증 (`build.mjs`가 validate_plan.py 호출).
 - **없음** (simple 경로) — LLM이 brief에서 즉흥 결정. 본 스킬 미사용.
 
 자동 chain wrapper(`/slide-with-plan` 같은)는 추가하지 않는다 — 사용자가 의도적으로 두 단계를 분리할 수 있어야 한다.
@@ -267,7 +267,7 @@ exit 1이면 R2/R5 위반 — 수정 후 재검증.
 
 | 사용자 발언 | 행동 |
 |---|---|
-| "/slide-plan" / "체계적으로 기획해줘" | 즉시 이 스킬 진입 → 8단계 워크플로우 → slide_plan.json + markdown 요약 → 사용자 confirm → "/slide로 빌드하시겠어요?" |
+| "/slide-plan" / "체계적으로 기획해줘" | 즉시 이 스킬 진입 → 8단계 워크플로우 → slide_plan.json + 슬라이드별 요약 출력 → 같은 턴에 `/slide` 진행 (stop keyword가 오면 plan 수정 모드) |
 | "데크 구조부터 짜줘" | 동일 |
 | "그냥 슬라이드 만들어줘" | 이 스킬 사용 안 함 — `/slide` simple 경로로 직행 |
 | 사용자가 이미 slide_plan.json을 손으로 만듦 | 이 스킬 skip — `/slide`가 자동 감지 |

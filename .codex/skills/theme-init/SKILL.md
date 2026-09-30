@@ -3,14 +3,14 @@ name: theme-init
 description: >
   Generate a new design system preset for the /slide PPTX pipeline.
   입력은 디자인 가이드 마크다운 또는 완결된 프리셋 폴더.
-  Claude Code 로컬 전용 (claude.ai 업로드 안 함).
+  claude.ai 업로드 대상 아님 (로컬 실행 전용).
   Trigger on: "/theme-init", "디자인 시스템 추가", "새 브랜드 프리셋",
   "set up a new theme".
 ---
 
 # /theme-init — 디자인 시스템 프리셋 생성기
 
-**Claude Code 로컬 전용.** 새 디자인 가이드(MD 또는 완결된 프리셋 폴더)를 받아서, `/slide` 스킬 번들이 즉시 사용할 수 있는 **완전한 프리셋 폴더**를 생성한다. 결과물은 슬라이드 번들의 `.codex/skills/slide/assets/design-systems/<preset>/`에 새 폴더로 추가되고, 같은 디렉토리의 `README.md` 카탈로그도 자동으로 갱신된다 — 기존 프리셋(jangpm 등)은 보존.
+**로컬 실행 전용 (claude.ai 업로드 대상 아님).** 새 디자인 가이드(MD 또는 완결된 프리셋 폴더)를 받아서, `/slide` 스킬 번들이 즉시 사용할 수 있는 **완전한 프리셋 폴더**를 생성한다. 결과물은 슬라이드 번들의 `.codex/skills/slide/assets/design-systems/<preset>/`에 새 폴더로 추가되고, 같은 디렉토리의 `README.md` 카탈로그도 자동으로 갱신된다 — 기존 프리셋(jangpm 등)은 보존.
 
 이 스킬은 claude.ai에 업로드하지 않는다. 디자인 시스템은 로컬에서 굽고, 그 결과가 박힌 slide 번들만 claude.ai에 올리는 흐름.
 
@@ -93,7 +93,7 @@ bash .codex/skills/slide/scripts/init-project.sh test-<preset> <preset>
 cd output/test-<preset>-pptx/
 node build.mjs
 
-# 결과 PPTX를 PowerPoint/Keynote 로 열어 색·폰트 확인
+# 결과 PPTX를 PowerPoint/Keynote 로 열어 색·폰트 확인 (macOS: open / Windows: start)
 open test-<preset>.pptx
 ```
 
@@ -194,7 +194,7 @@ Phase 2(Layout Authoring)를 거치면 identity 슬라이드(`01·23·25·09·07
 theme-init은 결과물을 slide 번들의 `assets/design-systems/` 안에 직접 떨군다. 추가 동기화·이동 작업 없음. 새 프리셋 생성 직후 `/slide` (또는 `init-project.sh <project> <preset>`)를 호출하면 자동으로 새 프리셋 자산을 사용:
 - `_pptx-slide.css`가 프리셋 폴더에서 복사됨 (jangpm 기본 코드와 다른 색)
 - 첫 슬라이드 (`01-title.html`)도 프리셋 boilerplate에서 복사됨
-- 사용자가 새 슬라이드 추가할 때 참고할 패턴은 `assets/design-systems/<preset>/pptx-boilerplate/02-08*.html`
+- 새 슬라이드는 프리셋 `DESIGN.md` §5 어휘와 그 anchor 보일러플레이트(`assets/design-systems/<preset>/pptx-boilerplate/01~37`)를 참고해 작곡한다
 - `assets/design-systems/README.md`에 새 프리셋이 자동으로 한 행 추가되어 카탈로그 최신 유지
 
 ## 참고 자산
@@ -223,7 +223,7 @@ theme-init은 결과물을 slide 번들의 `assets/design-systems/` 안에 직�
 - **모노 폰트는 `typography.font-mono` 토큰** — `.t-mono` / `--font-mono` / code. 프리셋이 명시 안 하면 모노크롬 기본 mono 체인.
 - **01-title.html 의 한국어 카피·캐릭터 이미지 경로는 jangpm 특이** — 새 프리셋 첫 슬라이드는 색만 reskin. 카피·이미지는 프리셋 폴더에서 직접 수정.
 - **타이포·간격 등 일부 토큰은 가이드가 명시 안 하면 monochrome 기본값** — 의도. 잘못된 브랜드 값보다 안전한 기본값 우선.
-- **DESIGN.md는 draft 상태로 생성됨** — LLM 자동 본문 추출은 의도적으로 stub. 사용자 손글씨가 잘못된 자동 추출보다 안전 (slide-plan introduction guide §살아남은 염려점 #4).
+- **DESIGN.md는 draft 상태로 생성됨** — LLM 자동 본문 추출은 의도적으로 stub. 사용자 손글씨가 잘못된 자동 추출보다 안전.
 
 ## 트러블슈팅
 
@@ -232,8 +232,7 @@ theme-init은 결과물을 slide 번들의 `assets/design-systems/` 안에 직�
 | `validate_theme.py FAILS the v1 token contract` | hex 형식 잘못, 필수 키 누락 | stderr 메시지 보고 드래프트 수정 후 재실행 |
 | `missing theme token: X.Y` | 템플릿이 참조하는 토큰을 드래프트가 안 채움 | 드래프트에 토큰 추가, 또는 템플릿이 잘못 참조 중 |
 | `init-project.sh` 가 "preset is missing _pptx-slide.css" 라고 함 | 프리셋이 아직 생성 안 됐거나 `--force` 안 한 갱신 후 일부 파일 누락 | `init_theme.py --preset <name> --from <theme.json> --force` 재실행 |
-| 새 프리셋의 PPTX 가 jangpm 색으로 나옴 | init-project 가 옛 `slide/templates/` 에서 복사했음 (구버전 init-project.sh) | init-project.sh 가 최신본인지 확인 (Task 8 이후) |
-| active 전환 후 옛 데크 색이 새 테마와 안 맞음 | 데크 슬라이드에 옛 테마 accent 가 hex 로 하드코딩돼 stale | active 전환 시 `scan_stale_hex.py` 가 자동 warn (Fix1). 수동: `python scripts/scan_stale_hex.py` → `FOREIGN` hex 를 `var(--*)`/헬퍼 클래스로 재토큰화. `--strict` 로 게이트화 가능 |
+| active 전환 후 옛 데크 색이 새 테마와 안 맞음 | 데크 슬라이드에 옛 테마 accent 가 hex 로 하드코딩돼 stale | active 전환 시 `scan_stale_hex.py` 가 자동 warn. 수동: `python scripts/scan_stale_hex.py` → `FOREIGN` hex 를 `var(--*)`/헬퍼 클래스로 재토큰화. `--strict` 로 게이트화 가능 |
 
 ## 다른 슬라이드 스킬과의 관계
 

@@ -38,7 +38,7 @@ Fourteen diagram types. One shared design system, complexity budget, and taste g
 
 **Before generating your first diagram in a new project, verify the style guide has been customized.**
 
-Open [`references/style-guide.md`](references/style-guide.md) and check the default tokens. If they're still the shipped defaults (paper `#faf7f2`, ink `#1c1917`, accent `#b5523a` rust), **pause and ask the user**:
+Open [`references/style-guide.md`](references/style-guide.md) and check the default tokens. If they're still the shipped defaults (paper `#f5f5f5`, ink `#2d3142`, accent `#eb6c36` atomic-tangerine), **pause and ask the user**:
 
 > *"This is your first Schematic in this project. The style guide is still at the default (neutral stone + rust). Do you want to customize it to match your brand first? Options: (a) run onboarding — I'll pull colors and fonts from your website, (b) paste your tokens manually, (c) proceed with the default for now."*
 
@@ -47,7 +47,7 @@ Then branch:
 - **(b)** → accept the user's tokens and write them into `style-guide.md` under a new "Custom tokens" section.
 - **(c)** → proceed; optionally remind the user they can run onboarding later.
 
-**Once the style guide has been customized** (or the user explicitly opted for default), skip this gate on subsequent runs. A simple way to detect customization: if the `accent` value in `style-guide.md` differs from `#b5523a`, assume custom.
+**Once the style guide has been customized** (or the user explicitly opted for default), skip this gate on subsequent runs. A simple way to detect customization: if the `accent` value in `style-guide.md` differs from `#eb6c36`, assume custom.
 
 Don't silently ship default-skinned diagrams into a branded project — that's the failure mode this gate exists to prevent.
 
@@ -62,7 +62,7 @@ From `.impeccable.md`: *"Confident restraint. Earn every element. One color acce
 Applied to schematics:
 - Every node represents a distinct idea. Two nodes that always travel together are one node.
 - Every connection carries information. If the relationship is obvious from layout, remove the line.
-- Coral is **editorial, not a flag.** 1–2 focal nodes per diagram. Using it on 5 nodes erases the signal.
+- `accent` is **editorial, not a flag.** 1–2 focal nodes per diagram. Using it on 5 nodes erases the signal.
 - The schematic isn't done when everything is added. It's done when nothing can be removed.
 
 **Target density: 4/10.** Enough to be technically complete. Not so dense it needs a guide. Above 9 nodes, it's probably two diagrams.
@@ -128,7 +128,7 @@ These mark "AI slop" schematics of any type:
 | 3 equal-width summary cards as default | Generic grid — vary widths |
 | Shadow on any element | Shadows are out. Borders are in. |
 | `rounded-2xl` on boxes | Max radius 6–10px or none |
-| Coral on every "important" node | Coral is 1–2 editorial accents, not a signaling system |
+| `accent` on every "important" node | `accent` is 1–2 editorial accents, not a signaling system |
 
 Type-specific anti-patterns live in each `references/type-*.md`.
 
@@ -148,7 +148,7 @@ The full design-vocabulary tables — semantic roles, node type → fill/stroke 
 
 ## 6–8. Universal Diagram Grammar
 
-**작곡(드로잉) 전에 [`references/diagram-grammar.md`](references/diagram-grammar.md)를 반드시 읽는다.** Core SVG primitives (background, arrow markers, node-box pattern, arrow-label masking, bottom legend strip), the 4px grid, the complexity budget, page layout, and the summary-card pattern all live there — every rule binds exactly as before.
+**작곡(드로잉) 전에 [`references/diagram-grammar.md`](references/diagram-grammar.md)를 반드시 읽는다.** Core SVG primitives (background, arrow markers, node-box pattern, arrow-label masking, bottom legend strip), the 4px grid, the complexity budget, page layout, and the summary-card pattern all live there, and every rule there applies.
 
 ---
 
@@ -168,7 +168,7 @@ Run before producing any diagram.
 - [ ] Can I remove any label? (Does color or shape already signal it?)
 
 **Signal:**
-- [ ] Coral used on ≤2 elements? If more, which actually deserve focal status?
+- [ ] `accent` used on ≤2 elements? If more, which actually deserve focal status?
 - [ ] Legend covers every type used — and nothing extra?
 - [ ] Within the type's complexity budget (`references/diagram-grammar.md`)?
 

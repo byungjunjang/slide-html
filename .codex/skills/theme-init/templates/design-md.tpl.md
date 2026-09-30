@@ -10,7 +10,7 @@ status: draft
 
 > **작성 안내:** 자동 생성 초안입니다. 사용자 검토 후 빈 섹션(특히 §1·§5·§6·§10)을 채우고 frontmatter `status:`를 `draft → confirmed`로 변경하세요. 현재 상태는 frontmatter `status:` 한 곳에만 기록합니다 — 본문에 중복 표기하지 않으므로 frontmatter와 어긋날 일이 없습니다.
 >
-> 이 문서는 slide-plan introduction guide §Layer 3의 산출물입니다. slide-plan은 이 어휘로 `recommended_layout_family`를 채우고, simple `/slide` 경로의 LLM도 이를 참조해 layout 일관성과 **변형 자유도**를 유지합니다.
+> 이 문서는 slide-plan 스킬(`slide-plan/SKILL.md`)이 읽는 preset 어휘 문서입니다. slide-plan은 이 어휘로 `recommended_layout_family`를 채우고, simple `/slide` 경로의 LLM도 이를 참조해 layout 일관성과 **변형 자유도**를 유지합니다.
 >
 > 5 questions / 7-step 작곡 흐름 / anti-slop self-check / 미세 서식 polish는 **`/slide` 스킬 본체** (`SKILL.md`, `references/anti-slop.md`, `references/text-formatting-rules.md`)에 박혀 있습니다 — preset 무관, 모든 preset에서 자동 적용. 본 DESIGN.md는 그 위에 얹는 **이 preset의 편집 어휘·시각 vocabulary** 입니다.
 
@@ -155,7 +155,7 @@ status: draft
 
 ## 8. Chart / table treatment
 
-slide-plan introduction guide §"차트의 수사적 역할 어휘" 9종을 이 preset의 시각 구현에 매핑하세요.
+`slide-plan/references/chart-rhetoric.md` 의 9개 chart_strategy를 이 preset의 시각 구현에 매핑하세요.
 
 | chart_strategy | 이 preset 구현 | 상태 |
 |---|---|---|
@@ -207,7 +207,7 @@ slide-plan introduction guide §"차트의 수사적 역할 어휘" 9종을 이 
 - ❌ 같은 카테고리 연속 3장 이상
 - ❌ 같은 어휘(`three-point`, `kpi-grid` 등) 연속 2장 이상
 
-### Plan 규칙 (R-rules · slide-plan introduction guide)
+### Plan 규칙 (R-rules · `slide-plan/SKILL.md` Layer 1)
 
 - ❌ chart·table만 두고 takeaway 텍스트 누락 (R2)
 - ❌ 슬라이드 20장 초과인데 split/merge 미검토 (R3)

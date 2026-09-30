@@ -24,13 +24,13 @@
 
 ## 스킬
 
-| 스킬 | 트리거 | 위치 |
-|------|--------|------|
-| `/slide` | `"슬라이드 만들어"`, `"PPT"`, `"프레젠테이션"`, `"pptx"`, `"발표 자료"`, `"강의 슬라이드"` | 핵심 파이프라인 |
-| `/slide-plan` | `"체계적으로 기획"`, `"데크 구조부터"`, `"/slide-plan"` | 선택적 강화 단계 — `/slide` 이전에 실행 |
-| `/theme-init` | `"테마 추가"`, `"새 디자인 시스템"`, `"새 프리셋"` | 새 프리셋 추가 (1회성) |
-| `/upload-drive` | `"드라이브 올려"`, `"슬라이드로 변환"` | Google Drive 업로드 + Slides 변환 |
-| `diagram-design` | `"다이어그램"`, `"구성도/아키텍처"`, `"플로우/순서도"`, `"시퀀스/상태도"`, `"조직도/계층도"`, `"ER/벤/피라미드"` (슬라이드 시각 주역이 "구조적 관계") | 다이어그램 작곡 → `/slide` Step 2.6에서 PNG `<img>` 슬롯으로 임베드 |
+| 스킬 | 역할·위치 |
+|------|-----------|
+| `/slide` | 핵심 파이프라인 |
+| `/slide-plan` | 선택적 강화 단계 — `/slide` 이전에 실행 |
+| `/theme-init` | 새 프리셋 추가 (1회성) |
+| `/upload-drive` | Google Drive 업로드 + Slides 변환 |
+| `diagram-design` | 다이어그램 작곡 (슬라이드 시각 주역이 "구조적 관계"일 때) → `/slide` Step 2.6에서 PNG `<img>` 슬롯으로 임베드 |
 
 `/slide`는 `output/<slug>-pptx/slide_plan.json` 존재 여부로 Systematic/Simple 자동 분기. 자세한 워크플로우는 `.claude/skills/slide/SKILL.md`.
 
@@ -55,7 +55,6 @@ slide-html/
 ├── LICENSE
 ├── package.json                       ← playwright + pptxgenjs + sharp
 ├── .claude/
-│   ├── settings.local.json            ← 스크립트 실행 allow-list
 │   └── skills/
 │       ├── slide/
 │       │   ├── SKILL.md               ← 스킬 엔트리 (5단계 워크플로우)
@@ -74,7 +73,7 @@ slide-html/
 │       │   │   ├── html2pptx.js           ← computedStyle → pptxgenjs 변환
 │       │   │   ├── prebuild-svg.mjs       ← icons/*.svg → PNG 래스터 (sharp)
 │       │   │   └── render-diagram.mjs     ← diagram-design HTML → 투명 PNG (Playwright, 2.6단계)
-│       │   ├── templates/                 ← build.mjs / _pptx-slide.css 템플릿
+│       │   ├── templates/                 ← build.mjs 템플릿 (`_pptx-slide.css` 는 프리셋 폴더에)
 │       │   └── assets/design-systems/     ← 프리셋 (jangpm 기본 + theme-init 산출물)
 │       ├── diagram-design/            ← 다이어그램 작곡 스킬 (14종, /slide Step 2.6 경유 임베드)
 │       ├── slide-plan/                ← 기획 단계 (Systematic 모드용 slide_plan.json 생성)
@@ -128,7 +127,7 @@ python3 .claude/skills/slide/scripts/dev/sync_codex_mirror.py --check  # 드리�
 
 ## 빌드 시 주의
 
-- `init-project.sh` 가 `output/<slug>-pptx/` 에 `build.mjs`, `_pptx-slide.css`, `slides/01-title.html` 스캐폴드를 만든다. `01-title.html` 만 있으면 init 상태일 뿐 — 계획한 장수만큼 `NN-*.html` 이 채워지고 `node build.mjs` 가 성공해야 `built`로 본다 (운영 게이트).
+- `init-project.sh` 가 `output/<slug>-pptx/` 에 `build.mjs`, `_pptx-slide.css`, `slides/01-title.html` 스캐폴드를 만든다. `01-title.html` 만 있으면 init 상태일 뿐 — 계획한 장수만큼 `NN-*.html` 이 채워지고 `node build.mjs` 가 성공해야 `built`로 본다.
 - `node build.mjs` prebuild 체인: 다양성 게이트(`validate-diversity.mjs --strict`, **HARD** — `<body data-layout>` 누락/다양성 미달 시 빌드 실패) → 디자인 B-게이트(`check_design_gates.py`, WARN — FAIL 항목은 완료 선언 전 수정 의무) → stale-hex 가드(WARN). postbuild: `verify_deck.py` (HARD).
 - 빌드가 `_screenshots/NN-*.png` 슬라이드 렌더를 자동 저장한다 — Step 5 비주얼 self-review 의무 (Read로 직접 보고 겹침/여백/chrome 점검).
 - 빌드가 `build-report.json`(슬라이드별 성공/실패 + overlap auto-fix 내역)을 남긴다 — `overlap_autofix_total > 0`이면 소스 HTML을 고쳐 0으로 만든 뒤 완료 선언.

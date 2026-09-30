@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate slide_plan.json against Layer 1 R1-R5 + enum constraints.
 
-Three slide pipelines (slide-html, slide-svg, slide-pencil) share R1-R5 as the
+The slide pipelines (slide-html, slide-svg) share R1-R5 as the
 universal contract. slide-html's layout_family vocabulary is preset-defined
 (jangpm has 30+ families across 6 categories), so the validator pulls the
 allowed set from the plan's own `design_dependency.allowed_layout_families`
@@ -23,7 +23,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-# Common chart_strategy enum (10 values) — shared with slide-pencil / slide-svg.
+# Common chart_strategy enum (10 values) — shared with slide-svg.
 CHART_STRATEGIES = {
     "growth-trend", "forecast", "structural-break", "focus-comparison",
     "distribution", "quadrant", "priority-matrix", "split-segment", "funnel",

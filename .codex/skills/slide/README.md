@@ -9,18 +9,16 @@ slide/
 ├── SKILL.md                    스킬 정의 + 워크플로우
 ├── package.json                런타임 의존성 (playwright, pptxgenjs, sharp)
 ├── README.md                   이 파일
-├── scripts/
-│   ├── init-project.sh         새 슬라이드 프로젝트 셋업
-│   ├── prebuild-svg.mjs        icons/*.svg → PNG 래스터화 (PptxGenJS 우회)
-│   ├── export_deck_pptx.mjs    PPTX 빌드 CLI
-│   └── html2pptx.js            HTML → PPTX 변환 엔진 (Playwright)
+├── scripts/                    빌드·게이트 스크립트 (init-project, export_deck_pptx, html2pptx, verify_deck 등)
 ├── templates/
 │   └── build.mjs.template      빌드 스크립트 템플릿
 ├── references/                 4 hard constraint, 에러 카탈로그 등
 └── assets/
     └── design-systems/
         ├── README.md           프리셋 카탈로그 (theme-init이 자동 갱신)
+        ├── active.json         활성 프리셋 SSOT
         ├── jangpm/             기본 프리셋 (Pretendard 폰트 포함, ~20MB)
+        ├── notion/             프리셋
         └── acme-warm/          예제 프리셋
 ```
 
@@ -56,7 +54,7 @@ cd output/<project-name>-pptx
 node build.mjs
 ```
 
-LLM이 brief에서 슬라이드 구조를 즉흥 결정. 짧은 데크·1회성 초안에 적합. 4 hard constraint만 검증.
+LLM이 brief에서 슬라이드 구조를 즉흥 결정. 짧은 데크·1회성 초안에 적합. 4 hard constraint + 다양성 게이트(HARD) + B-게이트(WARN) + verify_deck(HARD).
 
 ### Systematic (선택, slide-plan 사용)
 
