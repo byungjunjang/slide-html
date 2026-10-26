@@ -135,10 +135,9 @@ async function main() {
   if (errors.length) {
     console.error(`\n⚠️ ${errors.length} 장 변환 실패. 흔한 원인: 4 hard constraint 위반.`);
     console.error(`  references/error-patterns.md 의 픽스 패턴을 참조하세요.`);
-    if (errors.length === files.length) {
-      console.error(`✗ 전부 실패 — PPTX 를 생성하지 않습니다.`);
-      process.exit(1);
-    }
+    console.error('✗ 변환 실패 — 기존 PPTX를 보존합니다.');
+    process.exitCode = 1;
+    return;
   }
 
   await pres.writeFile({ fileName: outFile });
