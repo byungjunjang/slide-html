@@ -20,7 +20,7 @@
 - **단일 액센트 원칙** — 활성 프리셋의 accent 하나만 사용, 멀티 휴 / 그라디언트 / 글로우 금지 (jangpm 기본: `#4633E3`)
 - **이모지 금지** — 아이콘은 활성 프리셋의 라인아이콘 또는 SVG만
 - **html2pptx-safe CSS만** — `_pptx-slide.css` 헬퍼 클래스 위에서만 작성. 임의 CSS는 PPTX 번역 실패 위험. 상세는 `references/css-helpers.md`
-- **editable text 유지** — `<text>`/`<p>`/`<span>`은 PPTX `text` 객체로 임베드되어야 함, `<img>` 플래튼 금지
+- **editable text 유지** — `<text>`/`<p>`/`<span>`은 PPTX `text` 객체로 임베드되어야 함, `<img>` 플래튼 금지. 예외: 「다이어그램」의 PNG `<img>` 슬롯(다이어그램 글자는 편집 불가)
 
 ## 스킬
 
@@ -34,7 +34,7 @@
 
 `/slide`는 `output/<slug>-pptx/slide_plan.json` 존재 여부로 Systematic/Simple 자동 분기. 자세한 워크플로우는 `.claude/skills/slide/SKILL.md`.
 
-**Auto-trigger → Systematic 모드:** 슬라이드 수 ≥ 10장, 사용자가 참고 파일 첨부, brief에 `계획/체계/꼼꼼/제대로/thorough/detailed` 등 태도 키워드 포함 — 하나라도 충족하면 `/slide-plan` 먼저 호출.
+**Auto-trigger → Systematic 모드:** 조건·키워드·우회(`.deck-mode`)는 `.claude/skills/slide/SKILL.md` §0b 가 정본.
 
 ## 산출물 컨벤션
 
@@ -102,7 +102,7 @@ powershell -ExecutionPolicy Bypass -File .claude/skills/slide/scripts/init-proje
 # 3. 빌드 (PPTX 생성)
 cd output/<slug>-pptx && node build.mjs
 
-# 4. 무결성 검증 (필수 — 완료 판정 게이트)
+# 4. 무결성 검증 (완료 판정 항목 — 「빌드 시 주의」)
 unzip -t output/<slug>-pptx/<slug>.pptx
 
 # 5. (선택) Google Drive 업로드 + Slides 변환
@@ -132,12 +132,12 @@ python3 .claude/skills/slide/scripts/dev/sync_codex_mirror.py --check  # 드리�
 - 빌드가 `_screenshots/NN-*.png` 슬라이드 렌더를 자동 저장한다 — Step 5 비주얼 self-review 의무 (Read로 직접 보고 겹침/여백/chrome 점검).
 - 빌드가 `build-report.json`(슬라이드별 성공/실패 + overlap auto-fix 내역)을 남긴다 — `overlap_autofix_total > 0`이면 소스 HTML을 고쳐 0으로 만든 뒤 완료 선언.
 - 빌드 에러는 `references/error-patterns.md` 의 픽스 패턴부터 적용. 임의 CSS 변경으로 우회하지 말 것.
-- 완료 판정: PPTX 존재 + 빌드 성공 + `unzip -t` 무결성 통과 + (officecli 설치 시) `verify_deck.py`의 officecli validate 통과 및 `_pptx_render/grid.png` 눈검수 + (Systematic 모드면) `slide_plan.json` plan-fidelity self-check 통과.
+- 완료 판정: `node build.mjs` 성공(postbuild `verify_deck.py` HARD 통과 포함) + `unzip -t` 무결성 통과 + (officecli 설치 시) `_pptx_render/grid.png` 눈검수 + (Systematic 모드면) `slide_plan.json` plan-fidelity self-check 통과.
 - (선택) 변환 충실도 회귀 점검: `python3 .claude/skills/slide/scripts/dev/roundtrip_check.py output/<slug>-pptx` — PPTX를 LibreOffice로 재렌더해 `_screenshots/`와 비교 (기본 임계 0.90).
 
 ## 이미지 생성
 
-`/slide` Step 2.5(이미지 슬롯이 있을 때만)가 사용. **백엔드는 단일** — Codex 내장 `imagegen`/`image_gen` 경로(`gpt-image-2`, OAuth, API key 불필요). 다른 이미지 백엔드는 동봉하지 않는다.
+`/slide` Step 2.5(이미지 슬롯이 있을 때만)가 사용. **백엔드는 단일** — Codex 내장 `imagegen`/`image_gen` 경로(`gpt-image-2`, OAuth, API key 불필요). Claude Code 는 SKILL §2.5 대로 슬롯마다 `codex exec` 로 그 `image_gen` 을 직접 부른다(`codex-image` 스킬은 거치지 않음). 다른 이미지 백엔드는 동봉하지 않는다.
 
 preflight(`codex --version` / `codex login status`) 실패 시 대체 생성기로 넘어가지 않고 이미지 단계를 중단, `<img>` 슬롯을 placeholder 도형(`<div class="img-placeholder">`)으로 대체하며 이때 **`data-image-slot`을 반드시 제거**한다 — 남아 있으면 `verify_deck.py`가 하드 페일한다.
 
